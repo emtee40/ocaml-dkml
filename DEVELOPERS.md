@@ -26,8 +26,9 @@
 
 ### Rebuilding an installer
 
-1. Run CMake configure (`cmake -G` or a "configure" button in your CMake-enabled IDE)
-   with the `ci-reproduce` configuration.
+1. Run CMake configure: Either run `cmake --preset ci-reproduce` or press a "configure" button in your
+   CMake-enabled IDE with the `ci-reproduce` configuration. Use `ci-reproduce-windows-c` on Windows to
+   place your build directory in `C:\build` to avoid the 260-character Windows path limit.
 
    > The `ci-reproduce` target will use [CMakePresetsGenerated.json](./CMakePresetsGenerated.json)
    > which captures the last git commits of all the [subprojects](./dependencies/fetch-git-projects.cmake)
@@ -56,10 +57,10 @@
 
    * Delete the `build/pkg/bump` directory
 
-2. Run CMake configure (`cmake -G` or a "configure" button in your CMake-enabled IDE)
-   with the `develop` configuration.
+2. Run CMake configure: Either run `cmake --preset develop` or press a "configure" button in your
+   CMake-enabled IDE with the `develop` configuration.
 3. Run one of the `Package-VersionBump-{PRERELEASE,PATCH,MINOR,MAJOR}` targets
-4. Rerun CMake configure (ex. `cmake -G`).
+4. Rerun CMake configure (ex. `cmake --preset develop`).
 5. Run through each of the CMake targets **sequentially** starting from `Package-Stage01-` to
    the highest Stage number. Many stages require a re-configuration based on
    values obtained from the prior stages, so do not skip any targets. Consult the
