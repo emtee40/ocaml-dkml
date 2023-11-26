@@ -86,7 +86,7 @@ You can:
    ```
 
 This saved git commit approach is the reason why in CI we don't just build `dkml` from `diskuv-opam-repository` ... with
-the git commits saved we can reproduce the installer on external machines and perhaps codesign if it is good.
+the git commits saved we can reproduce the installer on external machines and perhaps code-sign if it is good.
 
 ## Editing Source Code
 
