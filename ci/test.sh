@@ -16,12 +16,14 @@ install -d installer && tar xCf installer "dkml-native-$arch-i-$ver.tar" --strip
 # Temporary: This should have been done by the Unix installer just like the Windows installer.
 #install -d "${XDG_DATA_HOME:-$HOME/.local/share}/dkml" && printf '(("DiskuvOCamlHome" ("%s/Applications/DkMLNative")))' "$HOME" | tee "${XDG_DATA_HOME:-$HOME/.local/share}/dkml/dkmlvars-v2.sexp"
 
-# Optional since done automatically with the first ocaml/ocamlc/dune/utop/... but test it explicitly
+# Optional since done automatically with the first ocaml/ocamlc/dune/utop/... but test it explicitly.
+# And --disable-sandboxing is needed on macOS/Linux because the installation path of DkMLNative
+# is not known apriori (it can be customized by the user).
 export OCAMLRUNPARAM=b
 if [ "$(uname -s)" = Darwin ]; then
     # bug: dkml-install-api/package/console/common/dkml_package_console_common.ml[i] says
     # to place in Applications/DkMLNative.app/ in the .mli but does not do that in the .ml.
-    ~/Applications/DkMLNative/bin/dkml init --system
+    ~/Applications/DkMLNative/bin/dkml init --system --disable-sandboxing
 else
-    ~/.local/share/dkml-native/bin/dkml init --system
+    ~/.local/share/dkml-native/bin/dkml init --system --disable-sandboxing
 fi
