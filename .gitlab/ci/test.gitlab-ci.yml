@@ -14,7 +14,7 @@ test:
     when: on_success
     expire_in: "30 days"
     paths:
-      - build/pkg/bump/.ci/o/*/share/dkml-installer-ocaml-*/t
+      - dkml-native-*.tar.gz
 
 installer-windows_x86_64:
   extends:
@@ -35,7 +35,9 @@ installer-windows_x86_64:
   - cmake --preset ci-reproduce-windows-c -G Ninja
   - cmake --build --preset ci-reproduce-windows-c
 
-installer-debian_x86_64:
+  - copy C:/build/pkg/bump/.ci/o/*/share/dkml-installer-ocaml-*/t/unsigned-dkml-native-windows_x86_64-*.exe .
+
+installer-debian_x86_64: # Debian is just the prototype for Linux with a "modern" libc
   extends:
     - .cmake-with-opam-prereqs-debian:before
     - .installer-unix
@@ -46,6 +48,10 @@ installer-debian_x86_64:
 
   - .ci/cmake/bin/cmake --preset ci-reproduce -G Ninja -D DKML_HOST_LINUX_DOCKER=0
   - .ci/cmake/bin/cmake --build --preset ci-reproduce
+
+  - ver=$(.ci/cmake/bin/cmake -P cmake/get-version.cmake)
+  - build/pkg/bump/.ci/o/$ver/share/dkml-installer-ocaml-network/t/bundle-dkml-native-linux_x86_64-i.sh tar
+  - gzip dkml-native-linux_x86_64-i-$ver.tar
 
 installer-darwin_x86_64:
   extends:
@@ -61,6 +67,10 @@ installer-darwin_x86_64:
   - .ci/cmake/bin/cmake --preset ci-reproduce -G Ninja -D DKML_HOST_ABI=darwin_x86_64 -D DKML_TARGET_ABI=darwin_x86_64
   - .ci/cmake/bin/cmake --build --preset ci-reproduce
 
+  - ver=$(.ci/cmake/bin/cmake -P cmake/get-version.cmake)
+  - build/pkg/bump/.ci/o/$ver/share/dkml-installer-ocaml-network/t/bundle-dkml-native-darwin_x86_64-i.sh tar
+  - gzip dkml-native-darwin_x86_64-i-$ver.tar
+
 installer-darwin_arm64:
   extends:
     - .cmake-with-opam-prereqs-macos:build
@@ -74,6 +84,10 @@ installer-darwin_arm64:
 
   - .ci/cmake/bin/cmake --preset ci-reproduce -G Ninja -D DKML_HOST_ABI=darwin_arm64 -D DKML_TARGET_ABI=darwin_arm64
   - .ci/cmake/bin/cmake --build --preset ci-reproduce
+
+  - ver=$(.ci/cmake/bin/cmake -P cmake/get-version.cmake)
+  - build/pkg/bump/.ci/o/$ver/share/dkml-installer-ocaml-network/t/bundle-dkml-native-darwin_arm64-i.sh tar
+  - gzip dkml-native-darwin_arm64-i-$ver.tar
 
 installer-linux_x86_64:
   extends:
@@ -114,3 +128,37 @@ installer-linux_x86_64:
     - .ci/sd4/opamrun/cmdrun sh ./dk dksdk.cmake.copy QUIET
     - .ci/sd4/opamrun/cmdrun cmake --preset ci-reproduce -G Ninja -D SKIP_CMDRUN=1 -D DKML_HOST_LINUX_DOCKER=0
     - .ci/sd4/opamrun/cmdrun cmake --build --preset ci-reproduce
+
+    - ver=$(.ci/cmake/bin/cmake -P cmake/get-version.cmake)
+    - build/pkg/bump/.ci/o/$ver/share/dkml-installer-ocaml-network/t/bundle-dkml-native-linux_x86_64-i.sh tar
+    - gzip dkml-native-linux_x86_64-i-$ver.tar
+
+# ------------------------------------------------------------------------
+# Tests
+# ------------------------------------------------------------------------
+
+test-darwin_arm64:
+  extends:
+    - .cmake-with-opam-prereqs-macos:build
+  needs:
+    - job: installer-darwin_arm64
+      artifacts: true
+  script: ci/test.sh darwin_arm64
+
+test-debian_x86_64-on-debian_x86_64:
+  extends:
+    - .cmake-with-opam-prereqs-debian:before
+  stage: test
+  needs:
+    - job: installer-debian_x86_64
+      artifacts: true
+  script: ci/test.sh linux_x86_64
+
+test-linux_x86_64-on-debian_x86_64:
+  extends:
+    - .cmake-with-opam-prereqs-debian:before
+  stage: test
+  needs:
+    - job: installer-linux_x86_64
+      artifacts: true
+  script: ci/test.sh linux_x86_64
