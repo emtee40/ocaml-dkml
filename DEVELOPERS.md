@@ -67,27 +67,6 @@
    [Errata](#errata)
 6. Finish with the CMake target `-PublishAssets`.
 
-### Try new installer in CI
-
-How about trying a new installer in CI before a [new version is finished](#creating-a-new-version)?
-
-You can:
-
-1. Do a CMake configure so that [CMakePresetsGenerated.json](./CMakePresetsGenerated.json) is updated with
-   the latest git commits.
-2. Do:
-
-   ```sh
-   git commit -m "ci: Try installer" CMakePresetsGenerated.json
-   git push
-   for sub in diskuv-opam-repository dkml-compiler dkml-component-curl dkml-component-desktop dkml-component-ocamlcompiler dkml-component-ocamlrun dkml-component-opam dkml-component-unixutils dkml-install-api dkml-installer-ocaml-byte dkml-installer-ocaml dkml-runtime-apps dkml-runtime-common dkml-runtime-distribution dkml-workflows; do
-      git -C build/_deps/${sub}-src push
-   done
-   ```
-
-This saved git commit approach is the reason why in CI we don't just build `dkml` from `diskuv-opam-repository` ... with
-the git commits saved we can reproduce the installer on external machines and perhaps code-sign if it is good.
-
 ## Editing Source Code
 
 ### Visual Studio Code
@@ -165,3 +144,16 @@ Each iteration:
 5. Run the `Package-WindowsSandbox` target. Inside it:
    1. Run `powershell -ExecutionPolicy Bypass tools\install-winget.ps1`
    2. Run `tools\installer-native.cmd`
+6. Do a CMake configure so that [CMakePresetsGenerated.json](./CMakePresetsGenerated.json) is updated with
+   the latest git commits.
+7. Do:
+
+   ```sh
+   git commit -m "ci: Try installer" CMakePresetsGenerated.json
+   git push
+   for sub in diskuv-opam-repository dkml-compiler dkml-component-curl dkml-component-desktop dkml-component-ocamlcompiler dkml-component-ocamlrun dkml-component-opam dkml-component-unixutils dkml-install-api dkml-installer-ocaml-byte dkml-installer-ocaml dkml-runtime-apps dkml-runtime-common dkml-runtime-distribution dkml-workflows; do
+      git -C build/_deps/${sub}-src push
+   done
+   ```
+
+> This saved git commit approach is the reason why in CI we don't just build `dkml` from `diskuv-opam-repository` ... with the git commits saved we can reproduce the installer on external machines and perhaps code-sign if it is good.

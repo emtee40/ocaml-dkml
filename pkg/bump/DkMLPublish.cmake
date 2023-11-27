@@ -115,6 +115,11 @@ function(DkMLPublish_CreateReleaseTarget)
     string(REPLACE "@@YYYYMMDD@@" "${now_YYYYMMDD}" changes_CONTENT "${changes_CONTENT}")
     file(WRITE ${changes_MD_NEW_FILENAME} ${changes_CONTENT})
 
+    string(SUBSTRING "${now_YYYYMMDD}" 0 4 now_YYYYMMDD_LEFT4)
+    string(SUBSTRING "${now_YYYYMMDD}" 4 6 now_YYYYMMDD_REMAINDER)
+    math(EXPR next_YYYY "${now_YYYYMMDD_LEFT4} + 1")
+    set(nextyear_YYYYMMDD "${next_YYYY}${now_YYYYMMDD_REMAINDER}")
+
     add_custom_target(${ARG_TARGET}
         DEPENDS ${changes_MD_NEW_FILENAME}
         COMMAND
@@ -126,6 +131,8 @@ function(DkMLPublish_CreateReleaseTarget)
         --name "DkML ${DKML_VERSION_SEMVER}"
         --ref "${DKML_VERSION_SEMVER}"
         --notes-file ${changes_MD_NEW_FILENAME}
+        #   A date in the future so GitLab Releases page says "Upcoming Release" (it is untested right now!)
+        --released-at "${nextyear_YYYYMMDD}T00:00:00Z"
 
         # There seems to be an eventual consistency issue with GitLab as of 2023-09. If
         # we create the release above, and then the next second upload the Generic Package
