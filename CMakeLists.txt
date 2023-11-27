@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
 include(FetchContent)
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/DkMLExternalContent.cmake)
 
 include(${CMAKE_CURRENT_LIST_DIR}/version.cmake)
 project(DkML VERSION ${DKML_VERSION_CMAKEVER} LANGUAGES NONE)
