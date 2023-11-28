@@ -53,7 +53,7 @@
 
 3. Test it out with (for example macOS/Silicon):
 
-   ```
+   ```sh
    build/pkg/bump/.ci/o/2.1.0/share/dkml-installer-ocaml-network/t/bundle-dkml-native-darwin_arm64-i.sh tar
    # Careful! This stomps your existing installation!
    rm -rf ~/Applications/DkMLNative ~/.local/share/dkml && sh ci/test.sh darwin_arm64
@@ -146,8 +146,10 @@ Each iteration:
    next_iteration 9.9.9
    ```
 
-2. If you are *doing testing in the CI or manually repeating the CI instructions locally ... basically anything but the Windows Sandbox*:
-   1. Run the `Package-Stage07-Installer` target.
+2. Do a CMake configure so that [CMakePresetsGenerated.json](./CMakePresetsGenerated.json) is updated with
+   the latest git commits.
+3. If you are *doing testing in the CI or manually repeating the CI instructions locally ... basically anything but the Windows Sandbox*:
+   1. Run the `Package-Stage10-GitPushForTesting` target.
 
    otherwise:
 
@@ -158,9 +160,9 @@ Each iteration:
       1. Run `powershell -ExecutionPolicy Bypass tools\install-winget.ps1`
       2. Run `tools\installer-native.cmd`
 
-3. Do a CMake configure so that [CMakePresetsGenerated.json](./CMakePresetsGenerated.json) is updated with
+4. Again do a CMake configure so that [CMakePresetsGenerated.json](./CMakePresetsGenerated.json) is updated with
    the latest git commits.
-4. Do:
+5. Do:
 
    ```sh
    git commit -m "ci: Try installer" CMakePresetsGenerated.json
