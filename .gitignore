@@ -10,4 +10,5 @@ build/
 
 # ci/test.sh
 /installer/
-/dkml-*.tar/
+/dkml-*.tar
+/dkml-*.tar.gz
