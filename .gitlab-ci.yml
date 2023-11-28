@@ -92,7 +92,8 @@ variables:
     #   libsqlite3-dev: needed by dkml-component-staging-desktop-full > conf-sqlite3
     #   libx11-dev: needed by dkml-component-staging-desktop-full > graphics > conf-libX11
     #   pkg-config: needed by dkml-component-staging-desktop-full > conf-sqlite3 > conf-pkg-config
-    - apt-get install -qq -o=Dpkg::Use-Pty=0 ninja-build build-essential git unzip libsqlite3-dev libx11-dev pkg-config > /dev/null
+    #   libffi-dev: needed by ctypes-foreign > conf-libffi
+    - apt-get install -qq -o=Dpkg::Use-Pty=0 ninja-build build-essential git unzip libsqlite3-dev libx11-dev pkg-config libffi-dev > /dev/null
     # Install CMake
     - ./dk dksdk.cmake.link QUIET
 
@@ -107,6 +108,7 @@ variables:
     #   xquartz: needed by graphics > conf-libX11
     #   sqlite: {provided by macos} needed by dkml-component-staging-desktop-full > conf-sqlite3
     #   git: {already installed by GitLab} CMake FetchContent()
-    - brew install ninja gpatch unzip pkg-config xquartz
+    #   libffi: needed by ctypes-foreign > conf-libffi
+    - brew install ninja gpatch unzip pkg-config xquartz libffi
     # Install CMake
     - ./dk dksdk.cmake.link QUIET

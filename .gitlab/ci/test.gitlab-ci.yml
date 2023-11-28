@@ -118,8 +118,10 @@ installer-linux_x86_64:
     #   sqlite-devel: needed by dkml-component-staging-desktop-full > conf-sqlite3
     #   libX11-devel: needed by dkml-component-staging-desktop-full > graphics > conf-libX11
     #   pkgconfig: needed by dkml-component-staging-desktop-full > conf-sqlite3 > conf-pkg-config
-    dockcross_packages_apt: 'libsqlite3-dev libx11-dev pkg-config'
-    dockcross_packages_yum: 'sqlite-devel libX11-devel pkgconfig'
+    #   gcc-c++: needed by mccs > conf-c++
+    #   libffi-dev: needed by ctypes-foreign > conf-libffi
+    dockcross_packages_apt: 'libsqlite3-dev libx11-dev pkg-config libffi-devel'
+    dockcross_packages_yum: 'sqlite-devel libX11-devel pkgconfig gcc-c++ libffi-devel'
     in_docker: 'true'
 
   stage: build

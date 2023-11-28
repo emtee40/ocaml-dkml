@@ -51,6 +51,14 @@
 
    Consult the [Errata](#errata).
 
+3. Test it out with (for example macOS/Silicon):
+
+   ```
+   build/pkg/bump/.ci/o/2.1.0/share/dkml-installer-ocaml-network/t/bundle-dkml-native-darwin_arm64-i.sh tar
+   # Careful! This stomps your existing installation!
+   rm -rf ~/Applications/DkMLNative ~/.local/share/dkml && sh ci/test.sh darwin_arm64
+   ```
+
 ### Creating a new version
 
 1. If you have a build directory:
@@ -138,15 +146,21 @@ Each iteration:
    next_iteration 9.9.9
    ```
 
-2. Go to <https://gitlab.com/dkml/distributions/dkml/-/packages> and **delete** the **same** version number if it exists.
-3. Go to <https://gitlab.com/dkml/distributions/dkml/-/releases> and **delete** the **same** version number if it exists.
-4. Run the `Package-Stage12-PublishAssets` target.
-5. Run the `Package-WindowsSandbox` target. Inside it:
-   1. Run `powershell -ExecutionPolicy Bypass tools\install-winget.ps1`
-   2. Run `tools\installer-native.cmd`
-6. Do a CMake configure so that [CMakePresetsGenerated.json](./CMakePresetsGenerated.json) is updated with
+2. If you are *doing testing in the CI or manually repeating the CI instructions locally ... basically anything but the Windows Sandbox*:
+   1. Run the `Package-Stage07-Installer` target.
+
+   otherwise:
+
+   1. Go to <https://gitlab.com/dkml/distributions/dkml/-/packages> and **delete** the **same** version number if it exists.
+   2. Go to <https://gitlab.com/dkml/distributions/dkml/-/releases> and **delete** the **same** version number if it exists.
+   3. Run the `Package-Stage12-PublishAssets` target.
+   4. Run the `Package-WindowsSandbox` target. Inside it:
+      1. Run `powershell -ExecutionPolicy Bypass tools\install-winget.ps1`
+      2. Run `tools\installer-native.cmd`
+
+3. Do a CMake configure so that [CMakePresetsGenerated.json](./CMakePresetsGenerated.json) is updated with
    the latest git commits.
-7. Do:
+4. Do:
 
    ```sh
    git commit -m "ci: Try installer" CMakePresetsGenerated.json
