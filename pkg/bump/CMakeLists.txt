@@ -1389,11 +1389,7 @@ function(add_all_stage_targets)
         OUTPUT_LIST_VARIABLE apiOutputs
         DEPENDS ${fullFlavorOutputs}
         VERBATIM)
-    if(DKML_GOLDEN_SOURCE_CODE)
-        add_dependencies(Package-Stage05-Api Package-Stage02-DuneFlavor)
-    else()
-        add_dependencies(Package-Stage05-Api Package-Stage04-FullFlavor)
-    endif()
+    add_dependencies(Package-Stage05-Api Package-Stage04-FullFlavor)
 
     # Stage 6
     if(NOT DKML_GOLDEN_SOURCE_CODE)
