@@ -20,10 +20,12 @@ install -d installer && tar xCf installer "dkml-native-$arch-i-$ver.tar" --strip
 # And --disable-sandboxing is needed on macOS/Linux because the installation path of DkMLNative
 # is not known apriori (it can be customized by the user).
 export OCAMLRUNPARAM=b
-if [ "$(uname -s)" = Darwin ]; then
-    # bug: dkml-install-api/package/console/common/dkml_package_console_common.ml[i] says
-    # to place in Applications/DkMLNative.app/ in the .mli but does not do that in the .ml.
-    ~/Applications/DkMLNative/bin/dkml init --system --disable-sandboxing
-else
-    ~/.local/share/dkml-native/bin/dkml init --system --disable-sandboxing
+if [ "${SKIP_SYSTEM_INIT:-0}" = 0 ]; then
+    if [ "$(uname -s)" = Darwin ]; then
+        # bug: dkml-install-api/package/console/common/dkml_package_console_common.ml[i] says
+        # to place in Applications/DkMLNative.app/ in the .mli but does not do that in the .ml.
+        ~/Applications/DkMLNative/bin/dkml init --system --disable-sandboxing
+    else
+        ~/.local/share/dkml-native/bin/dkml init --system --disable-sandboxing
+    fi
 fi
