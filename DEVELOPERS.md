@@ -49,6 +49,18 @@
    3. `Package-Stage05-Api`
    4. `Package-Stage07-Installer`
 
+   If the last step fails with `Error: Unbound module Dkml_component_ocamlcompiler_common` then
+   the final bump was not checked in. You can do the following to modify the installer source code:
+
+   ```sh
+   build/pkg/bump/.ci/sd4/bs/bin/opam exec --root build/pkg/bump/.ci/o -- dune build --root build/_deps/dkml-installer-ocaml-src '@gen-dkml' --auto-promote
+   build/pkg/bump/.ci/sd4/bs/bin/opam exec --root build/pkg/bump/.ci/o -- dune build --root build/_deps/dkml-installer-ocaml-byte-src '@gen-dkml' --auto-promote
+   git -C build/_deps/dkml-installer-ocaml-src commit -a -m "bump installer"
+   git -C build/_deps/dkml-installer-ocaml-byte-src commit -a -m "bump installer"
+   ```
+
+   and then repeat `Package-Stage07-Installer`.
+
    Consult the [Errata](#errata).
 
 3. Test it out with (for example macOS/Silicon):
