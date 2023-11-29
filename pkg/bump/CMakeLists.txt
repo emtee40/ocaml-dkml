@@ -166,7 +166,7 @@ function(get_self_modifications)
     # Often the vM.N.O.md changelog is manually modified during the bump as bugs are found.
     # Include them in -final.
     if(NOT EXISTS ${PROJECT_SOURCE_DIR}/contributors/changes/v${DKML_VERSION_SEMVER}.md)
-        message(FATAL_ERROR "The changelog file is required: ${PROJECT_SOURCE_DIR}/contributors/changes/v${DKML_VERSION_SEMVER}.md")        
+        message(FATAL_ERROR "The changelog file is required: ${PROJECT_SOURCE_DIR}/contributors/changes/v${DKML_VERSION_SEMVER}.md")
     endif()
     list(APPEND SELF_MODIFICATIONS contributors/changes/v${DKML_VERSION_SEMVER}.md)
 
@@ -1033,6 +1033,14 @@ function(add_Flavor_targets)
     )
 
     set(switchCreated ${opamsw}/switch.created)
+    #   Makefile Generators delete BYPRODUCTS during cmake clean. So no deleting files in opam switches.
+    if(CMAKE_GENERATOR MATCHES Makefiles OR CMAKE_GENERATOR STREQUAL "Watcom WMake")
+        set(switch_BYPRODUCTS)
+    else()
+        set(switch_BYPRODUCTS BYPRODUCTS
+            ${switchPath}/.opam-switch/switch-config
+            ${switchPath}/.opam-switch/environment)
+    endif()
     add_custom_command(
         WORKING_DIRECTORY ${opamsw}
 
@@ -1043,9 +1051,7 @@ function(add_Flavor_targets)
         # So we use a synthetic OUTPUT, real BYPRODUCTS,
         # and a [touch] command.
         OUTPUT ${switchCreated}
-        BYPRODUCTS
-        ${switchPath}/.opam-switch/switch-config
-        ${switchPath}/.opam-switch/environment
+        ${switch_BYPRODUCTS}
         MAIN_DEPENDENCY upsert-dkml-switch.in.sh
         DEPENDS
         ${WITH_COMPILER_SH}
@@ -1066,6 +1072,12 @@ function(add_Flavor_targets)
         USES_TERMINAL
     )
     set(compilerCreated ${opamsw}/compiler.created)
+    #   Makefile Generators delete BYPRODUCTS during cmake clean. So no deleting files in opam switches.
+    if(CMAKE_GENERATOR MATCHES Makefiles OR CMAKE_GENERATOR STREQUAL "Watcom WMake")
+        set(compiler_BYPRODUCTS)
+    else()
+        set(compiler_BYPRODUCTS BYPRODUCTS ${switchPath}/bin/ocamlopt.opt${CMAKE_EXECUTABLE_SUFFIX})
+    endif()
     add_custom_command(
         WORKING_DIRECTORY ${opamsw}
 
@@ -1073,7 +1085,7 @@ function(add_Flavor_targets)
         # opam seeing no changes. So we use a synthetic OUTPUT, real BYPRODUCTS,
         # and a [touch] command.
         OUTPUT ${compilerCreated}
-        BYPRODUCTS ${switchPath}/bin/ocamlopt.opt${CMAKE_EXECUTABLE_SUFFIX}
+        ${compiler_BYPRODUCTS}
         MAIN_DEPENDENCY upsert-dkml-pkgs-compiler.in.sh
         DEPENDS
         ${switchCreated}
@@ -1087,13 +1099,21 @@ function(add_Flavor_targets)
         VERBATIM
         USES_TERMINAL
     )
-    set(duneFlavorOutput ${DUNE_FLAVOR_PKGS})
-    list(REMOVE_ITEM duneFlavorOutput ${PACKAGES_WITHOUT_META})
-    list(TRANSFORM duneFlavorOutput PREPEND "${switchPath}/lib/" OUTPUT_VARIABLE duneFlavorOutput)
-    list(TRANSFORM duneFlavorOutput APPEND "/META" OUTPUT_VARIABLE duneFlavorOutput)
+    set(duneFlavorCreated ${opamsw}/dune-flavor.created)
+    #   Makefile Generators delete BYPRODUCTS during cmake clean. So no deleting files in opam switches.
+    if(CMAKE_GENERATOR MATCHES Makefiles OR CMAKE_GENERATOR STREQUAL "Watcom WMake")
+        set(duneFlavor_BYPRODUCTS)
+    else()
+        set(duneFlavor_BYPRODUCTS ${DUNE_FLAVOR_PKGS})
+        list(REMOVE_ITEM duneFlavor_BYPRODUCTS ${PACKAGES_WITHOUT_META})
+        list(TRANSFORM duneFlavor_BYPRODUCTS PREPEND "${switchPath}/lib/" OUTPUT_VARIABLE duneFlavor_BYPRODUCTS)
+        list(TRANSFORM duneFlavor_BYPRODUCTS APPEND "/META" OUTPUT_VARIABLE duneFlavor_BYPRODUCTS)
+        set(duneFlavor_BYPRODUCTS BYPRODUCTS ${duneFlavor_BYPRODUCTS})
+    endif()
     add_custom_command(
         WORKING_DIRECTORY ${opamsw}
-        OUTPUT ${duneFlavorOutput}
+        OUTPUT ${duneFlavorCreated}
+        ${duneFlavor_BYPRODUCTS}
         MAIN_DEPENDENCY upsert-dkml-pkgs-flavor-dune.in.sh
         DEPENDS
         ${compilerCreated}
@@ -1102,29 +1122,38 @@ function(add_Flavor_targets)
         ${CMAKE_CURRENT_BINARY_DIR}/depends/DUNE_FLAVOR_NO_SHIM_SPACED_PKGVERS
         COMMENT "Creating/updating ${DKML_VERSION_CMAKEVER} distribution - Dune flavor"
         COMMAND ${upsert_dkml_pkgs_dune_COMMAND}
+        COMMAND ${CMAKE_COMMAND} -E touch "${duneFlavorCreated}"
         VERBATIM
         USES_TERMINAL
     )
     add_custom_target(Package-Stage02-DuneFlavor
-        DEPENDS ${duneFlavorOutput} ${DEPENDS_FLAVORS_Dune}
+        DEPENDS ${duneFlavorCreated} ${DEPENDS_FLAVORS_Dune}
         VERBATIM
     )
-    set(${OUTPUT_LIST_VARIABLE_DUNE} ${duneFlavorOutput} PARENT_SCOPE)
+    set(${OUTPUT_LIST_VARIABLE_DUNE} "${duneFlavorCreated}" ${duneFlavor_BYPRODUCTS} PARENT_SCOPE)
 
     # -----------------------------------
     # Sequentially the Stage3 target runs here. The Stage3 is
     # responsible for using [dune build *.opam] to update any synced
     # projects opam files.
     # -----------------------------------
-    set(fullFlavorOutput ${FULL_NOT_DUNE_FLAVOR_PKGS})
-    list(REMOVE_ITEM fullFlavorOutput ${PACKAGES_WITHOUT_META})
-    list(TRANSFORM fullFlavorOutput PREPEND "${switchPath}/lib/" OUTPUT_VARIABLE fullFlavorOutput)
-    list(TRANSFORM fullFlavorOutput APPEND "/META" OUTPUT_VARIABLE fullFlavorOutput)
+    set(fullFlavorCreated ${opamsw}/full-flavor.created)
+    #   Makefile Generators delete BYPRODUCTS during cmake clean. So no deleting files in opam switches.
+    if(CMAKE_GENERATOR MATCHES Makefiles OR CMAKE_GENERATOR STREQUAL "Watcom WMake")
+        set(fullFlavor_BYPRODUCTS)
+    else()
+        set(fullFlavor_BYPRODUCTS ${FULL_NOT_DUNE_FLAVOR_PKGS})
+        list(REMOVE_ITEM fullFlavor_BYPRODUCTS ${PACKAGES_WITHOUT_META})
+        list(TRANSFORM fullFlavor_BYPRODUCTS PREPEND "${switchPath}/lib/" OUTPUT_VARIABLE fullFlavor_BYPRODUCTS)
+        list(TRANSFORM fullFlavor_BYPRODUCTS APPEND "/META" OUTPUT_VARIABLE fullFlavor_BYPRODUCTS)
+        set(fullFlavor_BYPRODUCTS BYPRODUCTS ${fullFlavor_BYPRODUCTS})
+    endif()
     add_custom_command(
         WORKING_DIRECTORY ${opamsw}
-        OUTPUT ${fullFlavorOutput}
+        OUTPUT ${fullFlavorCreated}
+        ${fullFlavor_BYPRODUCTS}
         MAIN_DEPENDENCY upsert-dkml-pkgs-flavor-full-not-dune.in.sh
-        DEPENDS ${duneFlavorOutput} ${WITH_COMPILER_SH} ${anyrun_OUTPUTS}
+        DEPENDS ${duneFlavor_BYPRODUCTS} ${WITH_COMPILER_SH} ${anyrun_OUTPUTS}
         ${CMAKE_CURRENT_BINARY_DIR}/depends/dkml-compiler.shortref
         ${CMAKE_CURRENT_BINARY_DIR}/depends/dkml-runtime-apps.shortref
         ${CMAKE_CURRENT_BINARY_DIR}/depends/dkml-runtime-common.shortref
@@ -1132,11 +1161,18 @@ function(add_Flavor_targets)
         ${CMAKE_CURRENT_BINARY_DIR}/depends/FULL_NOT_DUNE_FLAVOR_NO_WITHDKML_SPACED_PKGVERS
         COMMENT "Creating/updating ${DKML_VERSION_CMAKEVER} distribution - Full flavor"
         COMMAND ${upsert_dkml_pkgs_full_not_dune_COMMAND}
+        COMMAND ${CMAKE_COMMAND} -E touch "${fullFlavorCreated}"
         VERBATIM
         USES_TERMINAL
     )
 
     set(introspectCreated ${opamsw}/introspect.created)
+    #   Makefile Generators delete BYPRODUCTS during cmake clean. So no deleting files in opam switches.
+    if(CMAKE_GENERATOR MATCHES Makefiles OR CMAKE_GENERATOR STREQUAL "Watcom WMake")
+        set(introspect_BYPRODUCTS)
+    else()
+        set(introspect_BYPRODUCTS BYPRODUCTS ${switchPath}/bin/dkml-desktop-gen-globals${CMAKE_EXECUTABLE_SUFFIX})
+    endif()
     add_custom_command(
         WORKING_DIRECTORY ${opamsw}
 
@@ -1144,11 +1180,11 @@ function(add_Flavor_targets)
         # opam seeing no changes. So we use a synthetic OUTPUT, real BYPRODUCTS,
         # and a [touch] command.
         OUTPUT ${introspectCreated}
-        BYPRODUCTS
-        ${switchPath}/bin/dkml-desktop-gen-globals${CMAKE_EXECUTABLE_SUFFIX}
+        ${introspect_BYPRODUCTS}
         MAIN_DEPENDENCY upsert-dkml-pkgs-introspect.in.sh
         DEPENDS
-        ${fullFlavorOutput}
+        ${fullFlavorCreated}
+        ${fullFlavor_BYPRODUCTS}
         ${WITH_COMPILER_SH}
         ${anyrun_OUTPUTS}
         ${CMAKE_CURRENT_BINARY_DIR}/depends/dkml-component-desktop.shortref # especially src/citime/* compiled by dkml-build-desktop.opam
@@ -1196,6 +1232,14 @@ function(add_Api_target)
     anyrun(${opamsw}/upsert-api.sh upsert_api_COMMAND)
 
     set(apiCreated ${opamsw}/api.created)
+    #   Makefile Generators delete BYPRODUCTS during cmake clean. So no deleting files in opam switches.
+    if(CMAKE_GENERATOR MATCHES Makefiles OR CMAKE_GENERATOR STREQUAL "Watcom WMake")
+        set(fullFlavor_BYPRODUCTS)
+    else()
+        set(fullFlavor_BYPRODUCTS BYPRODUCTS
+            ${switchPath}/bin/common-ml-of-installer-generator${CMAKE_EXECUTABLE_SUFFIX}
+            ${switchPath}/bin/package-ml-of-installer-generator${CMAKE_EXECUTABLE_SUFFIX})
+    endif()
 
     add_custom_command(
         WORKING_DIRECTORY ${opamsw}
@@ -1204,9 +1248,7 @@ function(add_Api_target)
         # opam seeing no changes. So we use a synthetic OUTPUT, real BYPRODUCTS,
         # and a [touch] command.
         OUTPUT ${apiCreated}
-        BYPRODUCTS
-        ${switchPath}/bin/common-ml-of-installer-generator${CMAKE_EXECUTABLE_SUFFIX}
-        ${switchPath}/bin/package-ml-of-installer-generator${CMAKE_EXECUTABLE_SUFFIX}
+        ${fullFlavor_BYPRODUCTS}
         MAIN_DEPENDENCY upsert-api.in.sh
         DEPENDS
         ${newSemverFile}
@@ -1283,6 +1325,13 @@ function(add_Installer_target)
     list(TRANSFORM byproducts_native PREPEND ${switchPath}/share/dkml-installer-ocaml-network/t/)
 
     set(installerCreated ${opamsw}/installer.created)
+    #   Makefile Generators delete BYPRODUCTS during cmake clean. So no deleting files in opam switches.
+    if(CMAKE_GENERATOR MATCHES Makefiles OR CMAKE_GENERATOR STREQUAL "Watcom WMake")
+        set(fullFlavor_BYPRODUCTS)
+    else()
+        set(fullFlavor_BYPRODUCTS BYPRODUCTS ${byproducts_byte} ${byproducts_native})
+    endif()
+
     add_custom_command(
         WORKING_DIRECTORY ${opamsw}
 
@@ -1290,7 +1339,7 @@ function(add_Installer_target)
         # opam seeing no changes. So we use a synthetic OUTPUT, real BYPRODUCTS,
         # and a [touch] command.
         OUTPUT ${installerCreated}
-        BYPRODUCTS ${byproducts_byte} ${byproducts_native}
+        ${fullFlavor_BYPRODUCTS}
         MAIN_DEPENDENCY upsert-installer.in.sh
         DEPENDS
         ${newSemverFile}
@@ -1381,7 +1430,7 @@ function(add_all_stage_targets)
             TARGET Package-Stage03-VersionBump
             FILTER POST_DUNE
             DEPENDS ${duneFlavorOutputs})
-        add_dependencies(Package-Stage03-VersionBump Package-Stage02-DuneFlavor)    
+        add_dependencies(Package-Stage03-VersionBump Package-Stage02-DuneFlavor)
         add_dependencies(Package-Stage04-FullFlavor Package-Stage03-VersionBump)
     endif()
 
