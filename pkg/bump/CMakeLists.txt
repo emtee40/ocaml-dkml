@@ -1130,7 +1130,7 @@ function(add_Flavor_targets)
         DEPENDS ${duneFlavorCreated} ${DEPENDS_FLAVORS_Dune}
         VERBATIM
     )
-    set(${OUTPUT_LIST_VARIABLE_DUNE} "${duneFlavorCreated}" ${duneFlavor_BYPRODUCTS} PARENT_SCOPE)
+    set(${OUTPUT_LIST_VARIABLE_DUNE} "${duneFlavorCreated}" PARENT_SCOPE)
 
     # -----------------------------------
     # Sequentially the Stage3 target runs here. The Stage3 is
@@ -1153,7 +1153,10 @@ function(add_Flavor_targets)
         OUTPUT ${fullFlavorCreated}
         ${fullFlavor_BYPRODUCTS}
         MAIN_DEPENDENCY upsert-dkml-pkgs-flavor-full-not-dune.in.sh
-        DEPENDS ${duneFlavor_BYPRODUCTS} ${WITH_COMPILER_SH} ${anyrun_OUTPUTS}
+        DEPENDS
+        ${duneFlavorCreated}
+        ${WITH_COMPILER_SH}
+        ${anyrun_OUTPUTS}
         ${CMAKE_CURRENT_BINARY_DIR}/depends/dkml-compiler.shortref
         ${CMAKE_CURRENT_BINARY_DIR}/depends/dkml-runtime-apps.shortref
         ${CMAKE_CURRENT_BINARY_DIR}/depends/dkml-runtime-common.shortref
@@ -1184,7 +1187,6 @@ function(add_Flavor_targets)
         MAIN_DEPENDENCY upsert-dkml-pkgs-introspect.in.sh
         DEPENDS
         ${fullFlavorCreated}
-        ${fullFlavor_BYPRODUCTS}
         ${WITH_COMPILER_SH}
         ${anyrun_OUTPUTS}
         ${CMAKE_CURRENT_BINARY_DIR}/depends/dkml-component-desktop.shortref # especially src/citime/* compiled by dkml-build-desktop.opam
