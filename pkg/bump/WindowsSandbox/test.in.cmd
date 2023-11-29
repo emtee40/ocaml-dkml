@@ -29,6 +29,7 @@ if "%DiskuvOCamlMode%" == "native" (
     pushd %TEMP%\scratch2
 
     dkml init --yes
+    if %errorlevel% neq 0 popd & exit /b %errorlevel%
 
     REM install something with a low number of dependencies, that sufficiently exercises Opam
     opam install graphics --yes
