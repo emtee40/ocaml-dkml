@@ -12,3 +12,7 @@ build/
 /installer/
 /dkml-*.tar
 /dkml-*.tar.gz
+
+# tests/test.sh
+/scratch1/
+/scratch2/
