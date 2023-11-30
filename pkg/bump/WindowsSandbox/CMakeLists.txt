@@ -8,11 +8,11 @@ configure_file(config.in.wsb config.wsb @ONLY)
 configure_file(installer-native.in.cmd ${TOOLSDIR}/installer-native.cmd @ONLY NEWLINE_STYLE DOS)
 configure_file(installer-byte.in.cmd ${TOOLSDIR}/installer-byte.cmd @ONLY NEWLINE_STYLE DOS)
 file(COPY_FILE install-winget.ps1 ${TOOLSDIR}/install-winget.ps1 ONLY_IF_DIFFERENT)
-configure_file("${PROJECT_SOURCE_DIR}/postinstall-test.cmd" ${TOOLSDIR}/test.cmd COPYONLY NEWLINE_STYLE DOS)
+configure_file("${PROJECT_SOURCE_DIR}/tests/postinstall-test.cmd" ${TOOLSDIR}/test.cmd @ONLY NEWLINE_STYLE DOS)
 file(COPY
-    "${PROJECT_SOURCE_DIR}/proj1"
-    "${PROJECT_SOURCE_DIR}/proj2"
-    "${PROJECT_SOURCE_DIR}/script1"
+    "${PROJECT_SOURCE_DIR}/tests/proj1"
+    "${PROJECT_SOURCE_DIR}/tests/proj2"
+    "${PROJECT_SOURCE_DIR}/tests/script1"
     DESTINATION ${TOOLSDIR})
 
 if(CMAKE_HOST_WIN32)
