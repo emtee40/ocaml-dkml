@@ -7,7 +7,7 @@ shift
 ver=$(.ci/cmake/bin/cmake -P cmake/get-version.cmake)
 
 # Unpack installer
-install -d installer && tar xCf installer "dkml-native-$arch-i-$ver.tar" --strip-components 1
+install -d installer && tar xCfz installer "dkml-native-$arch-i-$ver.tar.gz" --strip-components 1
 
 # Run installer which on Unix just copies and edits the findlib + topfind packages with final install paths.
 # Unlike Windows does not add to PATH ... that is your job.
