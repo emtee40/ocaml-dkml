@@ -169,7 +169,7 @@ Each iteration:
    2. Go to <https://gitlab.com/dkml/distributions/dkml/-/releases> and **delete** the **same** version number if it exists.
    3. Run the `Package-Stage12-PublishAssets` target.
    4. Run the `Package-WindowsSandbox` target. Inside it:
-      1. Run `powershell -ExecutionPolicy Bypass tools\install-winget.ps1`
+      1. Run `tools\install-winget.cmd`
       2. Run `tools\installer-native.cmd`
 
 4. Again do a CMake configure so that [CMakePresetsGenerated.json](./CMakePresetsGenerated.json) is updated with
