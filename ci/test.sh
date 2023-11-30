@@ -16,7 +16,7 @@ fi
 
 # Run installer which on Unix just copies and edits the findlib + topfind packages with final install paths.
 # Unlike Windows does not add to PATH ... that is your job.
-"installer/sg/staging-ocamlrun/$arch/bin/ocamlrun" installer/bin/dkml-package.bc -vv && rm -rf installer
+CAML_LD_LIBRARY_PATH=$PWD/installer/sg/staging-ocamlrun/$arch/lib/ocaml/stublibs "installer/sg/staging-ocamlrun/$arch/bin/ocamlrun" installer/bin/dkml-package.bc -vv && rm -rf installer
 
 # Temporary: This should have been done by the Unix installer just like the Windows installer.
 #install -d "${XDG_DATA_HOME:-$HOME/.local/share}/dkml" && printf '(("DiskuvOCamlHome" ("%s/Applications/DkMLNative")))' "$HOME" | tee "${XDG_DATA_HOME:-$HOME/.local/share}/dkml/dkmlvars-v2.sexp"

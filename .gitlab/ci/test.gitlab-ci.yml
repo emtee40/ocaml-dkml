@@ -138,6 +138,14 @@ installer-linux_x86_64:
 # ------------------------------------------------------------------------
 # Tests
 # ------------------------------------------------------------------------
+#
+# Why are these separate from [stage: build]?
+# 1. Different paths on different machines means that hardcoded library locations
+#    can be tested. For example, ci/test.sh has to use CAML_LD_LIBRARY_PATH
+#    to work correctly when the test machine is different from the build machine.
+#    That betters simulates real end-user requirements.
+# 2. If the build succeeds but the test fails, we have the job artifacts from the
+#    build job so we can re-run the tests locally.
 
 test-darwin_arm64:
   extends:
@@ -145,7 +153,7 @@ test-darwin_arm64:
   needs:
     - job: installer-darwin_arm64
       artifacts: true
-  script: ci/test.sh darwin_arm64
+  script: sh ci/test.sh darwin_arm64
 
 test-debian_x86_64-on-debian_x86_64:
   extends:
@@ -154,7 +162,7 @@ test-debian_x86_64-on-debian_x86_64:
   needs:
     - job: installer-debian_x86_64
       artifacts: true
-  script: ci/test.sh linux_x86_64
+  script: sh ci/test.sh linux_x86_64
 
 test-linux_x86_64-on-debian_x86_64:
   extends:
@@ -163,4 +171,4 @@ test-linux_x86_64-on-debian_x86_64:
   needs:
     - job: installer-linux_x86_64
       artifacts: true
-  script: ci/test.sh linux_x86_64
+  script: sh ci/test.sh linux_x86_64
