@@ -7,7 +7,12 @@ shift
 ver=$(.ci/cmake/bin/cmake -P cmake/get-version.cmake)
 
 # Unpack installer
-install -d installer && tar xCfz installer "dkml-native-$arch-i-$ver.tar.gz" --strip-components 1
+install -d installer
+if [ -e "dkml-native-$arch-i-$ver.tar.gz" ]; then
+    tar xCfz installer "dkml-native-$arch-i-$ver.tar.gz" --strip-components 1
+else
+    tar xCf installer "dkml-native-$arch-i-$ver.tar" --strip-components 1
+fi
 
 # Run installer which on Unix just copies and edits the findlib + topfind packages with final install paths.
 # Unlike Windows does not add to PATH ... that is your job.
@@ -31,4 +36,4 @@ export OCAMLRUNPARAM=b
 # fi
 
 # Do the post-install tests
-sh tests/postinstall-test.sh
+exec sh tests/postinstall-test.sh
