@@ -1,7 +1,8 @@
 for %%i in ("%~dp0.") do SET "sandbox=%%~fi"
 
-ocamlfind printconf
-if %errorlevel% neq 0 exit /b %errorlevel%
+REM [ocamlfind] is no longer installed in the global environment. https://github.com/diskuv/dkml-installer-ocaml/issues/83
+REM ocamlfind printconf
+REM if %errorlevel% neq 0 exit /b %errorlevel%
 
 REM Windows Sandbox's shared folders write out garbage when trying to
 REM compile an .exe (.bc is OK)... probably some security measure. So do all

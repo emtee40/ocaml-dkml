@@ -15,13 +15,13 @@
           "value": "d2e01746ffb3e32cb1fccc89b899e0c07267c416"
         },
         "dkml-runtime-apps_GIT_TAG": {
-          "value": "ffdaeb606a0c0b981314234099fc1f093312992b"
+          "value": "368caa9482a4598cbbab57adad665a2a2168d048"
         },
         "dkml-workflows_GIT_TAG": {
-          "value": "18f6d6f3dbfdcd29fed0e1d08a7c3e4a43a49cd5"
+          "value": "f559535edaefab7ed856e71ad83e43ec6152d062"
         },
         "dkml-component-desktop_GIT_TAG": {
-          "value": "ae91cc3a788c25f0acfc260cf0d1f9fc13ce664e"
+          "value": "9dbdf380ff3393cc672bf7202e0adddd2b6299d9"
         },
         "dkml-component-ocamlcompiler_GIT_TAG": {
           "value": "afd2d55334c6947ea138d33eeb14a0fc5993ebe7"
@@ -36,10 +36,10 @@
           "value": "907a46ce141fa769b9bad477278ddaae3ad5de8e"
         },
         "diskuv-opam-repository_GIT_TAG": {
-          "value": "f1e0dc266afc308ea30e990fe00e0c13e276b013"
+          "value": "60976b4e08a4b36a3497962d902562ef8e078c8a"
         },
         "dkml-install-api_GIT_TAG": {
-          "value": "6988698aee890320f610983e3851fc631bd23ad4"
+          "value": "f604bc6d9e9c8ad9c474779c1fa5b9b61ce2f9b5"
         },
         "dkml-component-curl_GIT_TAG": {
           "value": "5d1c13dc0f94a06ae88ea3456fd04d6a20c14a9b"
@@ -48,7 +48,7 @@
           "value": "bbd751831b9da3f2ebdb53f4c45552ef91cd331e"
         },
         "dkml-component-unixutils_GIT_TAG": {
-          "value": "72ca2a68cad18025dd5558aae3dd6a0e260f4b5b"
+          "value": "d0a11eb120f70ba1b06eb1139001bac47045b4bd"
         }
       }
     }

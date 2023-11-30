@@ -14,7 +14,8 @@ fi
 PATH="$DKMLNATIVEDIR_BUILDHOST/usr/bin:$DKMLNATIVEDIR_BUILDHOST/bin:$PATH"
 export PATH
 
-ocamlfind printconf
+# [ocamlfind] is no longer installed in the global environment. https://github.com/diskuv/dkml-installer-ocaml/issues/83
+# ocamlfind printconf
 
 utop-full "$sandbox/script1/script.ocamlinit"
 
