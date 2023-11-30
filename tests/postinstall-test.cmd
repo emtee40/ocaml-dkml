@@ -17,15 +17,21 @@ REM Once ocaml has a shim:
 REM - ocaml script1/script.ocamlinit
 
 CALL %LOCALAPPDATA%\Programs\DkML\dkmlvars.cmd
-if "%DiskuvOCamlMode%" == "byte" (
+if "%DiskuvOCamlMode%" == "byte" goto byte
+if "%DiskuvOCamlMode%" == "native" goto native
+goto end
+
+byte:
+
     REM Dune as of 3.8.3 requires explicit xxx.bc on the command line or else
     REM it will do -output-complete-exe which requires a C linker
     dune build --root %TEMP%\scratch1\proj1 ./a.bc
     if %errorlevel% neq 0 exit /b %errorlevel%
     ocamlrun %TEMP%\scratch1\proj1\_build\default\a.bc
     if %errorlevel% neq 0 exit /b %errorlevel%
-)
-if "%DiskuvOCamlMode%" == "native" (
+    goto end
+
+native:
     if not exist "%TEMP%\scratch2" mkdir %TEMP%\scratch2
     pushd %TEMP%\scratch2
 
@@ -57,4 +63,6 @@ if "%DiskuvOCamlMode%" == "native" (
     if %errorlevel% neq 0 exit /b %errorlevel%
 
     popd
-)
+    goto end
+
+:end
