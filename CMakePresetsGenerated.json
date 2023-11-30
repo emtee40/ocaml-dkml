@@ -24,7 +24,7 @@
           "value": "ae91cc3a788c25f0acfc260cf0d1f9fc13ce664e"
         },
         "dkml-component-ocamlcompiler_GIT_TAG": {
-          "value": "10c39833d4893ab51102d9d87b62ebb159119fd5"
+          "value": "eb11f861c703fb09284bbfd30962f0cbe5fd5511"
         },
         "dkml-component-ocamlrun_GIT_TAG": {
           "value": "dd4bead690f9f67a7487064694c6e2dbde65e361"
@@ -36,7 +36,7 @@
           "value": "bb73e2cd77d3c4b59e3106e6bac7e5cadde3d632"
         },
         "diskuv-opam-repository_GIT_TAG": {
-          "value": "1c3b4842ec702463040941faee3d427aa5d1e225"
+          "value": "9a67ef2d2f73e662c55e02566b43ef4ddbdcbdce"
         },
         "dkml-install-api_GIT_TAG": {
           "value": "6988698aee890320f610983e3851fc631bd23ad4"
