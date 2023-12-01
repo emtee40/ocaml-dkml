@@ -67,7 +67,6 @@ include:
 #     - sh ci/build-test.sh
 
 variables:
-  OPAM_SYS_DEPLOY_FOLDER_WINDOWS:  'C:\DkML\OpamSys'
   GIT_SUBMODULE_STRATEGY: recursive
 
 .alpine:before-sphinx:
