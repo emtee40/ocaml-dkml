@@ -33,9 +33,11 @@ fi
 
 if [ "${DiskuvOCamlMode:-}" = "byte" ]; then
     # Dune as of 3.8.3 requires explicit xxx.bc on the command line or else
-    # it will do -output-complete-exe which requires a C linker
-    dune build --root "$sandbox/scratch1/proj1" ./a.bc
-    ocamlrun "$sandbox/scratch1/proj1/_build/default/a.bc"
+    # it will do -output-complete-exe which requires a C linker.
+    # NOTE: As of DkML 2.1.0 there is no global [dune].
+    #    dune build --root "$sandbox/proj1" ./a.bc
+    #    ocamlrun "$sandbox/proj1/_build/default/a.bc"
+    true
 else
     install -d scratch2
     cd scratch2
@@ -63,6 +65,6 @@ else
 
     opam install ocamlformat --yes
 
-    opam exec -- dune build --root "$sandbox/scratch1/proj2"
-    opam exec -- dune exec --root "$sandbox/scratch1/proj2" ./best.exe    
+    opam exec -- dune build --root "$sandbox/proj2"
+    opam exec -- dune exec --root "$sandbox/proj2" ./best.exe    
 fi

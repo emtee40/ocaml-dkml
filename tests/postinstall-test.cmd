@@ -25,10 +25,11 @@ goto end
 
     REM Dune as of 3.8.3 requires explicit xxx.bc on the command line or else
     REM it will do -output-complete-exe which requires a C linker
-    dune build --root %TEMP%\scratch1\proj1 ./a.bc
-    if %errorlevel% neq 0 exit /b %errorlevel%
-    ocamlrun %TEMP%\scratch1\proj1\_build\default\a.bc
-    if %errorlevel% neq 0 exit /b %errorlevel%
+    REM NOTE: As of DkML 2.1.0 there is no global [dune].
+    REM    dune build --root %TEMP%\scratch1\proj1 ./a.bc
+    REM    if %errorlevel% neq 0 exit /b %errorlevel%
+    REM    ocamlrun %TEMP%\scratch1\proj1\_build\default\a.bc
+    REM    if %errorlevel% neq 0 exit /b %errorlevel%
     goto end
 
 :native
