@@ -1,11 +1,14 @@
 #!/bin/sh
 set -euf
+export OCAMLRUNPARAM=b
 
 sandbox=$(dirname "$0")
 sandbox=$(cd "$sandbox" && pwd)
 
 # Place usr/bin/ and bin/ into PATH
 if [ -x /usr/bin/uname ] && [ "$(/usr/bin/uname -s)" = Darwin ]; then
+    # bug: dkml-install-api/package/console/common/dkml_package_console_common.ml[i] says
+    # to place in Applications/DkMLNative.app/ in the .mli but does not do that in the .ml.
     DKMLNATIVEDIR_BUILDHOST="$HOME/Applications/DkMLNative"
 else
     # shellcheck disable=SC2034
@@ -37,7 +40,11 @@ else
     install -d scratch2
     cd scratch2
 
-    dkml init --yes
+    # Initialize the DkML system.
+    # Optional since done automatically with the first ocamlopt/dune/opam/... but test it explicitly.
+    # --disable-sandboxing is needed on macOS/Linux because the installation path of DkMLNative
+    # is not known apriori (it can be customized by the user).
+    dkml init --yes --disable-sandboxing
 
     # install something with a low number of dependencies, that sufficiently exercises Opam
     opam install graphics --yes
