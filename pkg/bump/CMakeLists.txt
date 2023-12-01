@@ -675,7 +675,7 @@ endfunction()
 function(get_flavor_packages)
     set(noValues)
     set(singleValues OUTPUT_PKGS_VARIABLE OUTPUT_PKGVERS_VARIABLE OUTPUT_DEPENDS)
-    set(multiValues FLAVORS)
+    set(multiValues FLAVORS EXCLUDE_PKGS)
     cmake_parse_arguments(PARSE_ARGV 0 ARG "${noValues}" "${singleValues}" "${multiValues}")
 
     set(pkgvers)
@@ -693,6 +693,10 @@ function(get_flavor_packages)
         string(TOLOWER "${FLAVOR}" lowerFlavor)
         grok(${dkml-runtime-distribution_SOURCE_DIR}/src/none/${lowerFlavor}-anyver-pkgs.txt)
         grok(${dkml-runtime-distribution_SOURCE_DIR}/src/none/${lowerFlavor}-${DKML_RELEASE_OCAML_VERSION}-pkgs.txt)
+    endforeach()
+
+    foreach(EXCLUDE_PKG IN LISTS ARG_EXCLUDE_PKGS)
+        list(FILTER pkgvers EXCLUDE REGEX "^${EXCLUDE_PKG}[.]")
     endforeach()
 
     list(TRANSFORM pkgvers REPLACE "[.].*" "" OUTPUT_VARIABLE pkgs)
@@ -726,9 +730,12 @@ get_flavor_packages(
     OUTPUT_DEPENDS DEPENDS_FLAVORS_Dune)
 get_flavor_packages(
     FLAVORS CI Full
+    EXCLUDE_PKGS ${DUNE_FLAVOR_PKGS} # ex. remove [xdg] which is a "compile" package but also part of the Dune flavor
     OUTPUT_PKGS_VARIABLE FULL_NOT_DUNE_FLAVOR_PKGS
     OUTPUT_PKGVERS_VARIABLE FULL_NOT_DUNE_FLAVOR_PKGVERS
     OUTPUT_DEPENDS DEPENDS_FLAVORS_CI_Full)
+
+# list(REMOVE_ITEM fullFlavor_BYPRODUCTS ${DUNE_FLAVOR_PKGS}) # ex. remove [xdg] which is a "compile" package but also part of the Dune flavor
 
 # dune.3.6.2+shim -> 3.6.2
 set(DKML_RELEASE_DUNE_VERSION ${DUNE_FLAVOR_PKGVERS})
