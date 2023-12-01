@@ -39,6 +39,8 @@ goto end
     if %errorlevel% neq 0 popd & exit /b %errorlevel%
 
     REM install something with a low number of dependencies, that sufficiently exercises Opam
+    opam config report --debug-level 1
+    if %errorlevel% neq 0 popd & exit /b %errorlevel%
     opam install graphics --yes
     if %errorlevel% neq 0 popd & exit /b %errorlevel%
 

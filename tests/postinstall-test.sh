@@ -46,8 +46,11 @@ else
     # is not known apriori (it can be customized by the user).
     dkml init --yes --disable-sandboxing
 
-    # install something with a low number of dependencies, that sufficiently exercises Opam
-    opam install graphics --yes
+    # install something with a low number of dependencies, that sufficiently exercises Opam.
+    # Enable tracing in case something goes wrong.
+    echo "Installing [graphics]"
+    DKML_BUILD_TRACE=ON DKML_BUILD_TRACE_LEVEL=2 opam config report --debug-level 1 # level=1 shows 'LOAD-GLOBAL-STATE @ ...' which is the opam root
+    DKML_BUILD_TRACE=ON DKML_BUILD_TRACE_LEVEL=2 opam install graphics --yes
 
     # regression test: https://discuss.ocaml.org/t/ann-diskuv-ocaml-1-x-x-windows-ocaml-installer-no-longer-in-preview/10309/8?u=jbeckford
     opam install ppx_jane --yes
