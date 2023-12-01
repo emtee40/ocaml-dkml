@@ -21,7 +21,7 @@ if "%DiskuvOCamlMode%" == "byte" goto byte
 if "%DiskuvOCamlMode%" == "native" goto native
 goto end
 
-byte:
+:byte
 
     REM Dune as of 3.8.3 requires explicit xxx.bc on the command line or else
     REM it will do -output-complete-exe which requires a C linker
@@ -31,7 +31,7 @@ byte:
     if %errorlevel% neq 0 exit /b %errorlevel%
     goto end
 
-native:
+:native
     if not exist "%TEMP%\scratch2" mkdir %TEMP%\scratch2
     pushd %TEMP%\scratch2
 
