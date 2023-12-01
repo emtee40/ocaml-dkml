@@ -1,6 +1,7 @@
 #!/bin/sh
 set -euf
 export OCAMLRUNPARAM=b
+export OPAMROOTISOK=1
 
 sandbox=$(dirname "$0")
 sandbox=$(cd "$sandbox" && pwd)
