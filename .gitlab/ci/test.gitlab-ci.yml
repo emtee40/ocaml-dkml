@@ -11,10 +11,12 @@ test:
 .installer-unix:
   artifacts:
     untracked: false
-    when: on_success
+    when: always
     expire_in: "30 days"
     paths:
       - dkml-native-*.tar.gz
+      - build/pkg/bump/.ci/o/log
+      - build/pkg/bump/*/sw/logs
 
 installer-windows_x86_64:
   extends:
@@ -24,10 +26,12 @@ installer-windows_x86_64:
   timeout: 3h
   artifacts:
     untracked: false
-    when: on_success
+    when: always
     expire_in: "30 days"
     paths:
       - C:/build/pkg/bump/.ci/o/*/share/dkml-installer-ocaml-*/t
+      - C:/build/pkg/bump/.ci/o/log
+      - C:/build/pkg/bump/*/sw/logs
   script:
   # Identity for dkml-compiler git-based patches
   - git config --global user.email "anyone@example.com"

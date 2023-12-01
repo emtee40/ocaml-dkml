@@ -159,7 +159,8 @@ Each iteration:
    ```
 
 2. Do a CMake configure so that [CMakePresetsGenerated.json](./CMakePresetsGenerated.json) is updated with
-   the latest git commits.
+   the latest git commits. Then **Developer: Reload Window** in your Visual Studio Code; that works around
+   a bug in CMake Tools (?) that does not use the latest preset values.
 3. If you are *doing testing in the CI or manually repeating the CI instructions locally ... basically anything but the Windows Sandbox*:
    1. Run the `Package-Stage10-GitPushForTesting` target.
 

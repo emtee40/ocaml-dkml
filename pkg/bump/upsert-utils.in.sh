@@ -20,6 +20,15 @@ case "$OPAMROOT" in
         # shellcheck disable=SC2034
         OPAMROOT="$STABLE_OPAM_DIR/$OPAMROOT" ;;
 esac
+export OPAMROOT
+
+# Color, except in CI or broken VS Code CMake/Build console.
+if [ "${CI:-}" = true ] || [ "${vsconsoleoutput:-}" = 1 ]; then
+    OPAMCOLOR=never
+else
+    OPAMCOLOR=always
+fi
+export OPAMCOLOR
 
 # Especially for Windows, we need the system Git for [opam repository]
 # commands and no other PATH complications.
@@ -65,6 +74,7 @@ idempotent_opam_local_install() {
     idempotent_opam_local_install_COMMITSOURCE_DIR=$1; shift
     idempotent_opam_local_install_IDEMPOTENT_ID=${idempotent_opam_local_install_SALT}$(git -C "$idempotent_opam_local_install_COMMITSOURCE_DIR" rev-parse --quiet --verify HEAD)
     idempotent_opam_local_install_LASTGITREFFILE="$UPSERT_BINARY_DIR/$idempotent_opam_local_install_NAME.installed.gitref"
+    idempotent_opam_local_install_LOGDIR="$UPSERT_BINARY_DIR/logs/$idempotent_opam_local_install_NAME"
     idempotent_opam_local_install_REBUILD=1
     if [ -e "$idempotent_opam_local_install_LASTGITREFFILE" ]; then
         idempotent_opam_local_install_LASTGITREF=$(cat "$idempotent_opam_local_install_LASTGITREFFILE")
@@ -88,7 +98,13 @@ idempotent_opam_local_install() {
         # - [cd ..._SOURCE_DIR ; opam install ./x.opam] is required because opam 2.2 prereleases say:
         #   "Invalid character in package name" when opam install Z:/x/y/z/a.opam
         cd "$idempotent_opam_local_install_COMMITSOURCE_DIR" || exit 67
-        '@WITH_COMPILER_SH@' "$OPAM_EXE" install "$@" --ignore-pin-depends --yes
+        #   Help troubleshooting by giving reasons. The stderr debug logs are too voluminous to show, so
+        #   use OPAMLOGS to redirect the logs into a directory, and only print the stdout which has useful
+        #   indicators like:
+        #       [dkml-runtime-distribution.2.1.0] synchronised (git+file://Y:/source/dkml/build/_deps/dkml-runtime-distribution-src#main)
+        install -d "$idempotent_opam_local_install_LOGDIR"
+        echo "[$idempotent_opam_local_install_NAME] Executing: opam install $*"
+        OPAMLOGS="$idempotent_opam_local_install_LOGDIR" '@WITH_COMPILER_SH@' "$OPAM_EXE" install "$@" --ignore-pin-depends --yes --color=$OPAMCOLOR --verbose --debug-level 3 2>/dev/null
         cd "$idempotent_opam_local_install_ENTRYDIR" || exit 67
 
         printf "%s" "$idempotent_opam_local_install_IDEMPOTENT_ID" > "$idempotent_opam_local_install_LASTGITREFFILE"
@@ -108,6 +124,7 @@ idempotent_opam_install() {
     idempotent_opam_install_IDEMPOTENT_ID="${idempotent_opam_install_SALT}$*"
     idempotent_opam_install_LAST_ID_FILE="$UPSERT_BINARY_DIR/$idempotent_opam_install_NAME.installed.id"
     idempotent_opam_install_REBUILD=1
+    idempotent_opam_install_LOGDIR="$UPSERT_BINARY_DIR/logs/$idempotent_opam_install_NAME"
     if [ -e "$idempotent_opam_install_LAST_ID_FILE" ]; then
         idempotent_opam_install_LAST_ID=$(cat "$idempotent_opam_install_LAST_ID_FILE")
         if [ "$idempotent_opam_install_LAST_ID" = "$idempotent_opam_install_IDEMPOTENT_ID" ]; then
@@ -125,7 +142,13 @@ idempotent_opam_install() {
         fi
     fi
     if [ $idempotent_opam_install_REBUILD -eq 1 ]; then
-        '@WITH_COMPILER_SH@' "$OPAM_EXE" install "$@" --yes
+        #   Help troubleshooting by giving reasons. The stderr debug logs are too voluminous to show, so
+        #   use OPAMLOGS to redirect the logs into a directory, and only print the stdout which has useful
+        #   indicators like:
+        #       [dkml-runtime-distribution.2.1.0] synchronised (git+file://Y:/source/dkml/build/_deps/dkml-runtime-distribution-src#main)
+        install -d "$idempotent_opam_install_LOGDIR"
+        echo "[$idempotent_opam_install_NAME] Executing: opam install $*"
+        OPAMLOGS="$idempotent_opam_install_LOGDIR" '@WITH_COMPILER_SH@' "$OPAM_EXE" install "$@" --yes --color=$OPAMCOLOR --verbose --debug-level 3 2>/dev/null
         printf "%s" "$idempotent_opam_install_IDEMPOTENT_ID" > "$idempotent_opam_install_LAST_ID_FILE"
     fi
 }
