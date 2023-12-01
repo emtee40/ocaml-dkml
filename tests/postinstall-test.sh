@@ -60,6 +60,6 @@ else
 
     opam install ocamlformat --yes
 
-    dune build --root "$sandbox/scratch1/proj2"
-    dune exec --root "$sandbox/scratch1/proj2" ./best.exe    
+    opam exec -- dune build --root "$sandbox/scratch1/proj2"
+    opam exec -- dune exec --root "$sandbox/scratch1/proj2" ./best.exe    
 fi

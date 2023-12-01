@@ -57,9 +57,9 @@ goto end
     opam install ocamlformat --yes
     if %errorlevel% neq 0 popd & exit /b %errorlevel%
 
-    dune build --root %TEMP%\scratch1\proj2
+    opam exec -- dune build --root %TEMP%\scratch1\proj2
     if %errorlevel% neq 0 exit /b %errorlevel%
-    dune exec --root %TEMP%\scratch1\proj2 ./best.exe
+    opam exec -- dune exec --root %TEMP%\scratch1\proj2 ./best.exe
     if %errorlevel% neq 0 exit /b %errorlevel%
 
     popd
