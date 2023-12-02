@@ -1,3 +1,6 @@
+variables:
+  PACKAGE_REGISTRY_URL_BASE: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/release"
+
 test:
   extends:
     - .alpine:before-sphinx
@@ -15,6 +18,7 @@ test:
     expire_in: "30 days"
     paths:
       - dkml-native-*.tar.gz
+      - build/pkg/bump/*/publish/change.md
       - build/pkg/bump/.ci/o/log
       - build/pkg/bump/*/sw/logs
 
@@ -42,38 +46,6 @@ installer-windows_x86_64:
 
   - copy C:/build/pkg/bump/.ci/o/*/share/dkml-installer-ocaml-*/t/unsigned-dkml-native-windows_x86_64-*.exe .
 
-installer-debian_x86_64: # Debian is just the prototype for Linux with a "modern" libc
-  extends:
-    - .cmake-with-opam-prereqs-debian:before
-    - .installer-unix
-  stage: build
-  script:
-  # Identity for dkml-compiler git-based patches
-  - git config --global user.email "anyone@example.com"
-
-  - .ci/cmake/bin/cmake --preset ci-reproduce -G Ninja -D DKML_HOST_LINUX_DOCKER=0
-  - .ci/cmake/bin/cmake --build --preset ci-reproduce
-
-  - ver=$(.ci/cmake/bin/cmake -P cmake/get-version.cmake)
-  - build/pkg/bump/.ci/o/$ver/share/dkml-installer-ocaml-network/t/bundle-dkml-native-linux_x86_64-i.sh tar
-  - gzip dkml-native-linux_x86_64-i-$ver.tar
-
-installer-olddebian_x86_64:
-  extends:
-    - .cmake-with-opam-prereqs-olddebian:before
-    - .installer-unix
-  stage: build
-  script:
-  # Identity for dkml-compiler git-based patches
-  - git config --global user.email "anyone@example.com"
-
-  - .ci/cmake/bin/cmake --preset ci-reproduce -G Ninja -D DKML_HOST_LINUX_DOCKER=0
-  - .ci/cmake/bin/cmake --build --preset ci-reproduce
-
-  - ver=$(.ci/cmake/bin/cmake -P cmake/get-version.cmake)
-  - build/pkg/bump/.ci/o/$ver/share/dkml-installer-ocaml-network/t/bundle-dkml-native-linux_x86_64-i.sh tar
-  - gzip dkml-native-linux_x86_64-i-$ver.tar
-
 installer-oldolddebian_x86_64:
   extends:
     - .cmake-with-opam-prereqs-oldolddebian:before
@@ -88,7 +60,7 @@ installer-oldolddebian_x86_64:
 
   - ver=$(.ci/cmake/bin/cmake -P cmake/get-version.cmake)
   - build/pkg/bump/.ci/o/$ver/share/dkml-installer-ocaml-network/t/bundle-dkml-native-linux_x86_64-i.sh tar
-  - gzip dkml-native-linux_x86_64-i-$ver.tar
+  - gzip dkml-native-linux_x86_64-i-$ver.tar dkml-native-linux_x86_64-u-$ver.tar
 
 installer-darwin_x86_64:
   # This architecture has problems building with an old, patched version of `ctypes.0.19.2`. There is no problem with `darwin_arm64`. So likely easy to fix but low-priority.
@@ -108,7 +80,7 @@ installer-darwin_x86_64:
 
   - ver=$(.ci/cmake/bin/cmake -P cmake/get-version.cmake)
   - build/pkg/bump/.ci/o/$ver/share/dkml-installer-ocaml-network/t/bundle-dkml-native-darwin_x86_64-i.sh tar
-  - gzip dkml-native-darwin_x86_64-i-$ver.tar
+  - gzip dkml-native-darwin_x86_64-i-$ver.tar dkml-native-darwin_x86_64-u-$ver.tar
 
 installer-darwin_arm64:
   extends:
@@ -126,7 +98,7 @@ installer-darwin_arm64:
 
   - ver=$(.ci/cmake/bin/cmake -P cmake/get-version.cmake)
   - build/pkg/bump/.ci/o/$ver/share/dkml-installer-ocaml-network/t/bundle-dkml-native-darwin_arm64-i.sh tar
-  - gzip dkml-native-darwin_arm64-i-$ver.tar
+  - gzip dkml-native-darwin_arm64-i-$ver.tar dkml-native-darwin_arm64-u-$ver.tar
 
 installer-linux_x86_64:
   # This architecture is built with ManyLinux 2014, which has an ancient glibc so it is portable to most Linux distros. However, ocaml-lsp-server.1.16.2 submodules the `lev` package which does not compile with ManyLinux. Unclear why but not investigating because very low-priority.
@@ -174,7 +146,7 @@ installer-linux_x86_64:
 
     - ver=$(.ci/cmake/bin/cmake -P cmake/get-version.cmake)
     - build/pkg/bump/.ci/o/$ver/share/dkml-installer-ocaml-network/t/bundle-dkml-native-linux_x86_64-i.sh tar
-    - gzip dkml-native-linux_x86_64-i-$ver.tar
+    - gzip dkml-native-linux_x86_64-i-$ver.tar dkml-native-linux_x86_64-u-$ver.tar
 
 # ------------------------------------------------------------------------
 # Tests
@@ -196,15 +168,6 @@ test-darwin_arm64:
       artifacts: true
   script: sh ci/test.sh darwin_arm64
 
-test-debian_x86_64-on-debian_x86_64:
-  extends:
-    - .cmake-with-opam-prereqs-debian:before
-  stage: test
-  needs:
-    - job: installer-debian_x86_64
-      artifacts: true
-  script: sh ci/test.sh linux_x86_64
-
 test-oldolddebian_x86_64-on-debian_x86_64:
   extends:
     - .cmake-with-opam-prereqs-debian:before
@@ -224,3 +187,37 @@ test-oldolddebian_x86_64-on-debian_x86_64:
 #     - job: installer-linux_x86_64
 #       artifacts: true
 #   script: sh ci/test.sh linux_x86_64
+
+upload:
+  stage: upload
+  image: curlimages/curl:latest
+  needs:
+    - job: installer-oldolddebian_x86_64
+      artifacts: true
+    - job: installer-darwin_arm64
+      artifacts: true
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - ver=$(.ci/cmake/bin/cmake -P cmake/get-version.cmake)
+    - 'for each f in dkml-native-*.tar.gz; do curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file "$f" "$PACKAGE_REGISTRY_URL_BASE/$ver/$f"; done'
+
+release_job:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  needs:
+    - job: upload
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - echo "Running the release job. Expect it to fail with already-existing release until Package-Stage11-CreateRelease can be migrated completely (the Windows job must succeed; wait until next release of SaaS which has 3hr timeout)"
+    - ver=$(.ci/cmake/bin/cmake -P cmake/get-version.cmake)
+    - |
+      release-cli create --name "DkML $CI_COMMIT_TAG" --tag-name "$CI_COMMIT_TAG" --ref "$CI_COMMIT_SHA" \
+        --description build/pkg/bump/$ver/publish/change.md \
+        --assets-link "{\"link_type\":\"package\",\"name\":\"Windows/Intel 64-bit Native Installer\",     \"url\":\"$PACKAGE_REGISTRY_URL_BASE/unsigned-dkml-native-windows_x86_64-i-$ver.exe\",\"filepath\":\"/unsigned-dkml-native-windows_x86_64-i-$ver.exe\",}" \
+        --assets-link "{\"link_type\":\"package\",\"name\":\"Windows/Intel 64-bit Native Uninstaller\",   \"url\":\"$PACKAGE_REGISTRY_URL_BASE/unsigned-dkml-native-windows_x86_64-u-$ver.exe\",\"filepath\":\"/unsigned-dkml-native-windows_x86_64-u-$ver.exe\",}" \
+        --assets-link "{\"link_type\":\"package\",\"name\":\"Windows/Intel 64-bit Bytecode Installer\",   \"url\":\"$PACKAGE_REGISTRY_URL_BASE/unsigned-dkml-byte-windows_x86_64-i-$ver.exe\",\"filepath\":\"/unsigned-dkml-byte-windows_x86_64-i-$ver.exe\",}" \
+        --assets-link "{\"link_type\":\"package\",\"name\":\"Windows/Intel 64-bit Bytecode Uninstaller\", \"url\":\"$PACKAGE_REGISTRY_URL_BASE/unsigned-dkml-byte-windows_x86_64-u-$ver.exe\",\"filepath\":\"/unsigned-dkml-byte-windows_x86_64-u-$ver.exe\",}" \
+        --assets-link "{\"link_type\":\"package\",\"name\":\"macOS/Silicon 64-bit Installer\",            \"url\":\"$PACKAGE_REGISTRY_URL_BASE/dkml-native-darwin_arm64-i-$ver.tar.gz\",\"filepath\":\"/dkml-native-darwin_arm64-i-$ver.tar.gz\",}" \
+        --assets-link "{\"link_type\":\"package\",\"name\":\"DebianOldOld/Intel 64-bit Installer\",       \"url\":\"$PACKAGE_REGISTRY_URL_BASE/dkml-native-linux_x86_64-i-$ver.tar.gz\",\"filepath\":\"/dkml-native-linux_x86_64-i-$ver.tar.gz\",}"

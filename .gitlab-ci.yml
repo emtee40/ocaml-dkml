@@ -30,6 +30,8 @@ stages:
   - build
   - test
   - deploy
+  - upload
+  - release
 
 include:
   - local: '.ci/dkml-compilers/gl/setup-dkml.gitlab-ci.yml'

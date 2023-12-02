@@ -4,6 +4,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/DkMLBumpLevels.cmake)
 
 # Aka. https://gitlab.com/dkml/distributions/dkml
 set(GITLAB_UPLOAD_BASE_URL https://gitlab.com/api/v4/projects/dkml%2Fdistributions%2Fdkml)
+set(PACKAGE_REGISTRY_URL_BASE "${GITLAB_UPLOAD_BASE_URL}/packages/generic/release")
 set(PUBLISHDIR ${CMAKE_CURRENT_BINARY_DIR}/${DKML_VERSION_CMAKEVER}/publish)
 
 set(glab_HINTS)
@@ -185,31 +186,38 @@ function(DkMLPublish_PublishAssetsTarget)
             FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
             @ONLY)
         list(APPEND depends ${UPLOAD_SRCFILE})
-        list(APPEND assetlinks "{\"name\": \"${NAME}\", \"url\":\"${GITLAB_UPLOAD_BASE_URL}/packages/generic/release/${UPLOAD_VERSION}/${UPLOAD_DESTFILE}\", \"filepath\": \"/${DESTFILE}\", \"linktype\": \"${LINKTYPE}\"}")
+        list(APPEND assetlinks "{\"name\": \"${NAME}\", \"url\":\"${PACKAGE_REGISTRY_URL_BASE}/${UPLOAD_VERSION}/${UPLOAD_DESTFILE}\", \"filepath\": \"/${DESTFILE}\", \"linktype\": \"${LINKTYPE}\"}")
         list(APPEND precommands
             COMMAND ${CMAKE_COMMAND} -P ${PUBLISHDIR}/upload-${DESTFILE}.cmake)
     endmacro()
 
+    # TODO: When Windows test.gitlab-ci.yml job works, move this into the [release_job].
     if(DKML_TARGET_ABI STREQUAL windows_x86 OR DKML_TARGET_ABI STREQUAL windows_x86_64)
         # The reverse order of insertion shows up on GitLab UI. Want installer to display
         # first, so _handle_upload(<installer>) last.
         _handle_upload(package
             ${tnetwork}/unsigned-dkml-native-${DKML_TARGET_ABI}-u-${DKML_VERSION_SEMVER}.exe
             uninstall64nu.exe
-            "Windows 64-bit Native Uninstaller (unsigned)")
+            "Windows/Intel 64-bit Native Uninstaller")
         _handle_upload(package
             ${tnetwork}/unsigned-dkml-native-${DKML_TARGET_ABI}-i-${DKML_VERSION_SEMVER}.exe
             setup64nu.exe
-            "Windows 64-bit Native Installer (unsigned)")
+            "Windows/Intel 64-bit Native Installer")
         _handle_upload(package
             ${toffline}/unsigned-dkml-byte-${DKML_TARGET_ABI}-u-${DKML_VERSION_SEMVER}.exe
             uninstall64bu.exe
-            "Windows 64-bit Lite Bytecode Uninstaller (unsigned)")
+            "Windows/Intel 64-bit Bytecode Uninstaller")
         _handle_upload(package
             ${toffline}/unsigned-dkml-byte-${DKML_TARGET_ABI}-i-${DKML_VERSION_SEMVER}.exe
             setup64bu.exe
-            "Windows 64-bit Lite Bytecode Installer (unsigned)")
+            "Windows/Intel 64-bit Bytecode Installer")
     endif()
+
+    # TODO: Hack. This mimics test.gitlab-ci.yml [release_job] which we expect to fail because the GitLab Release
+    # is created below. Alternatively, this might fail but [release_job] succeeds.
+    # But test.gitlab-ci.yml [upload] should work, so these following links should be populated.
+    list(APPEND assetlinks "{\"name\": \"macOS/Silicon 64-bit Installer\", \"url\":\"${PACKAGE_REGISTRY_URL_BASE}/${DKML_VERSION_SEMVER}/dkml-native-darwin_arm64-i-${DKML_VERSION_SEMVER}.tar.gz\", \"filepath\": \"/dkml-native-darwin_arm64-i-${DKML_VERSION_SEMVER}.tar.gz\", \"linktype\": \"package\"}")
+    list(APPEND assetlinks "{\"name\": \"DebianOldOld/Intel 64-bit Installer\", \"url\":\"${PACKAGE_REGISTRY_URL_BASE}/${DKML_VERSION_SEMVER}/dkml-native-linux_x86_64-i-${DKML_VERSION_SEMVER}.tar.gz\", \"filepath\": \"/dkml-native-linux_x86_64-i-${DKML_VERSION_SEMVER}.tar.gz\", \"linktype\": \"package\"}")
 
     if(assetlinks)
         list(JOIN assetlinks "," assetlinks_csv)
