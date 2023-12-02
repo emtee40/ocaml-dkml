@@ -76,8 +76,7 @@ variables:
     - apk add --no-cache git make rsync graphviz
     - pip install -U sphinx sphinx_rtd_theme
 
-.cmake-with-opam-prereqs-debian:before:
-  image: debian:stable-slim
+.cmake-with-opam-prereqs-anydebian:before:
   variables:
     DEBIAN_FRONTEND: noninteractive # for apt-get
   before_script:
@@ -95,6 +94,21 @@ variables:
     - apt-get install -qq -o=Dpkg::Use-Pty=0 ninja-build build-essential git unzip libsqlite3-dev libx11-dev pkg-config libffi-dev > /dev/null
     # Install CMake
     - ./dk dksdk.cmake.link QUIET
+
+.cmake-with-opam-prereqs-debian:before:
+  image: debian:stable-slim
+  extends:
+    - .cmake-with-opam-prereqs-anydebian:before
+
+.cmake-with-opam-prereqs-olddebian:before:
+  image: debian:oldstable-slim
+  extends:
+    - .cmake-with-opam-prereqs-anydebian:before
+
+.cmake-with-opam-prereqs-oldolddebian:before:
+  image: debian:oldoldstable-slim
+  extends:
+    - .cmake-with-opam-prereqs-anydebian:before
 
 .cmake-with-opam-prereqs-macos:build:
   tags: [saas-macos-medium-m1]

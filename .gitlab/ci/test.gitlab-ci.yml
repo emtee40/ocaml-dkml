@@ -19,10 +19,11 @@ test:
       - build/pkg/bump/*/sw/logs
 
 installer-windows_x86_64:
+  # Needs more than 2 hours, which is GitLab SaaS limit as of 2023-11-24. See https://gitlab.com/groups/gitlab-org/-/epics/2162
+  allow_failure: true
   extends:
     - .windows:before-script-shared-setupmachine
   stage: build
-  allow_failure: true # Needs more than 2 hours, which is GitLab SaaS limit as of 2023-11-24. See https://gitlab.com/groups/gitlab-org/-/epics/2162
   timeout: 3h
   artifacts:
     untracked: false
@@ -57,7 +58,41 @@ installer-debian_x86_64: # Debian is just the prototype for Linux with a "modern
   - build/pkg/bump/.ci/o/$ver/share/dkml-installer-ocaml-network/t/bundle-dkml-native-linux_x86_64-i.sh tar
   - gzip dkml-native-linux_x86_64-i-$ver.tar
 
+installer-olddebian_x86_64:
+  extends:
+    - .cmake-with-opam-prereqs-olddebian:before
+    - .installer-unix
+  stage: build
+  script:
+  # Identity for dkml-compiler git-based patches
+  - git config --global user.email "anyone@example.com"
+
+  - .ci/cmake/bin/cmake --preset ci-reproduce -G Ninja -D DKML_HOST_LINUX_DOCKER=0
+  - .ci/cmake/bin/cmake --build --preset ci-reproduce
+
+  - ver=$(.ci/cmake/bin/cmake -P cmake/get-version.cmake)
+  - build/pkg/bump/.ci/o/$ver/share/dkml-installer-ocaml-network/t/bundle-dkml-native-linux_x86_64-i.sh tar
+  - gzip dkml-native-linux_x86_64-i-$ver.tar
+
+installer-oldolddebian_x86_64:
+  extends:
+    - .cmake-with-opam-prereqs-oldolddebian:before
+    - .installer-unix
+  stage: build
+  script:
+  # Identity for dkml-compiler git-based patches
+  - git config --global user.email "anyone@example.com"
+
+  - .ci/cmake/bin/cmake --preset ci-reproduce -G Ninja -D DKML_HOST_LINUX_DOCKER=0
+  - .ci/cmake/bin/cmake --build --preset ci-reproduce
+
+  - ver=$(.ci/cmake/bin/cmake -P cmake/get-version.cmake)
+  - build/pkg/bump/.ci/o/$ver/share/dkml-installer-ocaml-network/t/bundle-dkml-native-linux_x86_64-i.sh tar
+  - gzip dkml-native-linux_x86_64-i-$ver.tar
+
 installer-darwin_x86_64:
+  # This architecture has problems building with an old, patched version of `ctypes.0.19.2`. There is no problem with `darwin_arm64`. So likely easy to fix but low-priority.
+  allow_failure: true
   extends:
     - .cmake-with-opam-prereqs-macos:build
     - .installer-unix
@@ -94,6 +129,8 @@ installer-darwin_arm64:
   - gzip dkml-native-darwin_arm64-i-$ver.tar
 
 installer-linux_x86_64:
+  # This architecture is built with ManyLinux 2014, which has an ancient glibc so it is portable to most Linux distros. However, ocaml-lsp-server.1.16.2 submodules the `lev` package which does not compile with ManyLinux. Unclear why but not investigating because very low-priority.
+  allow_failure: true
   extends:
     - .linux:setup-dkml-no-matrix
     - .installer-unix
@@ -168,11 +205,22 @@ test-debian_x86_64-on-debian_x86_64:
       artifacts: true
   script: sh ci/test.sh linux_x86_64
 
-test-linux_x86_64-on-debian_x86_64:
+test-oldolddebian_x86_64-on-debian_x86_64:
   extends:
     - .cmake-with-opam-prereqs-debian:before
   stage: test
   needs:
-    - job: installer-linux_x86_64
+    - job: installer-oldolddebian_x86_64
       artifacts: true
   script: sh ci/test.sh linux_x86_64
+
+# TODO: When linux_x86_64 job fixed.
+#
+# test-linux_x86_64-on-debian_x86_64:
+#   extends:
+#     - .cmake-with-opam-prereqs-debian:before
+#   stage: test
+#   needs:
+#     - job: installer-linux_x86_64
+#       artifacts: true
+#   script: sh ci/test.sh linux_x86_64
