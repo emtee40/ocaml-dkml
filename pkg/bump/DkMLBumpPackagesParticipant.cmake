@@ -71,8 +71,9 @@ function(DkMLBumpPackagesParticipant_CreateOpamSwitchUpgrade REL_FILENAME)
     list(APPEND pkgvers "dkml-installer-ocaml-offline.${DKML_VERSION_OPAMVER_NEW}")
 
     # Remove [dune] and replace with [dune+shim]
-    list(FILTER pkgvers EXCLUDE REGEX "^dune[.]")
-    list(APPEND pkgvers "dune.${DKML_RELEASE_DUNE_VERSION}+shim")
+    # @: DkML 2.1.0 no longer places Dune in the global environment, so no shim needed
+    # list(FILTER pkgvers EXCLUDE REGEX "^dune[.]")
+    # list(APPEND pkgvers "dune.${DKML_RELEASE_DUNE_VERSION}+shim")
 
     # Sort
     list(SORT pkgvers)
@@ -279,7 +280,9 @@ function(DkMLBumpPackagesParticipant_DuneProjectFlavorUpgrade REL_FILENAME)
         # used in the [depends:] section
         list(TRANSFORM pkgvers REPLACE "([^.]*)[.](.*)" "  (\\1 (= \\2))")
         list(JOIN pkgvers "\n" pkgvers)
-        string(PREPEND pkgvers "  (dune (or (= ${DKML_RELEASE_DUNE_VERSION}) (= ${DKML_RELEASE_DUNE_VERSION}+shim)))\n")
+        # @: DkML 2.1.0 no longer places Dune in the global environment, so no shim needed.
+        #string(PREPEND pkgvers "  (dune (or (= ${DKML_RELEASE_DUNE_VERSION}) (= ${DKML_RELEASE_DUNE_VERSION}+shim)))\n")
+        string(PREPEND pkgvers "  (dune (= ${DKML_RELEASE_DUNE_VERSION}))\n")
 
         # Make a dune-project section
         cmake_path(GET CMAKE_CURRENT_LIST_FILE FILENAME managerFile)
