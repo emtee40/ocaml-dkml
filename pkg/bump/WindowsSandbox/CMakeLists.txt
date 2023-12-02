@@ -9,7 +9,9 @@ foreach(cmd IN ITEMS installer-byte installer-native uninstaller-byte uninstalle
     configure_file(${cmd}.in.cmd ${TOOLSDIR}/${cmd}.cmd @ONLY NEWLINE_STYLE DOS)
 endforeach()
 file(COPY_FILE install-winget.ps1 ${TOOLSDIR}/install-winget.ps1 ONLY_IF_DIFFERENT)
-configure_file(install-winget.cmd ${TOOLSDIR}/install-winget.cmd @ONLY NEWLINE_STYLE DOS)
+foreach(cmd IN ITEMS install-winget install-git install-vsstudio install-native-prereqs)
+    configure_file(${cmd}.cmd ${TOOLSDIR}/${cmd}.cmd @ONLY NEWLINE_STYLE DOS)
+endforeach()
 configure_file("${PROJECT_SOURCE_DIR}/tests/postinstall-test.cmd" ${TOOLSDIR}/test.cmd @ONLY NEWLINE_STYLE DOS)
 file(COPY
     "${PROJECT_SOURCE_DIR}/tests/proj1"
