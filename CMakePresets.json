@@ -40,6 +40,7 @@
         "ci-agnostic",
         "ci-cleared"
       ],
+      "generator": "Ninja",
       "cacheVariables": {
         "DKML_GOLDEN_SOURCE_CODE": "OFF"
       }
