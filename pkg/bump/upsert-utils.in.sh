@@ -104,7 +104,7 @@ idempotent_opam_local_install() {
         #       [dkml-runtime-distribution.2.1.0] synchronised (git+file://Y:/source/dkml/build/_deps/dkml-runtime-distribution-src#main)
         install -d "$idempotent_opam_local_install_LOGDIR"
         echo "[$idempotent_opam_local_install_NAME] Executing: opam install $*"
-        OPAMLOGS="$idempotent_opam_local_install_LOGDIR" '@WITH_COMPILER_SH@' "$OPAM_EXE" install "$@" --ignore-pin-depends --yes --color=$OPAMCOLOR --verbose --debug-level 3 2>/dev/null
+        OPAMLOGS="$idempotent_opam_local_install_LOGDIR" '@WITH_COMPILER_SH@' "$OPAM_EXE" install "$@" --ignore-pin-depends --yes --color=$OPAMCOLOR --verbose --debug-level 1 2>/dev/null
         cd "$idempotent_opam_local_install_ENTRYDIR" || exit 67
 
         printf "%s" "$idempotent_opam_local_install_IDEMPOTENT_ID" > "$idempotent_opam_local_install_LASTGITREFFILE"
@@ -148,7 +148,7 @@ idempotent_opam_install() {
         #       [dkml-runtime-distribution.2.1.0] synchronised (git+file://Y:/source/dkml/build/_deps/dkml-runtime-distribution-src#main)
         install -d "$idempotent_opam_install_LOGDIR"
         echo "[$idempotent_opam_install_NAME] Executing: opam install $*"
-        OPAMLOGS="$idempotent_opam_install_LOGDIR" '@WITH_COMPILER_SH@' "$OPAM_EXE" install "$@" --yes --color=$OPAMCOLOR --verbose --debug-level 3 2>/dev/null
+        OPAMLOGS="$idempotent_opam_install_LOGDIR" '@WITH_COMPILER_SH@' "$OPAM_EXE" install "$@" --yes --color=$OPAMCOLOR --verbose --debug-level 1 2>/dev/null
         printf "%s" "$idempotent_opam_install_IDEMPOTENT_ID" > "$idempotent_opam_install_LAST_ID_FILE"
     fi
 }
