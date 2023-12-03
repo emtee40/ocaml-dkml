@@ -56,11 +56,7 @@ installer-oldolddebian_x86_64:
   - git config --global user.email "anyone@example.com"
 
   - .ci/cmake/bin/cmake --preset ci-reproduce -G Ninja -D DKML_HOST_LINUX_DOCKER=0
-  - .ci/cmake/bin/cmake --build --preset ci-reproduce
-
-  - ver=$(.ci/cmake/bin/cmake -P cmake/get-version.cmake)
-  - build/pkg/bump/.ci/o/$ver/share/dkml-installer-ocaml-network/t/bundle-dkml-native-linux_x86_64-i.sh tar
-  - gzip dkml-native-linux_x86_64-i-$ver.tar dkml-native-linux_x86_64-u-$ver.tar
+  - sh ci/build-unix-targz.sh linux_x86_64
 
 installer-darwin_x86_64:
   # This architecture has problems building with an old, patched version of `ctypes.0.19.2`. There is no problem with `darwin_arm64`. So likely easy to fix but low-priority.
@@ -76,11 +72,7 @@ installer-darwin_x86_64:
   - git config --global user.email "anyone@example.com"
 
   - .ci/cmake/bin/cmake --preset ci-reproduce -G Ninja -D DKML_HOST_ABI=darwin_x86_64 -D DKML_TARGET_ABI=darwin_x86_64
-  - .ci/cmake/bin/cmake --build --preset ci-reproduce
-
-  - ver=$(.ci/cmake/bin/cmake -P cmake/get-version.cmake)
-  - build/pkg/bump/.ci/o/$ver/share/dkml-installer-ocaml-network/t/bundle-dkml-native-darwin_x86_64-i.sh tar
-  - gzip dkml-native-darwin_x86_64-i-$ver.tar dkml-native-darwin_x86_64-u-$ver.tar
+  - sh ci/build-unix-targz.sh darwin_x86_64
 
 installer-darwin_arm64:
   extends:
@@ -94,11 +86,7 @@ installer-darwin_arm64:
   - git config --global user.email "anyone@example.com"
 
   - .ci/cmake/bin/cmake --preset ci-reproduce -G Ninja -D DKML_HOST_ABI=darwin_arm64 -D DKML_TARGET_ABI=darwin_arm64
-  - .ci/cmake/bin/cmake --build --preset ci-reproduce
-
-  - ver=$(.ci/cmake/bin/cmake -P cmake/get-version.cmake)
-  - build/pkg/bump/.ci/o/$ver/share/dkml-installer-ocaml-network/t/bundle-dkml-native-darwin_arm64-i.sh tar
-  - gzip dkml-native-darwin_arm64-i-$ver.tar dkml-native-darwin_arm64-u-$ver.tar
+  - sh ci/build-unix-targz.sh darwin_arm64
 
 installer-linux_x86_64:
   # This architecture is built with ManyLinux 2014, which has an ancient glibc so it is portable to most Linux distros. However, ocaml-lsp-server.1.16.2 submodules the `lev` package which does not compile with ManyLinux. Unclear why but not investigating because very low-priority.
@@ -142,11 +130,7 @@ installer-linux_x86_64:
   script:
     - .ci/sd4/opamrun/cmdrun sh ./dk dksdk.cmake.copy QUIET
     - .ci/sd4/opamrun/cmdrun cmake --preset ci-reproduce -G Ninja -D SKIP_CMDRUN=1 -D DKML_HOST_LINUX_DOCKER=0
-    - .ci/sd4/opamrun/cmdrun cmake --build --preset ci-reproduce
-
-    - ver=$(.ci/cmake/bin/cmake -P cmake/get-version.cmake)
-    - build/pkg/bump/.ci/o/$ver/share/dkml-installer-ocaml-network/t/bundle-dkml-native-linux_x86_64-i.sh tar
-    - gzip dkml-native-linux_x86_64-i-$ver.tar dkml-native-linux_x86_64-u-$ver.tar
+    - sh ci/build-unix-targz.sh linux_x86_64
 
 # ------------------------------------------------------------------------
 # Tests
