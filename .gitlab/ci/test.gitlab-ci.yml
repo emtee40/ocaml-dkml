@@ -188,10 +188,47 @@ test-oldolddebian_x86_64-on-debian_x86_64:
 #       artifacts: true
 #   script: sh ci/test.sh linux_x86_64
 
+test-sanity-docker-amd64: # This tests GLIBC and basic sanity; it is not an exhaustive test.
+  parallel:
+    matrix:
+    - image: debian:oldoldstable-slim
+      packages: debian
+    - image: debian:stable-slim
+      packages: debian
+    - image: ubuntu:focal
+      packages: debian
+    - image: ubuntu:latest
+      packages: debian
+    # - image: centos:7 # won't work until entire DkML can work with manylinux-2014. but EOL June 30, 2024.
+    #   packages: redhat
+    - image: redhat/ubi8
+      packages: redhat
+    # - image: amazonlinux:1 # won't work until entire DkML can work with manylinux-2014. but deprecated anyway
+    #   packages: amazon
+    # - image: amazonlinux:2 # won't work until entire DkML can work with manylinux-2014
+    #   packages: amazon
+    - image: amazonlinux:2023
+      packages: amazon
+
+  image: $image
+  stage: test
+  needs:
+    - job: installer-oldolddebian_x86_64
+      artifacts: true
+  script:
+    - |
+      case $packages in
+        debian) apt-get update -y && apt-get install curl git build-essential unzip -y ;;
+        redhat) yum install curl git gcc gcc-c++ make unzip diffutils patch bzip2 -y ;;
+        amazon) yum install tar git gcc gcc-c++ make unzip diffutils patch bzip2 -y ;;
+      esac
+    - sh ci/test-glibc-docker-linux_x86_64.sh
+
 upload:
   stage: upload
   image: curlimages/curl:latest
   needs:
+    - job: test-oldolddebian_x86_64-on-debian_x86_64      
     - job: installer-oldolddebian_x86_64
       artifacts: true
     - job: installer-darwin_arm64
