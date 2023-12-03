@@ -206,7 +206,7 @@ test-sanity-docker-amd64: # This tests GLIBC and basic sanity; it is not an exha
         redhat) yum install curl git gcc gcc-c++ make unzip diffutils patch bzip2 -y ;;
         amazon) yum install tar git gcc gcc-c++ make unzip diffutils patch bzip2 -y ;;
       esac
-    - sh ci/test-glibc-docker-linux_x86_64.sh
+    - sh ci/test-sanity-docker-linux_x86_64.sh
 
 upload:
   stage: upload
