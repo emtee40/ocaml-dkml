@@ -222,7 +222,7 @@ upload:
   script:
     - ver=$(sh ci/get-version.sh)
     - echo "Uploading version $ver"
-    - 'for each f in dkml-native-*.tar.gz; do curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file "$f" "$PACKAGE_REGISTRY_URL_BASE/$ver/$f"; done'
+    - 'for f in dkml-native-*.tar.gz; do curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file "$f" "$PACKAGE_REGISTRY_URL_BASE/$ver/$f"; done'
 
 release_job:
   stage: release
