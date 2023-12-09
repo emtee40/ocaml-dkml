@@ -18,7 +18,7 @@ if(CMAKE_SCRIPT_MODE_FILE AND DKML_PUBLICVERSION_CMAKEVER_OVERRIDE)
     set(DKML_PUBLICVERSION_CMAKEVER "${DKML_PUBLICVERSION_CMAKEVER_OVERRIDE}")
 else()
     #   Edited by pkg/bump/CMakeLists.txt. Do not change format.
-    set(DKML_PUBLICVERSION_CMAKEVER "2.0.3")
+    set(DKML_PUBLICVERSION_CMAKEVER "2.1.0")
 endif()
 
 # The current version.
