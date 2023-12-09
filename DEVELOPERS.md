@@ -81,7 +81,7 @@
    CMake-enabled IDE with the `develop` configuration.
 3. Run one of the `Package-VersionBump-{PRERELEASE,PATCH,MINOR,MAJOR}` targets
 4. Rerun CMake configure (ex. `cmake --preset develop`).
-5. Run through each of the CMake targets **sequentially** starting from `Package-Stage01-` to
+5. Run through each of the CMake stage targets **sequentially** starting from `Package-Stage01-` to
    the highest Stage number. Many stages require a re-configuration based on
    values obtained from the prior stages, so do not skip any targets. Consult the
    [Errata](#errata)
