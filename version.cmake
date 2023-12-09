@@ -27,7 +27,7 @@ if(CMAKE_SCRIPT_MODE_FILE AND DKML_VERSION_CMAKEVER_OVERRIDE)
     set(DKML_VERSION_CMAKEVER "${DKML_VERSION_CMAKEVER_OVERRIDE}")
 else()
     # Edited by pkg/bump/CMakeLists.txt. Do not change format.
-    set(DKML_VERSION_CMAKEVER "2.1.0")
+    set(DKML_VERSION_CMAKEVER "2.1.1")
 endif()
 
 macro(ExpandDkmlVersion VERSIONTYPE)
