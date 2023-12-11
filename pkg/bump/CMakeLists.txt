@@ -1011,6 +1011,7 @@ function(add_Flavor_targets)
     set(DISKUV_OPAM_REPOSITORY_NAME_NEW diskuv-${DKML_VERSION_SEMVER}) # Used by upsert-dkml-pkgs-flavor-full-not-dune
 
     foreach(p IN ITEMS
+        dos2unix
         upsert-dkml-switch
         upsert-dkml-pkgs-compiler
         upsert-dkml-pkgs-flavor-dune
@@ -1026,6 +1027,12 @@ function(add_Flavor_targets)
     anyrun(${opamsw}/upsert-dkml-pkgs-flavor-dune.sh upsert_dkml_pkgs_dune_COMMAND)
     anyrun(${opamsw}/upsert-dkml-pkgs-flavor-full-not-dune.sh upsert_dkml_pkgs_full_not_dune_COMMAND)
     anyrun(${opamsw}/upsert-dkml-pkgs-introspect.sh upsert_dkml_pkgs_introspect_COMMAND)
+    anyrun(${opamsw}/dos2unix.sh dos2unix_COMMAND)
+
+    set(copy_EXTRA)
+    foreach(script IN ITEMS vendor/drc/unix/crossplatform-functions.sh)
+        list(APPEND copy_EXTRA COMMAND ${dos2unix_COMMAND} "${DKML_ROOT_DIR}/${script}")
+    endforeach()
 
     # nit: This can be execute_process() or add_custom_command()
     execute_process(
@@ -1036,6 +1043,9 @@ function(add_Flavor_targets)
 
         # Needed by create-opam-switch.sh
         COMMAND "${CMAKE_COMMAND}" -E copy_directory ${dkml-runtime-distribution_SOURCE_DIR} ${DKML_ROOT_DIR}/vendor/drd
+
+        ${copy_EXTRA}
+
         COMMAND_ERROR_IS_FATAL ANY
     )
 
