@@ -54,8 +54,8 @@ set(DKML_PATCH_EXCLUDE_PACKAGES
 
 # Do GLOBs once
 FetchContent_GetProperties(diskuv-opam-repository)
-file(GLOB_RECURSE diskuv-opam-repository-PACKAGEGLOB
-    LIST_DIRECTORIES true
+file(GLOB diskuv-opam-repository-PACKAGEGLOB
+    LIST_DIRECTORIES false
     RELATIVE ${diskuv-opam-repository_SOURCE_DIR}
 
     CONFIGURE_DEPENDS
@@ -72,12 +72,14 @@ function(DkMLPatches_GetPackageVersions)
     set(multiValues SYNCHRONIZED_PACKAGES EXCLUDE_PACKAGES)
     cmake_parse_arguments(PARSE_ARGV 0 ARG "${noValues}" "${singleValues}" "${multiValues}")
 
+    # Get a list of packages/XXX from packages/XXX/XXX-VERSION/opam
     set(pkgdirs)
     foreach(pkgopam IN LISTS diskuv-opam-repository-PACKAGEGLOB)
         cmake_path(GET pkgopam PARENT_PATH pkgverdir)
         cmake_path(GET pkgverdir PARENT_PATH pkgdir)
         list(APPEND pkgdirs "${pkgdir}")
     endforeach()
+    list(REMOVE_DUPLICATES pkgdirs)
 
     set(pkgvers)
     foreach(pkgdir IN LISTS pkgdirs)

@@ -3,6 +3,10 @@
 GIT_EXECUTABLE_DIR='@GIT_EXECUTABLE_DIR@'
 UPSERT_BINARY_DIR=$(pwd)
 
+#   Allow environment to override CMake vars
+DKML_BUILD_TRACE=${DKML_BUILD_TRACE:-@DKML_BUILD_TRACE@}
+DKML_BUILD_TRACE_LEVEL=${DKML_BUILD_TRACE_LEVEL:-@DKML_BUILD_TRACE_LEVEL@}
+
 # Get location of opam from cmdrun/opamrun (whatever is launching this script)
 OPAM_EXE=$(command -v opam)
 export OPAMSWITCH=@DKML_VERSION_CMAKEVER@
@@ -102,9 +106,14 @@ idempotent_opam_local_install() {
         #   use OPAMLOGS to redirect the logs into a directory, and only print the stdout which has useful
         #   indicators like:
         #       [dkml-runtime-distribution.2.1.0] synchronised (git+file://Y:/source/dkml/build/_deps/dkml-runtime-distribution-src#main)
+        #   2023-12-11: Using [--debug-level 1 2>/dev/null] causes errors not to be printed. Just respect DKML_BUILD_TRACE
         install -d "$idempotent_opam_local_install_LOGDIR"
         echo "[$idempotent_opam_local_install_NAME] Executing: opam install $*"
-        OPAMLOGS="$idempotent_opam_local_install_LOGDIR" '@WITH_COMPILER_SH@' "$OPAM_EXE" install "$@" --ignore-pin-depends --yes --color=$OPAMCOLOR --debug-level 1 2>/dev/null
+        if [ "${DKML_BUILD_TRACE:-}" = ON ]; then
+            OPAMLOGS="$idempotent_opam_local_install_LOGDIR" '@WITH_COMPILER_SH@' "$OPAM_EXE" install "$@" --ignore-pin-depends --yes --color=$OPAMCOLOR --debug-level "${DKML_BUILD_TRACE_LEVEL:-0}"
+        else
+            OPAMLOGS="$idempotent_opam_local_install_LOGDIR" '@WITH_COMPILER_SH@' "$OPAM_EXE" install "$@" --ignore-pin-depends --yes --color=$OPAMCOLOR
+        fi
         cd "$idempotent_opam_local_install_ENTRYDIR" || exit 67
 
         printf "%s" "$idempotent_opam_local_install_IDEMPOTENT_ID" > "$idempotent_opam_local_install_LASTGITREFFILE"
@@ -142,13 +151,15 @@ idempotent_opam_install() {
         fi
     fi
     if [ $idempotent_opam_install_REBUILD -eq 1 ]; then
-        #   Help troubleshooting by giving reasons. The stderr debug logs are too voluminous to show, so
-        #   use OPAMLOGS to redirect the logs into a directory, and only print the stdout which has useful
-        #   indicators like:
-        #       [dkml-runtime-distribution.2.1.0] synchronised (git+file://Y:/source/dkml/build/_deps/dkml-runtime-distribution-src#main)
+        #   Help troubleshooting by giving reasons.
+        #   See earlier comment in idempotent_opam_local_install().
         install -d "$idempotent_opam_install_LOGDIR"
         echo "[$idempotent_opam_install_NAME] Executing: opam install $*"
-        OPAMLOGS="$idempotent_opam_install_LOGDIR" '@WITH_COMPILER_SH@' "$OPAM_EXE" install "$@" --yes --color=$OPAMCOLOR --debug-level 1 2>/dev/null
+        if [ "${DKML_BUILD_TRACE:-}" = ON ]; then
+            OPAMLOGS="$idempotent_opam_install_LOGDIR" '@WITH_COMPILER_SH@' "$OPAM_EXE" install "$@" --yes --color=$OPAMCOLOR --debug-level "${DKML_BUILD_TRACE_LEVEL:-0}"
+        else
+            OPAMLOGS="$idempotent_opam_install_LOGDIR" '@WITH_COMPILER_SH@' "$OPAM_EXE" install "$@" --yes --color=$OPAMCOLOR
+        fi
         printf "%s" "$idempotent_opam_install_IDEMPOTENT_ID" > "$idempotent_opam_install_LAST_ID_FILE"
     fi
 }

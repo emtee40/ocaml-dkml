@@ -2,6 +2,9 @@
 set -euf
 
 OUTPUT_FILE='@WITH_COMPILER_SH@'
+#   Allow environment to override CMake vars
+DKML_BUILD_TRACE=${DKML_BUILD_TRACE:-@DKML_BUILD_TRACE@}
+DKML_BUILD_TRACE_LEVEL=${DKML_BUILD_TRACE_LEVEL:-@DKML_BUILD_TRACE_LEVEL@}
 
 #       shellcheck disable=SC1091
 . '@dkml-runtime-common_SOURCE_DIR@/unix/crossplatform-functions.sh'

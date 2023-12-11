@@ -6,6 +6,10 @@ export DKMLDIR='@DKML_ROOT_DIR@'
 #       shellcheck disable=SC1091
 . '@UPSERT_UTILS@'
 
+#   Default for compiler is ON and 2
+DKML_BUILD_TRACE=${DKML_BUILD_TRACE:-ON}
+DKML_BUILD_TRACE_LEVEL=${DKML_BUILD_TRACE_LEVEL:-2}
+
 # Add or upgrade compiler packages.
 # - In topological order so don't have unnecessary reinstalls
 # - dkml-base-compiler can find its own C compiler, so it does not need
