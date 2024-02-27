@@ -7,6 +7,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/../DkMLBumpLevels.cmake)
 # opam testing:
 #   To mimic DkML, use:
 #       .\install-vcruntime.cmd
+#       .\install-msys2.cmd
 #       .\install-winget.cmd
 #       .\install-git.cmd
 #       cd opam # Unpack the .zip from GitHub Actions
