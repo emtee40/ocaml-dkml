@@ -1,5 +1,8 @@
 include(${CMAKE_CURRENT_LIST_DIR}/../DkMLBumpLevels.cmake)
 
+# install-vcruntime: For testing binaries like standalone msvc-compiled opam.exe without an installer.
+#   The installers will auto-install the redistributable vcruntime so usually no need to do this.
+
 set(OPAMSWITCH ${PACKAGING_OPAMROOT}/${DKML_VERSION_CMAKEVER})
 set(TOOLSDIR ${CMAKE_CURRENT_BINARY_DIR}/tools)
 cmake_path(NATIVE_PATH OPAMSWITCH OPAMSWITCH_NATIVE)
@@ -9,7 +12,8 @@ foreach(cmd IN ITEMS installer-byte installer-native uninstaller-byte uninstalle
     configure_file(${cmd}.in.cmd ${TOOLSDIR}/${cmd}.cmd @ONLY NEWLINE_STYLE DOS)
 endforeach()
 file(COPY_FILE install-winget.ps1 ${TOOLSDIR}/install-winget.ps1 ONLY_IF_DIFFERENT)
-foreach(cmd IN ITEMS install-winget install-git install-vsstudio install-native-prereqs)
+file(COPY_FILE install-vcruntime.ps1 ${TOOLSDIR}/install-vcruntime.ps1 ONLY_IF_DIFFERENT)
+foreach(cmd IN ITEMS install-winget install-git install-vsstudio install-native-prereqs install-vcruntime)
     configure_file(${cmd}.cmd ${TOOLSDIR}/${cmd}.cmd @ONLY NEWLINE_STYLE DOS)
 endforeach()
 configure_file("${PROJECT_SOURCE_DIR}/tests/postinstall-test.cmd" ${TOOLSDIR}/test.cmd @ONLY NEWLINE_STYLE DOS)
