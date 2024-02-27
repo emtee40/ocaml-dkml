@@ -1,1 +1,1 @@
-winget install Git.Git
+winget install Git.Git --accept-source-agreements
