@@ -2,6 +2,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/../DkMLBumpLevels.cmake)
 
 # install-vcruntime: For testing binaries like standalone msvc-compiled opam.exe without an installer.
 #   The installers will auto-install the redistributable vcruntime so usually no need to do this.
+# install-msys2: For testing binaries like opam.exe that need an MSYS2 environment.
 
 set(OPAMSWITCH ${PACKAGING_OPAMROOT}/${DKML_VERSION_CMAKEVER})
 set(TOOLSDIR ${CMAKE_CURRENT_BINARY_DIR}/tools)
