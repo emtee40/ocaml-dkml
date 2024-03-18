@@ -57,8 +57,7 @@ Once your installation is finished, newcomers to OCaml should continue on with t
 
 ## License
 
-The *DkML* distribution uses an open-source, liberal
-[Apache v2 license](./LICENSE.txt).
+The *DkML* distribution uses an open-source, liberal [Apache v2 license](./LICENSE.txt).
 
 ## Quick Start
 
