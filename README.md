@@ -1,4 +1,4 @@
-# DkML 2.0.3
+# DkML 2.1.0
 
 The DkML distribution is an open-source set of software
 that supports software development in pure OCaml. The distribution's
@@ -23,24 +23,35 @@ These alternatives may be better depending on your use case:
   from-source builds unless it can guarantee (and code sign) the binaries are
   reproducible. Today that means a lot of compiling.
 
-The DKML Installer for OCaml generates and distributes installers for
-the DkML distribution. Windows is ready today; macOS will be available soon.
-
-Commercial tools and support are available from Diskuv for mixed OCaml/C
-development; however, this pure OCaml distribution only has limited support
-for mixed OCaml/C. For example, the `ctypes` opam package has been patched
-to work with Visual Studio but is out-dated. Contact
-support AT diskuv.com if you need OCaml/C development.
+The DkML Installer for OCaml generates and distributes installers for
+the DkML distribution.
 
 For news about DkML,
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/diskuv.svg?style=social&label=Follow%20%40diskuv)](https://twitter.com/diskuv) on Twitter.
 
-**Please visit our documentation at <https://diskuv.com/dkmlbook/>**
+## Installing
+
+Run the following in a terminal (either Windows PowerShell or Command Prompt):
+
+```powershell
+winget install Microsoft.VisualStudio.2019.BuildTools --override "--wait --passive --installPath C:\VS --addProductLang En-us --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
+winget install Git.Git
+winget install Diskuv.OCaml
+```
+
+And then in a **NEW** terminal:
+
+```powershell
+dkml init --system
+```
+
+> Any problems installing? Be sure to read the [latest release notes](https://gitlab.com/dkml/distributions/dkml/-/releases).
+
+Once your installation is finished, newcomers to OCaml should continue on with the [OCaml: Learn](https://ocaml.org/docs) site.
 
 ## License
 
-The *DkML* distribution uses an open-source, liberal
-[Apache v2 license](./LICENSE.txt).
+The *DkML* distribution uses an open-source, liberal [Apache v2 license](./LICENSE.txt).
 
 ## Quick Start
 
