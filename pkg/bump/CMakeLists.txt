@@ -1034,21 +1034,6 @@ function(add_Flavor_targets)
         list(APPEND copy_EXTRA COMMAND ${dos2unix_COMMAND} "${DKML_ROOT_DIR}/${script}")
     endforeach()
 
-    # nit: This can be execute_process() or add_custom_command()
-    execute_process(
-        COMMAND "${CMAKE_COMMAND}" -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/${DKML_VERSION_CMAKEVER}/dkmlroot ${DKML_ROOT_DIR}/.dkmlroot
-
-        # Needed by create-opam-switch.sh and init-opam-root.sh
-        COMMAND "${CMAKE_COMMAND}" -E copy_directory ${dkml-runtime-common_SOURCE_DIR} ${DKML_ROOT_DIR}/vendor/drc
-
-        # Needed by create-opam-switch.sh
-        COMMAND "${CMAKE_COMMAND}" -E copy_directory ${dkml-runtime-distribution_SOURCE_DIR} ${DKML_ROOT_DIR}/vendor/drd
-
-        ${copy_EXTRA}
-
-        COMMAND_ERROR_IS_FATAL ANY
-    )
-
     set(switchCreated ${opamsw}/switch.created)
     #   Makefile Generators delete BYPRODUCTS during cmake clean. So no deleting files in opam switches.
     if(CMAKE_GENERATOR MATCHES Makefiles OR CMAKE_GENERATOR STREQUAL "Watcom WMake")
@@ -1077,6 +1062,14 @@ function(add_Flavor_targets)
         ${CMAKE_CURRENT_BINARY_DIR}/depends/dkml-runtime-common.shortref # needed by dkml-runtime-distribution
         ${CMAKE_CURRENT_BINARY_DIR}/depends/dkml-runtime-distribution.shortref # src/unix/create-opam-switch.sh, src/unix/private/init-opam-root.sh etc.
         COMMENT "Creating/updating ${DKML_VERSION_CMAKEVER} opam switch"
+
+        # Configure switch creation environment by copyiny into DKML_ROOT_DIR
+        COMMAND "${CMAKE_COMMAND}" -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/${DKML_VERSION_CMAKEVER}/dkmlroot ${DKML_ROOT_DIR}/.dkmlroot
+        #   Needed by create-opam-switch.sh and init-opam-root.sh
+        COMMAND "${CMAKE_COMMAND}" -E copy_directory ${dkml-runtime-common_SOURCE_DIR} ${DKML_ROOT_DIR}/vendor/drc
+        #   Needed by create-opam-switch.sh
+        COMMAND "${CMAKE_COMMAND}" -E copy_directory ${dkml-runtime-distribution_SOURCE_DIR} ${DKML_ROOT_DIR}/vendor/drd
+        ${copy_EXTRA}
 
         # We don't make a separate CMake command for creating the opam root
         # because there is no good way (in CMake) to tell if the opam root
