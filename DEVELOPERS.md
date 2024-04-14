@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-* You must install the [`glab` GitLab CLI](https://gitlab.com/gitlab-org/cli/#installation).
+1. You must install the [`glab` GitLab CLI](https://gitlab.com/gitlab-org/cli/#installation).
 
 ## Use Cases
 
@@ -81,11 +81,12 @@
    CMake-enabled IDE with the `develop` configuration.
 3. Run one of the `Package-VersionBump-{PRERELEASE,PATCH,MINOR,MAJOR}` targets
 4. Rerun CMake configure (ex. `cmake --preset develop`).
-5. Run through each of the CMake stage targets **sequentially** starting from `Package-Stage01-` to
+5. Edit `build/_deps/dkml-runtime-apps-src/src/runtimelib/ocaml_opam_repository_gitref.txt` and set it to a commit id that you know works well with Windows, etc. Then commit the change. *You won't need to push it*.
+6. Run through each of the CMake stage targets **sequentially** starting from `Package-Stage01-` to
    the highest Stage number. Many stages require a re-configuration based on
    values obtained from the prior stages, so do not skip any targets. Consult the
    [Errata](#errata)
-6. Finish with the CMake target `-PublishAssets`.
+7. Finish with the CMake target `-PublishAssets`.
 
 ## Editing Source Code
 

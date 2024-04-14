@@ -1,4 +1,4 @@
-set(DKML_RELEASE_OCAML_VERSION 4.14.0)
+set(DKML_RELEASE_OCAML_VERSION 4.14.2)
 include(${PROJECT_SOURCE_DIR}/version.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/DkMLAnyRun.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/DkMLBumpLevels.cmake)

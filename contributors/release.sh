@@ -1,9 +1,10 @@
 #!/bin/bash
 set -euf
 
-RELEASE_OCAML_VERSION=4.14.0
+RELEASE_OCAML_VERSION=4.14.2
 #OCAMLVERS=(4.14.0 4.13.1 4.12.1)
-OCAMLVERS=("$RELEASE_OCAML_VERSION" 4.12.1)
+#OCAMLVERS=(4.14.0 4.12.1)
+OCAMLVERS=("$RELEASE_OCAML_VERSION" 4.14.0)
 
 # Really only needed for MSYS2 if we are calling from a MSYS2/usr/bin/make.exe rather than a full shell
 export PATH="/usr/local/bin:/usr/bin:/bin:/mingw64/bin:$PATH"

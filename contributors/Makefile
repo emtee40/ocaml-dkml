@@ -33,7 +33,7 @@ create-switch: _opam/.opam-switch/switch-config
 .PHONY: create-switch
 
 _opam/.opam-switch/switch-config:
-	opam switch create . --formula '"dkml-base-compiler" { >= "4.14.0~" & < "4.14.1~" }' \
+	opam switch create . --formula '"dkml-base-compiler" { >= "4.14.0~" & < "4.14.3~" }' \
 	  --yes \
 	  --deps-only \
 	  --repos diskuv=git+https://github.com/diskuv/diskuv-opam-repository.git#main,default=https://opam.ocaml.org
