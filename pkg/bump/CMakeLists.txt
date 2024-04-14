@@ -15,6 +15,7 @@ set(BUMP2VERSION_EXECUTABLE "${CONDA_EXECUTABLE}" run -n "${CONDA_ENVIRONMENT}" 
 
 cmake_path(GET GIT_EXECUTABLE PARENT_PATH GIT_EXECUTABLE_DIR)
 
+# TODO: This list is not authoritative, but dependencies/fetch-git-projects.cmake is.
 set(self_BRANCH next) # self is [dkml]
 set(diskuv-opam-repository_BRANCH main)
 set(dkml-compiler_BRANCH main)
