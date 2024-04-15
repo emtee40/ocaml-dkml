@@ -154,6 +154,13 @@ variables:
     # Leave machine alone for [diskuv]
     CI_NO_MODIFY_MACHINE: 1
 
+    # ---- diskuv, windows ----
+    vsstudio_dir: C:\vs
+    vsstudio_vcvarsver: '14.29'
+    vsstudio_winsdkver: '10.0.19041.0'
+    vsstudio_msvspreference: 'VS16.11'
+    vsstudio_cmakegenerator: 'Visual Studio 16 2019'
+
     # # ---- saas-windows-medium-amd64 ----
     # # Apparently `Get-CompatibleVisualStudios -ErrorIfNotFound` is failing to find VS 2022
     # # on GitLab.
