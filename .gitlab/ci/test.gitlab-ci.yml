@@ -41,6 +41,9 @@ installer-windows_x86_64:
   # Identity for dkml-compiler git-based patches
   - if ("$CI_NO_MODIFY_MACHINE" -ne 1) { git config --global user.email "anyone@example.com" }
 
+  # Ensure clean build, even if local
+  - if (Test-Path C:\build) { del -force -recurse C:\build }
+
   - cmake --preset ci-reproduce-windows-c -G Ninja
   - cmake --build --preset ci-reproduce-windows-c
 
