@@ -7,6 +7,9 @@ UPSERT_BINARY_DIR=$(pwd)
 DKML_BUILD_TRACE=${DKML_BUILD_TRACE:-@DKML_BUILD_TRACE@}
 DKML_BUILD_TRACE_LEVEL=${DKML_BUILD_TRACE_LEVEL:-@DKML_BUILD_TRACE_LEVEL@}
 
+# Never use dkmlvars.sh from an old installation
+export DiskuvOCamlForceDefaults=1
+
 # Get location of opam from cmdrun/opamrun (whatever is launching this script)
 OPAM_EXE=$(command -v opam)
 export OPAMSWITCH=@DKML_VERSION_CMAKEVER@
