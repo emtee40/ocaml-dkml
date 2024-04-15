@@ -62,6 +62,13 @@ function(DkMLBumpVersionParticipant_PlainReplace REL_FILENAME)
     _DkMLBumpVersionParticipant_Finish_Replace(SEMVER)
 endfunction()
 
+function(DkMLBumpVersionParticipant_OCamlOpamRepositoryReplace REL_FILENAME)
+    file(READ ${REL_FILENAME} contents)
+    set(contents_NEW "${OCAML_OPAM_REPOSITORY_GITREF}")
+
+    _DkMLBumpVersionParticipant_Finish_ReplaceDirect(${OCAML_OPAM_REPOSITORY_GITREF})
+endfunction()
+
 # version: "1.2.1~prerel2" -> version: "1.2.1~prerel3"
 function(DkMLBumpVersionParticipant_OpamReplace REL_FILENAME)
     file(READ ${REL_FILENAME} contents)

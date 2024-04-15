@@ -16,6 +16,9 @@ unset OPAMSWITCH # Interferes with init-opam-root.sh and create-opam-switch.sh
 # Opam does not know there is an update.
 dor_COMMIT='@DISKUV_OPAM_REPOSITORY_GITREF@'
 
+# The ocaml/opam-repository repository is fixed
+oor_COMMIT='@OCAML_OPAM_REPOSITORY_GITREF@'
+
 # init-opam-root
 #
 # -p DKMLABI: The DKML ABI (not 'dev')
@@ -31,8 +34,8 @@ dor_COMMIT='@DISKUV_OPAM_REPOSITORY_GITREF@'
 # -a Use local repository rather than git repository for diskuv-opam-repository. Requires rsync
 # -e DISKUV_REPO: Use DISKUV_REPO rather than the default diskuv-opam-repository. Valid opam
 #    urls must be used like https:// or git+https:// or git+file:// urls.
-# -c CENTRAL_REPO: Use CENTRAL_REPO rather than the default https://opam.ocaml.org repository. Valid opam
-#    urls must be used like https:// or git+https:// or git+file:// urls.
+# -c CENTRAL_REPO: Use CENTRAL_REPO rather than the default git+https://github.com/ocaml/opam-repository.git
+#    repository. Valid opam urls must be used like https:// or git+https:// or git+file:// urls.
 # -x Disable sandboxing in all platforms. By default, sandboxing is disabled in Windows, WSL2 and in dockcross
 #    Linux containers
 '@dkml-runtime-distribution_SOURCE_DIR@/src/unix/private/init-opam-root.sh' \
@@ -40,6 +43,7 @@ dor_COMMIT='@DISKUV_OPAM_REPOSITORY_GITREF@'
 -r "$OPAMROOT" \
 -o "$OPAM_EXE" \
 -e "git+file://@diskuv-opam-repository_SOURCE_DIR@/.git#${dor_COMMIT}" \
+-c "git+https://github.com/ocaml/opam-repository.git#${oor_COMMIT}" \
 -x
 
 # shellcheck disable=SC2050

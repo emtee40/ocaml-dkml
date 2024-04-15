@@ -354,6 +354,7 @@ function(add_VersionBump_target_for_synced_projects)
             -D CMAKE_MESSAGE_CONTEXT=${proj}
             -D "DKML_BUMP_VERSION_PARTICIPANT_MODULE=${participant}"
             -D DKML_RELEASE_OCAML_VERSION=${DKML_RELEASE_OCAML_VERSION}
+            -D "OCAML_OPAM_REPOSITORY_GITREF=${OCAML_OPAM_REPOSITORY_GITREF}"
             -D regex_DKML_VERSION_OPAMVER=${regex_DKML_VERSION_OPAMVER}
             -D regex_DKML_VERSION_SEMVER=${regex_DKML_VERSION_SEMVER}
             -D DKML_VERSION_OPAMVER_NEW=${DKML_VERSION_OPAMVER}
@@ -984,6 +985,8 @@ function(add_Flavor_targets)
         OUTPUT_VARIABLE DISKUV_OPAM_REPOSITORY_GITREF
         COMMAND_ERROR_IS_FATAL ANY
     )
+
+    file(READ ${PROJECT_SOURCE_DIR}/ocaml_opam_repository_gitref.txt OCAML_OPAM_REPOSITORY_GITREF)
 
     # Checksum to retrigger introspection
     FetchContent_GetProperties(dkml-runtime-distribution)
