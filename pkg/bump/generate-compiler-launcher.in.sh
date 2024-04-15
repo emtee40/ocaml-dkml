@@ -6,6 +6,10 @@ OUTPUT_FILE='@WITH_COMPILER_SH@'
 DKML_BUILD_TRACE=${DKML_BUILD_TRACE:-@DKML_BUILD_TRACE@}
 DKML_BUILD_TRACE_LEVEL=${DKML_BUILD_TRACE_LEVEL:-@DKML_BUILD_TRACE_LEVEL@}
 
+#   Clear environment, especially so autodetect_compiler is not influenced by DkML installation
+#       shellcheck disable=SC1091
+. '@CLEAR_COMPILER_ENV_SH@'
+
 #       shellcheck disable=SC1091
 . '@dkml-runtime-common_SOURCE_DIR@/unix/crossplatform-functions.sh'
 
