@@ -151,6 +151,8 @@ variables:
   variables:
     # Opam on Windows is mostly I/O bound but default is relative to CPU cores.
     OPAMJOBS: 8
+    # Leave machine alone for [diskuv]
+    CI_NO_MODIFY_MACHINE: 1
 
     # ---- saas-windows-medium-amd64 ----
     # Apparently `Get-CompatibleVisualStudios -ErrorIfNotFound` is failing to find VS 2022
