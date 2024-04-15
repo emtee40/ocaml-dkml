@@ -204,7 +204,7 @@ variables:
   # ----------- Curl -----------
 
   # curl is a built-in Powershell Alias. Want real curl.exe!
-  - Remove-Item Alias:curl
+  # - Remove-Item Alias:curl
 
   # ----------- release-cli -----------
 
