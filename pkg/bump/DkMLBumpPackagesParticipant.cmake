@@ -135,9 +135,9 @@ function(DkMLBumpPackagesParticipant_SetupDkmlUpgrade REL_FILENAME)
     set(pkgs2)
 
     foreach(pkg IN LISTS pkgs)
-        string(TOUPPER "${pkg}" PKG_UPPER_UNDERSCORE)
-        string(REPLACE "-" "_" PKG_UPPER_UNDERSCORE "${PKG_UPPER_UNDERSCORE}")
-        list(APPEND pkgs2 "${pkg} \"\${PIN_${PKG_UPPER_UNDERSCORE}}\"")
+        string(TOUPPER "${pkg}" PKG_UPPER_SANITIZED)
+        string(REPLACE "-" "_" PKG_UPPER_SANITIZED "${PKG_UPPER_SANITIZED}")
+        list(APPEND pkgs2 "${pkg} \"\${PIN_${PKG_UPPER_SANITIZED}}\"")
     endforeach()
 
     set(pkgs ${pkgs2})
@@ -193,6 +193,7 @@ function(DkMLBumpPackagesParticipant_ModelUpgrade REL_FILENAME)
     list(SORT pkgvers)
 
     # ocp-indent.1.2.3 -> ("PIN_OCP_INDENT", "1.2.3");
+    # conf-c++.1.0 -> ("PIN_CONF_CPLUSPLUS", "1.0");
     set(bindings)
 
     foreach(pkgver IN LISTS pkgvers)
@@ -200,9 +201,10 @@ function(DkMLBumpPackagesParticipant_ModelUpgrade REL_FILENAME)
         string(SUBSTRING "${pkgver}" 0 ${dotLoc} pkg)
         math(EXPR dotLocPlus1 "${dotLoc} + 1")
         string(SUBSTRING "${pkgver}" ${dotLocPlus1} -1 ver)
-        string(TOUPPER "${pkg}" PKG_UPPER_UNDERSCORE)
-        string(REPLACE "-" "_" PKG_UPPER_UNDERSCORE "${PKG_UPPER_UNDERSCORE}")
-        string(APPEND bindings "\n    (\"PIN_${PKG_UPPER_UNDERSCORE}\", \"${ver}\");")
+        string(TOUPPER "${pkg}" PKG_UPPER_SANITIZED)
+        string(REPLACE "-" "_" PKG_UPPER_SANITIZED "${PKG_UPPER_SANITIZED}")
+        string(REPLACE "+" "PLUS" PKG_UPPER_SANITIZED "${PKG_UPPER_SANITIZED}")
+        string(APPEND bindings "\n    (\"PIN_${PKG_UPPER_SANITIZED}\", \"${ver}\");")
     endforeach()
 
     # Set the command
