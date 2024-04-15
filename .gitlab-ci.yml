@@ -143,6 +143,35 @@ variables:
     - windows
     - windows-1809
 
+.win32:hardware:
+  # Old. 2h timeout. VS 2019. tags: [shared-windows, windows, windows-1809]
+  # This should wait until VirtualBox runner. 3h timeout. tags: [diskuv, windows]
+  # tags: [diskuv, windows, windows-vm] # 4h timeout. But virtualbox is 10X slower because Snail mode (no Hyper-V support) and Docker Windows breaks b/c https://github.com/moby/moby/issues/37024
+  tags: [saas-windows-medium-amd64] # 2h timeout.
+  variables:
+    # Opam on Windows is mostly I/O bound but default is relative to CPU cores.
+    OPAMJOBS: 8
+
+    # ---- saas-windows-medium-amd64 ----
+    # Apparently `Get-CompatibleVisualStudios -ErrorIfNotFound` is failing to find VS 2022
+    # on GitLab.
+    # Confer: https://gitlab.com/diskuv/distributions/1.0/dksdk-coder/-/jobs/6407506414
+    # So manually set the Visual Studio variables.
+    #
+    # export VS_DIR='C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools'
+    # export VS_VCVARSVER='14.29'
+    # export VS_WINSDKVER='10.0.19041.0'
+    # export VS_MSVSPREFERENCE='VS16.11'
+    # export VS_CMAKEGENERATOR='Visual Studio 16 2019'
+    vsstudio_dir: C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools
+    vsstudio_vcvarsver: '14.38'
+    #   From the following component ids:
+    #     Microsoft.VisualStudio.Component.Windows11SDK.22621
+    #     Microsoft.VisualStudio.Component.Windows10SDK
+    vsstudio_winsdkver: '10.0.22621.0'
+    vsstudio_msvspreference: 'VS17.8'
+    vsstudio_cmakegenerator: 'Visual Studio 17 2022'
+
 .before_windows: &before-windows
   - date
   - '[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12' # From https://www.msys2.org/docs/ci/#docker, but useful for everything
@@ -195,7 +224,7 @@ variables:
 
 .windows:before-script-shared-setupmachine:
   extends:
-  - .shared_windows_runners
+  - .win32:hardware
   before_script:
     - *before-windows
     - *before-setupmachine

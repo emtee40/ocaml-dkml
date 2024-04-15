@@ -89,7 +89,9 @@ installer-darwin_arm64:
   - sh ci/build-unix-targz.sh darwin_arm64
 
 installer-linux_x86_64:
-  # This architecture is built with ManyLinux 2014, which has an ancient glibc so it is portable to most Linux distros. However, ocaml-lsp-server.1.16.2 submodules the `lev` package which does not compile with ManyLinux. Unclear why but not investigating because very low-priority.
+  # This architecture is built with ManyLinux 2014, which has an ancient glibc so it is portable to most Linux distros.
+  # However, ocaml-lsp-server.1.16.2 submodules the `lev` package which does not compile with ManyLinux. Unclear why but not investigating because very low-priority.
+  # Ditto for Dune's vendored `spawn`.
   allow_failure: true
   extends:
     - .linux:setup-dkml-no-matrix
