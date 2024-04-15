@@ -145,9 +145,9 @@ variables:
 
 .win32:hardware:
   # Old. 2h timeout. VS 2019. tags: [shared-windows, windows, windows-1809]
-  # This should wait until VirtualBox runner. 3h timeout. tags: [diskuv, windows]
+  tags: [diskuv, windows] # 4h timeout.
   # tags: [diskuv, windows, windows-vm] # 4h timeout. But virtualbox is 10X slower because Snail mode (no Hyper-V support) and Docker Windows breaks b/c https://github.com/moby/moby/issues/37024
-  tags: [saas-windows-medium-amd64] # 2h timeout.
+  # tags: [saas-windows-medium-amd64] # 2h timeout.
   variables:
     # Opam on Windows is mostly I/O bound but default is relative to CPU cores.
     OPAMJOBS: 8
