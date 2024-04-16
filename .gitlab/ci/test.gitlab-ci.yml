@@ -42,7 +42,7 @@ installer-windows_x86_64:
   - if ("$CI_NO_MODIFY_MACHINE" -ne 1) { git config --global user.email "anyone@example.com" }
 
   # Ensure clean build, even if local
-  - if (Test-Path C:\build) { del -force -recurse C:\build }
+  - if (("$env:CI_PRISTINE_BUILD" -eq 1) -and (Test-Path C:\build)) { del -force -recurse C:\build }
 
   - cmake --preset ci-reproduce-windows-c -G Ninja
   - cmake --build --preset ci-reproduce-windows-c
