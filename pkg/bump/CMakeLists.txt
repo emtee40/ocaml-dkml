@@ -806,6 +806,7 @@ function(add_GenerateLaunchers_target)
 
     FetchContent_GetProperties(dkml-runtime-common)
     FetchContent_GetProperties(dkml-compiler)
+    set(BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}")
     configure_file(clear-compiler-env.in.sh ${CMAKE_CURRENT_BINARY_DIR}/clear-compiler-env.sh
         FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
         @ONLY NEWLINE_STYLE UNIX)
