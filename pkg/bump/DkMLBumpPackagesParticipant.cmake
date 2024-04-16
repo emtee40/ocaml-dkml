@@ -107,6 +107,12 @@ ${pkgvers}
     set_property(GLOBAL APPEND PROPERTY DkMLReleaseParticipant_REL_FILES ${REL_FILENAME})
 endfunction()
 
+macro(DkMLBumpPackagesParticipant_UpperSanitized)
+    string(TOUPPER "${pkg}" PKG_UPPER_SANITIZED)
+    string(REPLACE "-" "_" PKG_UPPER_SANITIZED "${PKG_UPPER_SANITIZED}")
+    string(REPLACE "+" "PLUS" PKG_UPPER_SANITIZED "${PKG_UPPER_SANITIZED}")
+endmacro()
+
 # Sets a series of commands like:
 # opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version alcotest "${PIN_ALCOTEST}"
 function(DkMLBumpPackagesParticipant_SetupDkmlUpgrade REL_FILENAME)
@@ -135,6 +141,7 @@ function(DkMLBumpPackagesParticipant_SetupDkmlUpgrade REL_FILENAME)
     set(pkgs2)
 
     foreach(pkg IN LISTS pkgs)
+        DkMLBumpPackagesParticipant_UpperSanitized()
         string(TOUPPER "${pkg}" PKG_UPPER_SANITIZED)
         string(REPLACE "-" "_" PKG_UPPER_SANITIZED "${PKG_UPPER_SANITIZED}")
         list(APPEND pkgs2 "${pkg} \"\${PIN_${PKG_UPPER_SANITIZED}}\"")
@@ -201,9 +208,7 @@ function(DkMLBumpPackagesParticipant_ModelUpgrade REL_FILENAME)
         string(SUBSTRING "${pkgver}" 0 ${dotLoc} pkg)
         math(EXPR dotLocPlus1 "${dotLoc} + 1")
         string(SUBSTRING "${pkgver}" ${dotLocPlus1} -1 ver)
-        string(TOUPPER "${pkg}" PKG_UPPER_SANITIZED)
-        string(REPLACE "-" "_" PKG_UPPER_SANITIZED "${PKG_UPPER_SANITIZED}")
-        string(REPLACE "+" "PLUS" PKG_UPPER_SANITIZED "${PKG_UPPER_SANITIZED}")
+        DkMLBumpPackagesParticipant_UpperSanitized()
         string(APPEND bindings "\n    (\"PIN_${PKG_UPPER_SANITIZED}\", \"${ver}\");")
     endforeach()
 
