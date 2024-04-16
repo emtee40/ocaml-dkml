@@ -37,6 +37,8 @@ foreach(PROJECT IN LISTS DKML_PROJECTS_SYNCED)
     endif()
 endforeach()
 
+file(READ ${PROJECT_SOURCE_DIR}/ocaml_opam_repository_gitref.txt OCAML_OPAM_REPOSITORY_GITREF)
+
 # ----------------
 # Make variables for all synced projects _and_ unsynced projects to have a
 # opam-install-friendly relative directory to PROJECT_SOURCE_DIR, and a
@@ -991,8 +993,6 @@ function(add_Flavor_targets)
         OUTPUT_VARIABLE DISKUV_OPAM_REPOSITORY_GITREF
         COMMAND_ERROR_IS_FATAL ANY
     )
-
-    file(READ ${PROJECT_SOURCE_DIR}/ocaml_opam_repository_gitref.txt OCAML_OPAM_REPOSITORY_GITREF)
 
     # Checksum to retrigger introspection
     FetchContent_GetProperties(dkml-runtime-distribution)

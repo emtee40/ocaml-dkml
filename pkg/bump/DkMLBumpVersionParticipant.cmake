@@ -20,6 +20,10 @@ if(NOT DKML_VERSION_SEMVER_NEW)
     message(FATAL_ERROR "Missing -D DKML_VERSION_SEMVER_NEW=xx")
 endif()
 
+if(NOT OCAML_OPAM_REPOSITORY_GITREF)
+    message(FATAL_ERROR "Missing -D OCAML_OPAM_REPOSITORY_GITREF=...")
+endif()
+
 macro(_DkMLBumpVersionParticipant_Finish_Replace VERSION_TYPE)
     if(contents STREQUAL "${contents_NEW}")
         string(FIND "${contents_NEW}" "${DKML_VERSION_${VERSION_TYPE}_NEW}" idempotent)
