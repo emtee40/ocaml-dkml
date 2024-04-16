@@ -86,7 +86,8 @@
    the highest Stage number. Many stages require a re-configuration based on
    values obtained from the prior stages, so do not skip any targets. Consult the
    [Errata](#errata)
-7. Finish with the CMake target `-PublishAssets`.
+7. Run `./dk dkml.workflow.compilers CI GitLab PRERELEASE`
+8. Finish with the CMake target `-PublishAssets`.
 
 ## Editing Source Code
 
