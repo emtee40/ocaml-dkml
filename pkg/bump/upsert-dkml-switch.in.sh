@@ -37,13 +37,16 @@ oor_COMMIT='@OCAML_OPAM_REPOSITORY_GITREF@'
 # -c CENTRAL_REPO: Use CENTRAL_REPO rather than the default git+https://github.com/ocaml/opam-repository.git
 #    repository. Valid opam urls must be used like https:// or git+https:// or git+file:// urls.
 # -x Disable sandboxing in all platforms. By default, sandboxing is disabled in Windows, WSL2 and in dockcross
-#    Linux containers
+#    Linux 
+# -g GIT_EXECUTABLE: Optional. Location of a git executable. On Windows it must not be in the same directory
+#    as a bash.exe or any other executables that have conflicting names with MSYS2 binaries.
 '@dkml-runtime-distribution_SOURCE_DIR@/src/unix/private/init-opam-root.sh' \
 -p "@DKML_HOST_ABI@" \
 -r "$OPAMROOT" \
 -o "$OPAM_EXE" \
 -e "git+file://@diskuv-opam-repository_SOURCE_DIR@/.git#${dor_COMMIT}" \
 -c "git+https://github.com/ocaml/opam-repository.git#${oor_COMMIT}" \
+-g '@GIT_EXECUTABLE@' \
 -x
 
 # shellcheck disable=SC2050
