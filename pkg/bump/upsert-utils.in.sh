@@ -9,7 +9,7 @@ DKML_BUILD_TRACE_LEVEL=${DKML_BUILD_TRACE_LEVEL:-@DKML_BUILD_TRACE_LEVEL@}
 
 #   Clear environment, especially so dkml-base-compiler is not influenced by DkML installation
 #       shellcheck disable=SC1091
-. '@CLEAR_COMPILER_ENV_SH@'
+. '@RESET_COMPILER_ENV_SH@'
 
 # Get location of opam from cmdrun/opamrun (whatever is launching this script)
 OPAM_EXE=$(command -v opam)

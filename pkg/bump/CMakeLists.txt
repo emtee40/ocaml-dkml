@@ -766,7 +766,6 @@ file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/depends/FULL_NOT_DUNE_FLAVOR_NO
 # GenerateLaunchers
 # -----------------------------------
 set(WITH_COMPILER_SH ${CMAKE_CURRENT_BINARY_DIR}/with-compiler.sh) # Used by generate-compiler-launcher.sh and upsert-*.sh
-SET(CLEAR_COMPILER_ENV_SH ${CMAKE_CURRENT_BINARY_DIR}/clear-compiler-env.sh) # Similar usage as WITH_COMPILER_SH
 
 function(add_GenerateLaunchers_target)
     FetchContent_GetProperties(dkml-workflows)
@@ -807,7 +806,12 @@ function(add_GenerateLaunchers_target)
     FetchContent_GetProperties(dkml-runtime-common)
     FetchContent_GetProperties(dkml-compiler)
     set(BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}")
-    configure_file(clear-compiler-env.in.sh ${CMAKE_CURRENT_BINARY_DIR}/clear-compiler-env.sh
+    if(CMAKE_HOST_WIN32)
+        set(IS_VISUAL_STUDIO ON)
+    else()
+        set(IS_VISUAL_STUDIO OFF)
+    endif()
+    configure_file(reset-compiler-env.in.sh ${CMAKE_CURRENT_BINARY_DIR}/reset-compiler-env.sh
         FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
         @ONLY NEWLINE_STYLE UNIX)
     configure_file(generate-compiler-launcher.in.sh ${CMAKE_CURRENT_BINARY_DIR}/generate-compiler-launcher.sh
@@ -834,6 +838,7 @@ function(add_GenerateLaunchers_target)
         DEPENDS ${WITH_COMPILER_SH}
     )
 endfunction()
+SET(RESET_COMPILER_ENV_SH ${CMAKE_CURRENT_BINARY_DIR}/reset-compiler-env.sh) # Similar usage as WITH_COMPILER_SH
 
 configure_file(anyrun.in.sh ${CMAKE_CURRENT_BINARY_DIR}/anyrun.sh
     FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
