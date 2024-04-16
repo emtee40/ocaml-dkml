@@ -11,23 +11,10 @@ DKML_BUILD_TRACE_LEVEL=${DKML_BUILD_TRACE_LEVEL:-@DKML_BUILD_TRACE_LEVEL@}
 #       shellcheck disable=SC1091
 . '@RESET_COMPILER_ENV_SH@'
 
-# Get location of opam from cmdrun/opamrun (whatever is launching this script)
-OPAM_EXE=$(command -v opam)
+# Location of opam
+OPAM_EXE='@anyrun_OPAMEXE@'
 export OPAMSWITCH=@DKML_VERSION_CMAKEVER@
-
-# If opam root is relative (ex. .ci/o), make it absolute
-STABLE_OPAM_DIR='@CMAKE_CURRENT_BINARY_DIR@'
-if [ -z "${OPAMROOT:-}" ]; then
-    echo 'No OPAMROOT is available. Missing cmdrun or its equivalent.' >&2
-    exit 79
-fi
-case "$OPAMROOT" in
-    /*|?:*) # ex. /a/b/c or C:\Windows
-        ;;
-    *)
-        # shellcheck disable=SC2034
-        OPAMROOT="$STABLE_OPAM_DIR/$OPAMROOT" ;;
-esac
+OPAMROOT='@anyrun_OPAMROOT@'
 export OPAMROOT
 
 # Color, except in CI or broken VS Code CMake/Build console.
