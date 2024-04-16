@@ -16,7 +16,7 @@ unset DiskuvOCamlMSYS2Dir
 case "@IS_VISUAL_STUDIO@" in
     ON)
         # shellcheck disable=SC1091
-        . "$BINARY_DIR/.ci/sd4/vsenv.sh"
+        . "@BINARY_DIR@/.ci/sd4/vsenv.sh"
         export DKML_COMPILE_SPEC="1"
         export DKML_COMPILE_TYPE="VS"
         export DKML_COMPILE_VS_DIR="$VS_DIR"
