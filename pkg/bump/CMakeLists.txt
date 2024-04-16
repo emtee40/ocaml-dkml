@@ -1026,6 +1026,7 @@ function(add_Flavor_targets)
 
     foreach(p IN ITEMS
         dos2unix
+        upsert-c-pkgs
         upsert-dkml-switch
         upsert-dkml-pkgs-compiler
         upsert-dkml-pkgs-flavor-dune
@@ -1036,6 +1037,7 @@ function(add_Flavor_targets)
             @ONLY NEWLINE_STYLE UNIX)
     endforeach()
 
+    anyrun(${opamsw}/upsert-c-pkgs.sh upsert_c_pkgs_COMMAND)
     anyrun(${opamsw}/upsert-dkml-switch.sh upsert_dkml_switch_COMMAND)
     anyrun(${opamsw}/upsert-dkml-pkgs-compiler.sh upsert_dkml_pkgs_compiler_COMMAND)
     anyrun(${opamsw}/upsert-dkml-pkgs-flavor-dune.sh upsert_dkml_pkgs_dune_COMMAND)
@@ -1084,6 +1086,11 @@ function(add_Flavor_targets)
         #   Needed by create-opam-switch.sh
         COMMAND "${CMAKE_COMMAND}" -E copy_directory ${dkml-runtime-distribution_SOURCE_DIR} ${DKML_ROOT_DIR}/vendor/drd
         ${copy_EXTRA}
+
+        # Do the C packages first especially in case the first opam command (the
+        # upsert dkml switch) has to rebuild the opam switch and later added packages
+        # are rebuilt.
+        COMMAND ${upsert_c_pkgs_COMMAND}
 
         # We don't make a separate CMake command for creating the opam root
         # because there is no good way (in CMake) to tell if the opam root
