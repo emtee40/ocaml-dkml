@@ -119,7 +119,7 @@ FetchGit(dkml-component-unixutils
 )
 FetchGit(dkml-component-opam
     GIT_REPOSITORY https://github.com/diskuv/dkml-component-opam.git
-    GIT_TAG main # daadfea83269e07b2e880e085e0a468b2ddeae6e
+    GIT_TAG 2.2.0-alpha # should be main once 2.2.0 series fixed
 )
 FetchGit(dkml-c-probe
     GIT_REPOSITORY https://github.com/diskuv/dkml-c-probe.git
