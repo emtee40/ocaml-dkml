@@ -188,3 +188,12 @@ Each iteration:
    ```
 
 > This saved git commit approach is the reason why in CI we don't just build `dkml` from `diskuv-opam-repository` ... with the git commits saved we can reproduce the installer on external machines and perhaps code-sign if it is good.
+
+### Debug
+
+```powershell
+# Change to the build directory, like:
+cd Y:\source\dkml\build\pkg\bump\.ci\o\2.1.1\.opam-switch\build\ctypes.0.19.2-windowssupport-r8
+
+& "C:\Program Files\CMake\bin\cmake.exe" -E env --modify PATH=path_list_prepend:Y:/source/dkml/build/pkg/bump/msys64/usr/bin -- Y:\source\dkml\build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root Y:\source\dkml\build\pkg\bump\.ci\o -- Y:\source\dkml\build\pkg\bump\msys64\usr\bin\make.exe XEN=disable ctypes-foreign
+```
