@@ -197,3 +197,11 @@ cd Y:\source\dkml\build\pkg\bump\.ci\o\2.1.1\.opam-switch\build\ctypes.0.19.2-wi
 
 & "C:\Program Files\CMake\bin\cmake.exe" -E env --modify PATH=path_list_prepend:Y:/source/dkml/build/pkg/bump/msys64/usr/bin -- Y:\source\dkml\build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root Y:\source\dkml\build\pkg\bump\.ci\o -- Y:\source\dkml\build\pkg\bump\msys64\usr\bin\make.exe XEN=disable ctypes-foreign
 ```
+
+### Nuclear Option
+
+```sh
+tag_DELETE=2.1.1-CHANGEME
+for i in diskuv-opam-repository; do git -C build/_deps/$i-src tag -d "$tag_DELETE"; git -C build/_deps/$i-src push origin --delete "$tag_DELETE"; done
+git tag -d "$tag_DELETE"; git push origin --delete "$tag_DELETE"
+```
