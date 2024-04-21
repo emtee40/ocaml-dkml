@@ -1,5 +1,6 @@
 variables:
   PACKAGE_REGISTRY_URL_BASE: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/release"
+  bootstrap_opam_version: 2.2.0-alpha-20221228 # 2.2.0-beta2-20240409 does not work
 
 test:
   extends:
