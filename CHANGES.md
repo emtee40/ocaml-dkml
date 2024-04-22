@@ -1,10 +1,21 @@
 # CHANGES
 
-## 2.1.1 (2024-04-21)
+## 2.1.0 (2023-12-09)
 
-### Installing and using DkML
+### Upgrading from a previous version
 
-See <https://youtu.be/33niX94tn3U>
+1. Close Visual Studio Code and any of your `dune` and `ocaml` programs.
+2. Open **Add or remove programs** from Windows Search (type Windows key and then start typing "Add or remove programs")
+   1. Uninstall `Diskuv OCaml` and/or `DkML Native` and/or `DkML Bytecode` if you see them; you can ignore any failures. You can now close "Add or remove programs".
+   2. Download and run the "Windows/Intel 64-bit Native Uninstaller" for version 2.1.0.
+3. Open PowerShell and run the following:
+
+   ```powershell
+   if (Test-Path $env:LOCALAPPDATA\Programs\DkMLNative\bin) { del -force -recurse $env:LOCALAPPDATA\Programs\DkMLNative\bin }
+   if (Test-Path $env:LOCALAPPDATA\Programs\DkMLNative\usr\bin) { del -force -recurse $env:LOCALAPPDATA\Programs\DkMLNative\usr\bin }
+   ```
+
+4. Go ahead and follow the "New Install Steps" below.
 
 ### What do I do after the install is complete?
 
@@ -26,15 +37,96 @@ for their GitHub Actions / GitLab CI:
 
 ### Major Changes
 
-* OCaml upgraded to 4.14.2 from 4.14.0
-* Dune upgraded to 3.15.0 from 3.12.1
-* The opam repository is fixed to [commit 6c3f73f42890cc19f81eb1dec8023c2cd7b8b5cd](https://github.com/ocaml/opam-repository/tree/6c3f73f42890cc19f81eb1dec8023c2cd7b8b5cd) for stability. If you need a new version of a package and can't wait for the next version of DkML, you can pin that package's url (recommended) or float the opam repository with `opam repository set-url default git+https://github.com/ocaml/opam-repository.git#main`.
-* Windows SDK 10.0.22621.0 and VC 17.8 (14.38) added to allowed list. This supports Visual Studio 2022, especially for GitLab CI.
-* New supported package: `tiny_httpd`
+* `dune` upgraded from `3.8.3+shim` to `3.12.1`. That means the `dune` "shim" providing access to MSVC and Unix in your projects (local switches) is gone,
+  but it also means you are free to unpin and upgrade `dune` in your projects independent of the DkML version.
+
+  So before the recommended flow was the following for PowerShell:
+
+  ```powershell
+  dkml init         # create a local opam switch for your project
+  opam install dune # install whatever packages you need
+  (& opam env) -split '\r?\n' | ForEach-Object { Invoke-Expression $_ }
+  dune build
+  ```
+
+  or the following for Command Prompt:
+
+  ```dosbatch
+  dkml init         # create a local opam switch for your project
+  opam install dune # install whatever packages you need
+  for /f "tokens=*" %i in ('opam env') do @%i
+  dune build
+  ```
+
+  I got tired of copy-and-pasting the different `opam env` syntaxes! Now the recommended flow is:
+
+  ```powershell
+  dkml init         # create a local opam switch for your project
+  opam install dune # install whatever packages you need
+  opam exec -- dune build
+  ```
+
+  I find the `opam exec -- ...` flow easy to remember and it is the same command regardless
+  whether you are running in a Unix shell or Command Prompt or PowerShell. Feedback on this
+  change is welcome, and there is a related [ocaml.org issue](https://github.com/ocaml/ocaml.org/issues/1819).
+
+  Advanced: Prefer the `opam env` flow over `opam exec --`? You can run `x64 Native Tools Command Prompt for VS 2019`
+  from Windows Search (press the Windows key and start typing `x64 ...`) to provide MSVC access to all
+  of your binaries, including `dune`. And if you want Unix access for your binaries, drop into a Unix
+  shell first with `with-dkml bash`.
+
+* The installer no longer auto-installs Visual Studio Build Tools and Git for Windows.
+  Instead you can use ["winget"](https://learn.microsoft.com/en-us/windows/package-manager/winget/#install-winget) as described
+  in [New Install Steps](#new-install-steps):
+
+  > Windows Package Manager **winget** command-line tool is available on Windows 11 and
+  > modern versions of Windows 10 as a part of the **App Installer**.
+  >
+  > You can [get App Installer from the Microsoft Store].
+  > If it's already installed, make sure it is updated with the latest version.
+* The installer has been separated into an *immediate* and a *shim* phase.
+
+  The *immediate* phase is available immediately after installation, and provides:
+
+  * `utop`, `ocamlc`, `ocaml`, `ocamlrun` and similar executables that work with bytecode in the global environment
+  * `ocamlformat`, `ocamllsp`, `ocamllex`, `dkml`, `with-dkml` and similar self-contained executables
+  * `opam` is a shim described below
+
+  The *shim* phase is started when the first shim (`opam`) is executed (or you can force it with `dkml init`).
+  These commands will **first** configure the global environment *as needed* so that OCaml tools can generate native code:
+
+  * builds the OCaml system compiler
+  * initializes the opam root
+  * creates the `playground` opam switch
+
+  and **second** continue to do their original function (ex. `opam install`, etc.).
+
+  Why separate phases?
+
+  * The time to first start using OCaml with `utop`, `ocamlc`, `ocamllsp` and `ocamlrun` has dropped to single-digit minutes.
+    The C compiler, assembler, system libraries and `git` are only needed for the shim phase ... nothing needs to be installed
+    for the immediate phase.
+
+    > I believe **time-to-first-use** is the most important metric for user experience.
+
+  * The support burden drops; before I had to deal with bad Visual Studio installations. Now `winget` can deal with it.
+  * System wide configuration options can be provided directly to `dkml init --system <more options>` rather than
+    through user-written configuration files.
+  * (Unexpected side-benefit) The separation made it fairly easy to run DkML on Unix. That means:
+    * it is sometimes much faster to develop simply by building on the Linux/macOS platforms that OCaml development is highly tuned for
+    * (hopefully) other Unix devs can contribute
+
+* Installation directory has changed from `<LOCALAPPDATA>/Programs/DiskuvOCaml` to `<LOCALAPPDATA>/Programs/DkML`
+* `dune` and `ocamlfind` are no longer placed in the global PATH.
+  * Why? The global `dune` was confusing if you happened be in a directory where a local opam switch (and a local `dune`) should be. And `ocamlfind` interferes with other programs (ex. `dune`).
+  * Eventually `dune` may be brought back to the global PATH when it (or the shim) becomes aware of its opam surroundings; that is, auto-install packages into the local opam switch, and builds code without any `eval $(opam env)` magic invocation.
+* dkml-workflows now supports `darwin_arm64`
+
+[get App Installer from the Microsoft Store]: https://www.microsoft.com/p/app-installer/9nblggh4nns1#activetab=pivot:overviewtab
 
 ### Known Issues
 
-* DkML is not yet supported on the Opam 2.2.0 beta series. The feature flag `DKML_FEATURE_FLAG_POST_OPAM_2_2_BETA2=ON` environment variable may be used once a working version of opam.exe (perhaps opam 2.2 beta3) has been placed in your PATH.
+* Can't upgrade to `ocaml.4.14.1` because of a complex issue with `ocaml-lsp` and `dune build` on Windows: <https://github.com/ocaml/opam-repository/pull/22902>. If your LSP is behaving oddly and/or does not have known bug fixes applied, you will have to wait until 4.14.2 is released at the end of the year.
 * macOS installs to `~/Applications/DkMLNative` rather than `~/Applications/DkMLNative.app` with an Application Bundle directory structure. In fact, not even sure that OCaml can be coherently packaged as an Application Bundle.
 * If you do move the installation directory or use the `--prefix` installer option on macOS or Linux, create a file `~/.local/share/dkml/dkmlvars-v2.sexp` (or `$XDG_DATA_HOME/dkml/dkmlvars-v2.sexp`) with the contents: `(("DiskuvOCamlHome" ("/path/to/new/install/dir")))`
 * The opam sandbox is disabled because the paths to `~/Applications/DkMLNative` (etc.) are not known today to the opam sandbox. Worse, you can change the installation directory and the opam sandbox won't know about it.
@@ -57,33 +149,141 @@ for their GitHub Actions / GitLab CI:
 
 ### Bug Fixes
 
-* You can now set the `OPAMROOT` environment variable to point to a directory where you'll save disk space. Your packages and projects are not transferred, however, to the new directory. Setting `OPAMROOT` is only recommended before installing DkML.
+* Fix bug where the cross-compiler `ocaml` interpreter (ex. darwin_x86 -> darwin_arm64) was hardcoded
+  with the cross-compiled standard library rather than the host standard library.
 
-### Patches
+### New Install Steps
 
-| Package                | What                              | Issue                                                   |
-| ---------------------- | --------------------------------- | ------------------------------------------------------- |
-| `base_bigstring.v16.0` | Implement `memmem` for Windows    | <https://github.com/janestreet/base_bigstring/issues/6> |
-| `core_kernel.v0.16.0`  | MSVC fix didn't make it to 0.16.0 | <https://github.com/janestreet/core_kernel/pull/107>    |
+#### Windows
+
+Windows 11 users already have `winget`, but Windows 10 users will need to [get App Installer from the Microsoft Store].
+
+Then run these three steps from the Command Prompt or PowerShell:
+
+```powershell
+# Visual Studio 2019 Build Tools
+# ------------------------------
+#
+# You can change "--installPath" if you need disk space (3GB+), but do not use spaces or parentheses. Bad: C:\Program Files (x86)
+# You can review what components are installed at:
+#   https://learn.microsoft.com/en-us/visualstudio/install/workload-component-id-vs-build-tools?view=vs-2019
+winget install Microsoft.VisualStudio.2019.BuildTools --override "--wait --passive --installPath C:\VS --addProductLang En-us --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
+
+# Git for Windows
+# ---------------
+#
+# You won't need this if you already have git.
+winget install Git.Git
+
+# Dkml
+# ----
+winget install Diskuv.OCaml
+```
+
+Because `winget` does not install dependencies, a design was made to allow the `winget` packages to install
+in any order. The practical consequence is that the first time you run any global command that could compile
+native code (ex. `opam`, `dune` and `dkml init` but not `ocaml` or `ocamlc`):
+
+1. The OCaml system compiler will be built using the available, compatible Visual Studio
+   (Visual Studio 2019 Build Tools or Visual Studio 2019 Community/Professional/Enterprise).
+2. The opam root will be initialized.
+3. The global "playground" switch will be installed.
+
+You can do those steps now with a **new** Command Prompt or PowerShell window:
+
+```powershell
+# IMPORTANT: If you run Windows in a VirtualBox, or have a computer manufactured before 2013 (ie. pre-Haswell or
+# pre-Piledriver CPU), run the following instead to avoid https://github.com/ocaml/ocaml/issues/12513:
+#   dkml init --system --enable-imprecise-c99-float-ops
+dkml init --system
+```
+
+#### macOS/Silicon
+
+```sh
+wget https://TODO/dkml-native-darwin_arm64-i-2.1.0.tar.gz
+install -d installer && tar xCfz installer dkml-native-darwin_arm64-i-2.1.0.tar.gz --strip-components 1
+installer/sg/staging-ocamlrun/darwin_arm64/bin/ocamlrun installer/bin/dkml-package.bc -vv && rm -rf installer
+
+# Use the DkML executables. Place usr/bin/ and bin/, in that order, in your PATH in .bashrc (etc.).
+~/Applications/DkMLNative/bin/utop            # Bytecode
+~/Applications/DkMLNative/bin/opam --version  # Native code; will auto-compile the native code OCaml system
+```
+
+#### Docker or Debian or Ubuntu
+
+> Docker in this section is for Debian-based Docker images
+
+```sh
+# or:
+#   docker run -it debian:oldoldstable-slim
+#   docker run -it debian:oldstable-slim
+#   docker run -it ubuntu:focal
+#   docker run -it ubuntu:latest
+$ docker run -it debian:stable-slim
+root@23c0e2f88029:/# apt-get update -y && apt-get install curl git build-essential unzip -y
+root@23c0e2f88029:/# curl --proto '=https' --tlsv1.2 -sSf -o i0.tar.gz https://gitlab.com/api/v4/projects/dkml%2Fdistributions%2Fdkml/packages/generic/release/2.1.0/dkml-native-linux_x86_64-i-2.1.0.tar.gz
+root@23c0e2f88029:/# install -d i0 && tar xCfz i0 i0.tar.gz --strip-components 1
+root@23c0e2f88029:/# CAML_LD_LIBRARY_PATH=i0/sg/staging-ocamlrun/linux_x86_64/lib/ocaml/stublibs i0/sg/staging-ocamlrun/linux_x86_64/bin/ocamlrun i0/bin/dkml-package.bc -v
+root@23c0e2f88029:/# rm -rf i0 i0.tar.gz
+
+root@23c0e2f88029:/# export OPAMROOTISOK=1 "PATH=$HOME/.local/share/dkml-native/usr/bin:$HOME/.local/share/dkml-native/bin:$PATH"
+root@23c0e2f88029:/# utop
+root@23c0e2f88029:/# opam --version
+root@23c0e2f88029:/# install -d ~/localswitch && cd ~/localswitch && dkml init --disable-sandboxing && opam install dune
+```
+
+#### Docker or RHEL
+
+> Docker in this section is for RHEL-based Docker images.
+
+```sh
+# or:
+#   docker run -it centos:7 # won't work until entire DkML can work with manylinux-2014. but EOL June 30, 2024.
+$ docker run -it redhat/ubi8
+[root@922cd710869b /]# yum install curl git gcc gcc-c++ make unzip diffutils patch bzip2 -y
+[root@922cd710869b /]# curl --proto '=https' --tlsv1.2 -sSf -o i0.tar.gz https://gitlab.com/api/v4/projects/dkml%2Fdistributions%2Fdkml/packages/generic/release/2.1.0/dkml-native-linux_x86_64-i-2.1.0.tar.gz
+[root@922cd710869b /]# install -d i0 && tar xCfz i0 i0.tar.gz --strip-components 1
+[root@922cd710869b /]# CAML_LD_LIBRARY_PATH=i0/sg/staging-ocamlrun/linux_x86_64/lib/ocaml/stublibs i0/sg/staging-ocamlrun/linux_x86_64/bin/ocamlrun i0/bin/dkml-package.bc -v
+[root@922cd710869b /]# rm -rf i0 i0.tar.gz
+
+[root@922cd710869b /]# export OPAMROOTISOK=1 "PATH=$HOME/.local/share/dkml-native/usr/bin:$HOME/.local/share/dkml-native/bin:$PATH"
+[root@922cd710869b /]# utop
+[root@922cd710869b /]# opam --version
+[root@922cd710869b /]# install -d ~/localswitch && cd ~/localswitch && dkml init --disable-sandboxing && opam install dune
+```
+
+#### Amazon Linux (AWS Lambda or EC2)
+
+```sh
+# or:
+#   docker run -it amazonlinux:1 # won't work until entire DkML can work with manylinux-2014. but deprecated anyway
+#   docker run -it amazonlinux:2 # won't work until entire DkML can work with manylinux-2014
+$ docker run -it amazonlinux:2023
+[root@922cd710869b /]# yum install tar git gcc gcc-c++ make unzip diffutils patch bzip2 -y
+[root@922cd710869b /]# curl --proto '=https' --tlsv1.2 -sSf -o i0.tar.gz https://gitlab.com/api/v4/projects/dkml%2Fdistributions%2Fdkml/packages/generic/release/2.1.0/dkml-native-linux_x86_64-i-2.1.0.tar.gz
+[root@922cd710869b /]# install -d i0 && tar xCfz i0 i0.tar.gz --strip-components 1
+[root@922cd710869b /]# CAML_LD_LIBRARY_PATH=i0/sg/staging-ocamlrun/linux_x86_64/lib/ocaml/stublibs i0/sg/staging-ocamlrun/linux_x86_64/bin/ocamlrun i0/bin/dkml-package.bc -v
+[root@922cd710869b /]# rm -rf i0 i0.tar.gz
+
+[root@922cd710869b /]# export OPAMROOTISOK=1 "PATH=$HOME/.local/share/dkml-native/usr/bin:$HOME/.local/share/dkml-native/bin:$PATH"
+[root@922cd710869b /]# utop
+[root@922cd710869b /]# opam --version
+[root@922cd710869b /]# install -d ~/localswitch && cd ~/localswitch && dkml init --disable-sandboxing && opam install dune
+```
 
 ### Internal Changes
 
-* `DiskuvOCamlForceDefaults=1` will skip any DkML variables detection from an old installation. When used with dkml-base-compiler it will refind its own Visual Studio installation rather than use what was detected during DkML installation.
-* There used to be `bootstrap_opam_version` and `FDOPEN_OPAMEXE_BOOTSTRAP` parameters for dkml-workflows (CI) that was independent of the DkML release. Now which opam is used is tied to what is tested during a DkML release.
-
 ### Upgraded Packages
 
-| Package             | From                     | To                       |
-| ------------------- | ------------------------ | ------------------------ |
-| dune (et al)        | 3.12.1                   | 3.15.0                   |
-| ocaml               | 4.14.0                   | 4.14.2                   |
-| ocamlformat (et al) | 0.25.1                   | 0.26.1                   |
-| odoc                | 2.2.0                    | 2.4.1                    |
-| odoc-parser         | 2.0.0                    | 2.4.1                    |
-| lsp (et al)         | 1.16.2                   | 1.17.0                   |
-| mdx                 | 2.3.0                    | 2.4.1                    |
-| ctypes (et al)      | 0.19.2-windowssupport-r7 | 0.19.2-windowssupport-r8 |
-| tiny_httpd          |                          | 0.16                     |
+| Package       | From       | To     |
+| ------------- | ---------- | ------ |
+| conf-withdkml | 2          | 3      |
+| lambda-term   | 3.3.1      | 3.3.2  |
+| lwt           | 5.6.1      | 5.7.0  |
+| zed           | 3.2.2      | 3.2.3  |
+| dune          | 3.8.3+shim | 3.12.1 |
+| xdg           | 3.9.0      | 3.12.1 |
 
 ### Likely Permanent Incompatibilities
 
