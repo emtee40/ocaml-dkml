@@ -58,8 +58,7 @@ installer-oldolddebian_x86_64:
   # Identity for dkml-compiler git-based patches
   - if [ "${CI_NO_MODIFY_MACHINE:-0}" -ne 1 ]; then echo git config --global user.email "anyone@example.com"; fi
 
-  - .ci/cmake/bin/cmake --preset ci-reproduce -G Ninja -D DKML_HOST_LINUX_DOCKER=0
-  - sh ci/build-unix-targz.sh linux_x86_64
+  - sh ci/build-unix-targz.sh linux_x86_64 standard
 
 installer-darwin_x86_64:
   # This architecture has problems building with an old, patched version of `ctypes.0.19.2`. There is no problem with `darwin_arm64`. So likely easy to fix but low-priority.
@@ -74,8 +73,7 @@ installer-darwin_x86_64:
   # Identity for dkml-compiler git-based patches
   - if [ "${CI_NO_MODIFY_MACHINE:-0}" -ne 1 ]; then echo git config --global user.email "anyone@example.com"; fi
 
-  - .ci/cmake/bin/cmake --preset ci-reproduce -G Ninja -D DKML_HOST_ABI=darwin_x86_64 -D DKML_TARGET_ABI=darwin_x86_64
-  - sh ci/build-unix-targz.sh darwin_x86_64
+  - sh ci/build-unix-targz.sh darwin_x86_64 standard
 
 installer-darwin_arm64:
   extends:
@@ -88,8 +86,7 @@ installer-darwin_arm64:
   # Identity for dkml-compiler git-based patches
   - if [ "${CI_NO_MODIFY_MACHINE:-0}" -ne 1 ]; then echo git config --global user.email "anyone@example.com"; fi
 
-  - .ci/cmake/bin/cmake --preset ci-reproduce -G Ninja -D DKML_HOST_ABI=darwin_arm64 -D DKML_TARGET_ABI=darwin_arm64
-  - sh ci/build-unix-targz.sh darwin_arm64
+  - sh ci/build-unix-targz.sh darwin_arm64 standard
 
 installer-linux_x86_64:
   # This architecture is built with ManyLinux 2014, which has an ancient glibc so it is portable to most Linux distros.
@@ -133,8 +130,7 @@ installer-linux_x86_64:
   dependencies: []
   script:
     - .ci/sd4/opamrun/cmdrun sh ./dk dksdk.cmake.copy QUIET
-    - .ci/sd4/opamrun/cmdrun cmake --preset ci-reproduce -G Ninja -D SKIP_CMDRUN=1 -D DKML_HOST_LINUX_DOCKER=0
-    - .ci/sd4/opamrun/cmdrun sh ci/build-unix-targz.sh linux_x86_64
+    - .ci/sd4/opamrun/cmdrun sh ci/build-unix-targz.sh linux_x86_64 dockcross
 
 # ------------------------------------------------------------------------
 # Tests

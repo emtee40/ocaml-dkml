@@ -222,3 +222,28 @@ cleanup_tag "." -final
 You will also need to edit and commit the changes ("Rollback to prior release"):
 - `CHANGES.md` to remove the release
 - `version.cmake` to rollback `DKML_PUBLICVERSION_CMAKEVER` to the last published version
+
+### dockcross
+
+From your host machine (Windows, macOS, Linux) launch a dockcross Linux container:
+
+```sh
+docker run --platform linux/amd64 --rm dockcross/manylinux2014-x64 > ./dockcross
+chmod +x ./dockcross
+./dockcross -a '--platform linux/amd64' bash
+```
+
+Inside the Linux container:
+
+```sh
+# dockcross_packages_yum from test.gitlab-ci.yml
+sudo yum install sqlite-devel libX11-devel pkgconfig gcc-c++ libffi-devel -y
+
+# .linux:setup-dkml-no-matrix from test.gitlab-ci.yml
+./dk dkml.workflow.compilers CI Desktop
+sh /work/.ci/dkml-compilers/pc/setup-dkml-linux_x86_64.sh --in_docker=false --PRIMARY_SWITCH_SKIP_INSTALL=true --SKIP_OPAM_MODIFICATIONS=true 
+
+# installer-linux_x86_64 build: steps from test.gitlab-ci.yml
+.ci/sd4/opamrun/cmdrun sh ./dk dksdk.cmake.copy QUIET
+.ci/sd4/opamrun/cmdrun sh ci/build-unix-targz.sh linux_x86_64 dockcross
+```
