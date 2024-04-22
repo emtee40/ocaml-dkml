@@ -1,5 +1,94 @@
 # CHANGES
 
+## 2.1.1 (2024-04-21)
+
+### Installing and using DkML
+
+See <https://youtu.be/33niX94tn3U>
+
+### What do I do after the install is complete?
+
+You SHOULD read the "Install is done! What next?" at <https://diskuv.com/dkmlbook/#install-is-done-what-next> documentation.
+
+If you had any existing local switches, upgrade them by doing `dkml init`, `opam upgrade` and `opam install . --deps-only` in the local switch directories.
+
+For projects using [`setup-dkml` (part of  `dkml-workflows`)](https://github.com/diskuv/dkml-workflows#dkml-workflows)
+for their GitHub Actions / GitLab CI:
+
+1. Re-run `dkml init`, `opam upgrade` and `opam install . --deps-only` in your project
+2. Follow the THIRD step of <https://github.com/diskuv/dkml-workflows#configure-your-project>
+
+*And* if you have installed the Bytecode Edition, you no longer need it! Do:
+
+1. Open Windows Explorer
+2. Navigate to the folder `%LOCALAPPDATA%\Programs`
+3. Delete the `DkMLByte` folder
+
+### Major Changes
+
+* OCaml upgraded to 4.14.2 from 4.14.0
+* Dune upgraded to 3.15.0 from 3.12.1
+* The opam repository is fixed to [commit 6c3f73f42890cc19f81eb1dec8023c2cd7b8b5cd](https://github.com/ocaml/opam-repository/tree/6c3f73f42890cc19f81eb1dec8023c2cd7b8b5cd) for stability. If you need a new version of a package and can't wait for the next version of DkML, you can pin that package's url (recommended) or float the opam repository with `opam repository set-url default git+https://github.com/ocaml/opam-repository.git#main`.
+* Windows SDK 10.0.22621.0 and VC 17.8 (14.38) added to allowed list. This supports Visual Studio 2022, especially for GitLab CI.
+* New supported package: `tiny_httpd`
+
+### Known Issues
+
+* DkML is not yet supported on the Opam 2.2.0 beta series. The feature flag `DKML_FEATURE_FLAG_POST_OPAM_2_2_BETA2=ON` environment variable may be used once a working version of opam.exe (perhaps opam 2.2 beta3) has been placed in your PATH.
+* macOS installs to `~/Applications/DkMLNative` rather than `~/Applications/DkMLNative.app` with an Application Bundle directory structure. In fact, not even sure that OCaml can be coherently packaged as an Application Bundle.
+* If you do move the installation directory or use the `--prefix` installer option on macOS or Linux, create a file `~/.local/share/dkml/dkmlvars-v2.sexp` (or `$XDG_DATA_HOME/dkml/dkmlvars-v2.sexp`) with the contents: `(("DiskuvOCamlHome" ("/path/to/new/install/dir")))`
+* The opam sandbox is disabled because the paths to `~/Applications/DkMLNative` (etc.) are not known today to the opam sandbox. Worse, you can change the installation directory and the opam sandbox won't know about it.
+
+### Architectures
+
+| Architecture            | Reason                                        |
+| ----------------------- | --------------------------------------------- |
+| ✅︎ `windows_x86_64`      |                                               |
+| ❌ `windows_x86`         | Haven't gotten around to it setting up CI     |
+| ✅︎ `darwin_arm64`        |                                               |
+| ❌ `darwin_x86_64`       | Resolvable issue with old `ctypes.0.19.2` (1) |
+| ❌ `linux_x86_64`        | Issue with `ocaml-lsp-server.1.16.2` (2)      |
+| ❌ `linux_x86`           | Haven't gotten around to it setting up CI     |
+| ✅︎ `oldolddebian_x86_64` | (3)                                           |
+
+* (1) This architecture has problems building with an old, patched version of `ctypes.0.19.2`. There is no problem with `darwin_arm64`. So likely easy to fix but low-priority.
+* (2) This architecture is built with ManyLinux 2014 based on CentOS 7, which has an ancient glibc so it is portable to most Linux distros. However, ocaml-lsp-server.1.16.2 submodules the `lev` package which does not compile with ManyLinux. Unclear why but not investigating because very low-priority.
+* (3) Internally named `linux_x86_64` but built from Debian oldold (currently 10 "buster") rather than CentOS 7. The binaries work on most of the major Linux non-EOL glibc distributions except CentOS 7.
+
+### Bug Fixes
+
+* You can now set the `OPAMROOT` environment variable to point to a directory where you'll save disk space. Your packages and projects are not transferred, however, to the new directory. Setting `OPAMROOT` is only recommended before installing DkML.
+
+### Patches
+
+| Package                | What                              | Issue                                                   |
+| ---------------------- | --------------------------------- | ------------------------------------------------------- |
+| `base_bigstring.v16.0` | Implement `memmem` for Windows    | <https://github.com/janestreet/base_bigstring/issues/6> |
+| `core_kernel.v0.16.0`  | MSVC fix didn't make it to 0.16.0 | <https://github.com/janestreet/core_kernel/pull/107>    |
+
+### Internal Changes
+
+* `DiskuvOCamlForceDefaults=1` will skip any DkML variables detection from an old installation. When used with dkml-base-compiler it will refind its own Visual Studio installation rather than use what was detected during DkML installation.
+* There used to be `bootstrap_opam_version` and `FDOPEN_OPAMEXE_BOOTSTRAP` parameters for dkml-workflows (CI) that was independent of the DkML release. Now which opam is used is tied to what is tested during a DkML release.
+
+### Upgraded Packages
+
+| Package             | From                     | To                       |
+| ------------------- | ------------------------ | ------------------------ |
+| dune (et al)        | 3.12.1                   | 3.15.0                   |
+| ocaml               | 4.14.0                   | 4.14.2                   |
+| ocamlformat (et al) | 0.25.1                   | 0.26.1                   |
+| odoc                | 2.2.0                    | 2.4.1                    |
+| odoc-parser         | 2.0.0                    | 2.4.1                    |
+| lsp (et al)         | 1.16.2                   | 1.17.0                   |
+| mdx                 | 2.3.0                    | 2.4.1                    |
+| ctypes (et al)      | 0.19.2-windowssupport-r7 | 0.19.2-windowssupport-r8 |
+| tiny_httpd          |                          | 0.16                     |
+
+### Likely Permanent Incompatibilities
+
+* The `diskuv-opam-repository`, in particular patches for `ocaml-config`, are required in addition to the main opam repository. The correct repositories are selected when `dkml init` is used to create a local switch. Why can't it be upstreamed? There were changes done to the `ocaml-config` package to recognize the process name `ocaml-real` that comes from the shim `ocaml <spawns> ocaml-real`. The shim is required to get OCaml to accept arbitrary user installation directories (aka. "relocation"). However, new versions past `ocaml-config.3` are restricted to only OCaml 5 which is not an option for DkML.
+
 ## 2.1.0 (2023-12-09)
 
 ### Upgrading from a previous version
