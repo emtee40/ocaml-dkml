@@ -142,8 +142,6 @@ function(DkMLBumpPackagesParticipant_SetupDkmlUpgrade REL_FILENAME)
 
     foreach(pkg IN LISTS pkgs)
         DkMLBumpPackagesParticipant_UpperSanitized()
-        string(TOUPPER "${pkg}" PKG_UPPER_SANITIZED)
-        string(REPLACE "-" "_" PKG_UPPER_SANITIZED "${PKG_UPPER_SANITIZED}")
         list(APPEND pkgs2 "${pkg} \"\${PIN_${PKG_UPPER_SANITIZED}}\"")
     endforeach()
 
