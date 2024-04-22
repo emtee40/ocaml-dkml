@@ -4233,7 +4233,7 @@ variables:
       dockcross_cli_image_args=
       if [ "${in_docker:-}" = "true" ] && [ -n "${dockcross_image:-}" ]; then
           echo "Doing docker build"
-          section_begin docker-build "Summary: docker build --quiet --tag ${docker_fqin_preusername}dkml-workflows/dockcross"
+          section_begin docker-build "Summary: docker build --tag ${docker_fqin_preusername}dkml-workflows/dockcross"
 
           install -d .ci/sd4/docker-image
           #   Since GitLab CI limits environment variables to 255 characters, if you need to exceed that there are five (5)
@@ -4243,7 +4243,7 @@ variables:
               "${dockcross_packages_apt:-}" "${dockcross_packages_apt2:-}" "${dockcross_packages_apt3:-}" "${dockcross_packages_apt4:-}" "${dockcross_packages_apt5:-}" \
               "${dockcross_packages_yum:-}" "${dockcross_packages_yum2:-}" "${dockcross_packages_yum3:-}" "${dockcross_packages_yum4:-}" "${dockcross_packages_yum5:-}" \
               >.ci/sd4/docker-image/Dockerfile
-          docker build --quiet --tag "${docker_fqin_preusername}dkml-workflows/dockcross:latest" .ci/sd4/docker-image
+          docker build --tag "${docker_fqin_preusername}dkml-workflows/dockcross:latest" .ci/sd4/docker-image
 
           # Save image id to re-use for all remaining dockcross invocations
           docker images --format "{{.ID}} {{.CreatedAt}}" | sort -rk 2 | awk 'NR==1{print $1}' | tee .ci/sd4/docker-image-id
