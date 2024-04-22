@@ -26,6 +26,7 @@ variables:
   PIN_BIGARRAY_COMPAT: '1.1.0'
   PIN_BOS: '0.2.1'
   PIN_CAMLP_STREAMS: '5.0.1'
+  PIN_CAMLZIP: '1.11'
   PIN_CHROME_TRACE: '3.15.0'
   PIN_CMDLINER: '1.2.0'
   PIN_CONF_BASH: '1'
@@ -34,12 +35,13 @@ variables:
   PIN_CONF_LIBX11: '1'
   PIN_CONF_PKG_CONFIG: '2+cpkgs'
   PIN_CONF_SQLITE3: '3.1+cpkgs'
+  PIN_CONF_ZLIB: '1'
   PIN_CPPO: '1.6.9'
   PIN_CRUNCH: '3.3.1'
   PIN_CSEXP: '1.5.2'
   PIN_CSTRUCT: '6.2.0'
-  PIN_CTYPES_FOREIGN: '0.19.2-windowssupport-r7'
-  PIN_CTYPES: '0.19.2-windowssupport-r7'
+  PIN_CTYPES_FOREIGN: '0.19.2-windowssupport-r8'
+  PIN_CTYPES: '0.19.2-windowssupport-r8'
   PIN_CUDF: '0.10'
   PIN_DIGESTIF: '1.2.0'
   PIN_DISKUVBOX: '0.2.0'
@@ -49,19 +51,19 @@ variables:
   PIN_DKML_C_PROBE: '3.0.0'
   PIN_DKML_COMPILER_SRC: '2.1.1'
   PIN_DKML_COMPONENT_COMMON_DESKTOP: '2.1.1'
-  PIN_DKML_COMPONENT_COMMON_OPAM: '2.2.0~beta2~20240409'
+  PIN_DKML_COMPONENT_COMMON_OPAM: '2.2.0~alpha0~20221228-r3'
   PIN_DKML_COMPONENT_COMMON_UNIXUTILS: '0.2.0'
   PIN_DKML_COMPONENT_OCAMLCOMPILER_COMMON: '4.14.2~v2.1.1'
   PIN_DKML_COMPONENT_OCAMLCOMPILER_NETWORK: '4.14.2~v2.1.1'
   PIN_DKML_COMPONENT_OCAMLCOMPILER_OFFLINE: '4.14.2~v2.1.1'
   PIN_DKML_COMPONENT_OFFLINE_DESKTOP_FULL: '2.1.1'
-  PIN_DKML_COMPONENT_OFFLINE_OPAMSHIM: '2.2.0~beta2~20240409'
+  PIN_DKML_COMPONENT_OFFLINE_OPAMSHIM: '2.2.0~alpha0~20221228-r3'
   PIN_DKML_COMPONENT_OFFLINE_UNIXUTILS: '0.2.0'
   PIN_DKML_COMPONENT_STAGING_DESKTOP_FULL: '2.1.1'
   PIN_DKML_COMPONENT_STAGING_DKMLCONFDIR: '2.1.1'
   PIN_DKML_COMPONENT_STAGING_OCAMLRUN: '4.14.2~v2.1.1'
-  PIN_DKML_COMPONENT_STAGING_OPAM32: '2.2.0~beta2~20240409'
-  PIN_DKML_COMPONENT_STAGING_OPAM64: '2.2.0~beta2~20240409'
+  PIN_DKML_COMPONENT_STAGING_OPAM32: '2.2.0~alpha0~20221228-r3'
+  PIN_DKML_COMPONENT_STAGING_OPAM64: '2.2.0~alpha0~20221228-r3'
   PIN_DKML_COMPONENT_STAGING_UNIXUTILS: '0.2.0'
   PIN_DKML_COMPONENT_STAGING_WITHDKML: '2.1.1'
   PIN_DKML_COMPONENT_XX_CONSOLE: '0.1.1'
@@ -101,7 +103,10 @@ variables:
   PIN_FPATH: '0.7.3'
   PIN_GRAPHICS: '5.1.2'
   PIN_HEX: '1.5.0'
+  PIN_HMAP: '0.8.1'
   PIN_INTEGERS: '0.7.0'
+  PIN_IOSTREAM_CAMLZIP: '0.2.2'
+  PIN_IOSTREAM: '0.2.2'
   PIN_JANE_STREET_HEADERS: 'v0.16.0'
   PIN_JINGOO: '1.5.0'
   PIN_JSONM: '1.0.2'
@@ -179,6 +184,8 @@ variables:
   PIN_STDLIB_SHIMS: '0.3.0'
   PIN_STDUNE: '3.15.0'
   PIN_TIME_NOW: 'v0.16.0'
+  PIN_TINY_HTTPD: '0.16'
+  PIN_TINY_HTTPD_CAMLZIP: '0.16'
   PIN_TOPKG: '1.0.7'
   PIN_TRAVERSE: '0.3.0'
   PIN_TRIE: '1.0.0'
@@ -834,9 +841,9 @@ variables:
               if [ ! -e version ] || [ "$(cat version)" != "$bootstrap_opam_version" ]; then
                   echo 'Bootstrap opam from historical release (non-Windows; Windows non-fdopen) ...'
                   if command -v curl > /dev/null 2> /dev/null; then
-                      curl -s -L -o opam.tar.gz "https://github.com/diskuv/dkml-component-opam/releases/download/v${bootstrap_opam_version}/dkml-component-staging-opam.tar.gz"
+                      curl -s -L -o opam.tar.gz "https://github.com/diskuv/dkml-component-opam/releases/download/${bootstrap_opam_version}/dkml-component-staging-opam.tar.gz"
                   else
-                      wget -q -O opam.tar.gz "https://github.com/diskuv/dkml-component-opam/releases/download/v${bootstrap_opam_version}/dkml-component-staging-opam.tar.gz"
+                      wget -q -O opam.tar.gz "https://github.com/diskuv/dkml-component-opam/releases/download/${bootstrap_opam_version}/dkml-component-staging-opam.tar.gz"
                   fi
                   tar tfz opam.tar.gz
                   tar xfz opam.tar.gz "./staging-files/${dkml_host_abi}/"
@@ -1142,8 +1149,7 @@ variables:
 
           # ---------------
           # Create Opam support scripts (not needed for all platforms)
-          #   The PATH to find opam must work internally in setup-dkml.yml (sd4/bs/bin) and
-          #   by consumers of setup-dkml.yml (sd4/opamexe)
+          #   The PATH to find opam must work internally in setup-dkml.yml (sd4/bs/bin)
           # ---------------
 
           USER_ID=$(id -u)
@@ -1165,7 +1171,7 @@ variables:
               cat >.ci/sd4/run-in-docker <<EOF
       #!/bin/sh
       set -euf
-      export PATH="/work/.ci/local/bin:/work/.ci/sd4/bs/bin:/work/.ci/sd4/opamexe:\$PATH"
+      export PATH="/work/.ci/local/bin:/work/.ci/sd4/bs/bin:\$PATH"
       export OPAMROOT=/work/${opam_root}
       export OPAMROOTISOK=1
       if [ "${PATCH_OS_DISTRIBUTION_WIN32}" = true ]; then export OPAMVAR_os_distribution=win32; fi
@@ -1286,7 +1292,7 @@ variables:
       HERE=\$(cd "\$HERE" && pwd)
       PROJECT_DIR=\$(cd "\$HERE"/../.. && pwd)
 
-      export PATH="\${PROJECT_DIR}/.ci/local/bin:\${PROJECT_DIR}/.ci/sd4/bs/bin:\${PROJECT_DIR}/.ci/sd4/opamexe:\$PATH"
+      export PATH="\${PROJECT_DIR}/.ci/local/bin:\${PROJECT_DIR}/.ci/sd4/bs/bin:\$PATH"
       export OPAMROOT='${opam_root}'
       export OPAMROOTISOK=1
       if [ "${PATCH_OS_DISTRIBUTION_WIN32}" = true ]; then export OPAMVAR_os_distribution=win32; fi
@@ -1573,6 +1579,7 @@ variables:
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version bigarray-compat "${PIN_BIGARRAY_COMPAT}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version bos "${PIN_BOS}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version camlp-streams "${PIN_CAMLP_STREAMS}"
+          opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version camlzip "${PIN_CAMLZIP}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version chrome-trace "${PIN_CHROME_TRACE}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version cmdliner "${PIN_CMDLINER}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version conf-bash "${PIN_CONF_BASH}"
@@ -1581,6 +1588,7 @@ variables:
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version conf-libX11 "${PIN_CONF_LIBX11}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version conf-pkg-config "${PIN_CONF_PKG_CONFIG}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version conf-sqlite3 "${PIN_CONF_SQLITE3}"
+          opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version conf-zlib "${PIN_CONF_ZLIB}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version cppo "${PIN_CPPO}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version crunch "${PIN_CRUNCH}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version csexp "${PIN_CSEXP}"
@@ -1648,7 +1656,10 @@ variables:
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version fpath "${PIN_FPATH}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version graphics "${PIN_GRAPHICS}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version hex "${PIN_HEX}"
+          opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version hmap "${PIN_HMAP}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version integers "${PIN_INTEGERS}"
+          opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version iostream "${PIN_IOSTREAM}"
+          opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version iostream-camlzip "${PIN_IOSTREAM_CAMLZIP}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version jane-street-headers "${PIN_JANE_STREET_HEADERS}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version jingoo "${PIN_JINGOO}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version jsonm "${PIN_JSONM}"
@@ -1726,6 +1737,8 @@ variables:
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version stdlib-shims "${PIN_STDLIB_SHIMS}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version stdune "${PIN_STDUNE}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version time_now "${PIN_TIME_NOW}"
+          opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version tiny_httpd "${PIN_TINY_HTTPD}"
+          opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version tiny_httpd_camlzip "${PIN_TINY_HTTPD_CAMLZIP}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version topkg "${PIN_TOPKG}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version traverse "${PIN_TRAVERSE}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version trie "${PIN_TRIE}"
@@ -2330,7 +2343,7 @@ variables:
       msys2_system: 'MINGW32',
       msys2_packages: 'mingw-w64-i686-pkg-config',
       exe_ext: '.exe',
-      bootstrap_opam_version: '2.2.0-alpha-20221228',
+      bootstrap_opam_version: '2.2.0-beta2-20240409',
       opam_abi: 'windows_x86',
       dkml_host_abi: 'windows_x86',
       opam_root: 'C:/o',
@@ -2351,7 +2364,7 @@ variables:
       msys2_system: 'CLANG64',
       msys2_packages: 'mingw-w64-clang-x86_64-pkg-config',
       exe_ext: '.exe',
-      bootstrap_opam_version: '2.2.0-alpha-20221228',
+      bootstrap_opam_version: '2.2.0-beta2-20240409',
       opam_abi: 'windows_x86_64',
       dkml_host_abi: 'windows_x86_64',
       opam_root: 'C:/o',
@@ -2373,7 +2386,7 @@ variables:
         msys2_system: 'MINGW32',
         msys2_packages: 'mingw-w64-i686-pkg-config',
         exe_ext: '.exe',
-        bootstrap_opam_version: '2.2.0-alpha-20221228',
+        bootstrap_opam_version: '2.2.0-beta2-20240409',
         opam_abi: 'windows_x86',
         dkml_host_abi: 'windows_x86',
         opam_root: 'C:/o',
@@ -2387,7 +2400,7 @@ variables:
         msys2_system: 'CLANG64',
         msys2_packages: 'mingw-w64-clang-x86_64-pkg-config',
         exe_ext: '.exe',
-        bootstrap_opam_version: '2.2.0-alpha-20221228',
+        bootstrap_opam_version: '2.2.0-beta2-20240409',
         opam_abi: 'windows_x86_64',
         dkml_host_abi: 'windows_x86_64',
         opam_root: 'C:/o',
@@ -2406,7 +2419,7 @@ variables:
         abi_pattern: 'macos-darwin_all-silicon',
         no_gh: 'true',
         gl_image: 'macos-13-xcode-14',
-        bootstrap_opam_version: '2.2.0-alpha-20221228',
+        bootstrap_opam_version: '2.2.0-beta2-20240409',
         dkml_host_abi: 'darwin_arm64',
         opam_root: '${CI_PROJECT_DIR}/.ci/o' },
         
@@ -2865,9 +2878,9 @@ variables:
               if [ ! -e version ] || [ "$(cat version)" != "$bootstrap_opam_version" ]; then
                   echo 'Bootstrap opam from historical release (non-Windows; Windows non-fdopen) ...'
                   if command -v curl > /dev/null 2> /dev/null; then
-                      curl -s -L -o opam.tar.gz "https://github.com/diskuv/dkml-component-opam/releases/download/v${bootstrap_opam_version}/dkml-component-staging-opam.tar.gz"
+                      curl -s -L -o opam.tar.gz "https://github.com/diskuv/dkml-component-opam/releases/download/${bootstrap_opam_version}/dkml-component-staging-opam.tar.gz"
                   else
-                      wget -q -O opam.tar.gz "https://github.com/diskuv/dkml-component-opam/releases/download/v${bootstrap_opam_version}/dkml-component-staging-opam.tar.gz"
+                      wget -q -O opam.tar.gz "https://github.com/diskuv/dkml-component-opam/releases/download/${bootstrap_opam_version}/dkml-component-staging-opam.tar.gz"
                   fi
                   tar tfz opam.tar.gz
                   tar xfz opam.tar.gz "./staging-files/${dkml_host_abi}/"
@@ -3173,8 +3186,7 @@ variables:
 
           # ---------------
           # Create Opam support scripts (not needed for all platforms)
-          #   The PATH to find opam must work internally in setup-dkml.yml (sd4/bs/bin) and
-          #   by consumers of setup-dkml.yml (sd4/opamexe)
+          #   The PATH to find opam must work internally in setup-dkml.yml (sd4/bs/bin)
           # ---------------
 
           USER_ID=$(id -u)
@@ -3196,7 +3208,7 @@ variables:
               cat >.ci/sd4/run-in-docker <<EOF
       #!/bin/sh
       set -euf
-      export PATH="/work/.ci/local/bin:/work/.ci/sd4/bs/bin:/work/.ci/sd4/opamexe:\$PATH"
+      export PATH="/work/.ci/local/bin:/work/.ci/sd4/bs/bin:\$PATH"
       export OPAMROOT=/work/${opam_root}
       export OPAMROOTISOK=1
       if [ "${PATCH_OS_DISTRIBUTION_WIN32}" = true ]; then export OPAMVAR_os_distribution=win32; fi
@@ -3317,7 +3329,7 @@ variables:
       HERE=\$(cd "\$HERE" && pwd)
       PROJECT_DIR=\$(cd "\$HERE"/../.. && pwd)
 
-      export PATH="\${PROJECT_DIR}/.ci/local/bin:\${PROJECT_DIR}/.ci/sd4/bs/bin:\${PROJECT_DIR}/.ci/sd4/opamexe:\$PATH"
+      export PATH="\${PROJECT_DIR}/.ci/local/bin:\${PROJECT_DIR}/.ci/sd4/bs/bin:\$PATH"
       export OPAMROOT='${opam_root}'
       export OPAMROOTISOK=1
       if [ "${PATCH_OS_DISTRIBUTION_WIN32}" = true ]; then export OPAMVAR_os_distribution=win32; fi
@@ -3604,6 +3616,7 @@ variables:
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version bigarray-compat "${PIN_BIGARRAY_COMPAT}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version bos "${PIN_BOS}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version camlp-streams "${PIN_CAMLP_STREAMS}"
+          opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version camlzip "${PIN_CAMLZIP}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version chrome-trace "${PIN_CHROME_TRACE}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version cmdliner "${PIN_CMDLINER}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version conf-bash "${PIN_CONF_BASH}"
@@ -3612,6 +3625,7 @@ variables:
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version conf-libX11 "${PIN_CONF_LIBX11}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version conf-pkg-config "${PIN_CONF_PKG_CONFIG}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version conf-sqlite3 "${PIN_CONF_SQLITE3}"
+          opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version conf-zlib "${PIN_CONF_ZLIB}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version cppo "${PIN_CPPO}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version crunch "${PIN_CRUNCH}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version csexp "${PIN_CSEXP}"
@@ -3679,7 +3693,10 @@ variables:
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version fpath "${PIN_FPATH}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version graphics "${PIN_GRAPHICS}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version hex "${PIN_HEX}"
+          opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version hmap "${PIN_HMAP}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version integers "${PIN_INTEGERS}"
+          opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version iostream "${PIN_IOSTREAM}"
+          opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version iostream-camlzip "${PIN_IOSTREAM_CAMLZIP}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version jane-street-headers "${PIN_JANE_STREET_HEADERS}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version jingoo "${PIN_JINGOO}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version jsonm "${PIN_JSONM}"
@@ -3757,6 +3774,8 @@ variables:
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version stdlib-shims "${PIN_STDLIB_SHIMS}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version stdune "${PIN_STDUNE}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version time_now "${PIN_TIME_NOW}"
+          opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version tiny_httpd "${PIN_TINY_HTTPD}"
+          opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version tiny_httpd_camlzip "${PIN_TINY_HTTPD_CAMLZIP}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version topkg "${PIN_TOPKG}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version traverse "${PIN_TRAVERSE}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version trie "${PIN_TRIE}"
@@ -4609,9 +4628,9 @@ variables:
               if [ ! -e version ] || [ "$(cat version)" != "$bootstrap_opam_version" ]; then
                   echo 'Bootstrap opam from historical release (non-Windows; Windows non-fdopen) ...'
                   if command -v curl > /dev/null 2> /dev/null; then
-                      curl -s -L -o opam.tar.gz "https://github.com/diskuv/dkml-component-opam/releases/download/v${bootstrap_opam_version}/dkml-component-staging-opam.tar.gz"
+                      curl -s -L -o opam.tar.gz "https://github.com/diskuv/dkml-component-opam/releases/download/${bootstrap_opam_version}/dkml-component-staging-opam.tar.gz"
                   else
-                      wget -q -O opam.tar.gz "https://github.com/diskuv/dkml-component-opam/releases/download/v${bootstrap_opam_version}/dkml-component-staging-opam.tar.gz"
+                      wget -q -O opam.tar.gz "https://github.com/diskuv/dkml-component-opam/releases/download/${bootstrap_opam_version}/dkml-component-staging-opam.tar.gz"
                   fi
                   tar tfz opam.tar.gz
                   tar xfz opam.tar.gz "./staging-files/${dkml_host_abi}/"
@@ -4917,8 +4936,7 @@ variables:
 
           # ---------------
           # Create Opam support scripts (not needed for all platforms)
-          #   The PATH to find opam must work internally in setup-dkml.yml (sd4/bs/bin) and
-          #   by consumers of setup-dkml.yml (sd4/opamexe)
+          #   The PATH to find opam must work internally in setup-dkml.yml (sd4/bs/bin)
           # ---------------
 
           USER_ID=$(id -u)
@@ -4940,7 +4958,7 @@ variables:
               cat >.ci/sd4/run-in-docker <<EOF
       #!/bin/sh
       set -euf
-      export PATH="/work/.ci/local/bin:/work/.ci/sd4/bs/bin:/work/.ci/sd4/opamexe:\$PATH"
+      export PATH="/work/.ci/local/bin:/work/.ci/sd4/bs/bin:\$PATH"
       export OPAMROOT=/work/${opam_root}
       export OPAMROOTISOK=1
       if [ "${PATCH_OS_DISTRIBUTION_WIN32}" = true ]; then export OPAMVAR_os_distribution=win32; fi
@@ -5061,7 +5079,7 @@ variables:
       HERE=\$(cd "\$HERE" && pwd)
       PROJECT_DIR=\$(cd "\$HERE"/../.. && pwd)
 
-      export PATH="\${PROJECT_DIR}/.ci/local/bin:\${PROJECT_DIR}/.ci/sd4/bs/bin:\${PROJECT_DIR}/.ci/sd4/opamexe:\$PATH"
+      export PATH="\${PROJECT_DIR}/.ci/local/bin:\${PROJECT_DIR}/.ci/sd4/bs/bin:\$PATH"
       export OPAMROOT='${opam_root}'
       export OPAMROOTISOK=1
       if [ "${PATCH_OS_DISTRIBUTION_WIN32}" = true ]; then export OPAMVAR_os_distribution=win32; fi
@@ -5348,6 +5366,7 @@ variables:
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version bigarray-compat "${PIN_BIGARRAY_COMPAT}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version bos "${PIN_BOS}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version camlp-streams "${PIN_CAMLP_STREAMS}"
+          opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version camlzip "${PIN_CAMLZIP}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version chrome-trace "${PIN_CHROME_TRACE}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version cmdliner "${PIN_CMDLINER}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version conf-bash "${PIN_CONF_BASH}"
@@ -5356,6 +5375,7 @@ variables:
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version conf-libX11 "${PIN_CONF_LIBX11}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version conf-pkg-config "${PIN_CONF_PKG_CONFIG}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version conf-sqlite3 "${PIN_CONF_SQLITE3}"
+          opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version conf-zlib "${PIN_CONF_ZLIB}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version cppo "${PIN_CPPO}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version crunch "${PIN_CRUNCH}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version csexp "${PIN_CSEXP}"
@@ -5423,7 +5443,10 @@ variables:
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version fpath "${PIN_FPATH}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version graphics "${PIN_GRAPHICS}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version hex "${PIN_HEX}"
+          opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version hmap "${PIN_HMAP}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version integers "${PIN_INTEGERS}"
+          opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version iostream "${PIN_IOSTREAM}"
+          opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version iostream-camlzip "${PIN_IOSTREAM_CAMLZIP}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version jane-street-headers "${PIN_JANE_STREET_HEADERS}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version jingoo "${PIN_JINGOO}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version jsonm "${PIN_JSONM}"
@@ -5501,6 +5524,8 @@ variables:
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version stdlib-shims "${PIN_STDLIB_SHIMS}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version stdune "${PIN_STDUNE}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version time_now "${PIN_TIME_NOW}"
+          opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version tiny_httpd "${PIN_TINY_HTTPD}"
+          opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version tiny_httpd_camlzip "${PIN_TINY_HTTPD_CAMLZIP}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version topkg "${PIN_TOPKG}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version traverse "${PIN_TRAVERSE}"
           opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version trie "${PIN_TRIE}"
@@ -5888,7 +5913,7 @@ variables:
       { dkml_host_os: 'linux',
         opam_root_cacheable: '.ci/o',
         abi_pattern: 'manylinux2014-linux_x86',
-        bootstrap_opam_version: '2.2.0-alpha-20221228',
+        bootstrap_opam_version: '2.2.0-beta2-20240409',
         dkml_host_abi: 'linux_x86',
         opam_root: '.ci/o',
         in_docker: 'true',
@@ -5898,7 +5923,7 @@ variables:
       { dkml_host_os: 'linux',
         opam_root_cacheable: '.ci/o',
         abi_pattern: 'manylinux2014-linux_x86_64',
-        bootstrap_opam_version: '2.2.0-alpha-20221228',
+        bootstrap_opam_version: '2.2.0-beta2-20240409',
         dkml_host_abi: 'linux_x86_64',
         opam_root: '.ci/o',
         dockcross_image: 'dockcross/manylinux2014-x64',
