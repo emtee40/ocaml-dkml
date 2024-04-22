@@ -129,8 +129,8 @@ Stop at this stage if you want to use the `Package-WindowsSandbox` target.
 You can go into directories to build each project you want to edit. For example:
 
 ```powershell
-cd build\_deps\dkml-runtime-apps-src
-Y:\source\dkml\build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --switch 2.1.0 --root Y:\source\dkml\build\pkg\bump\.ci\o -- dune build
+cd build/_deps/dkml-runtime-apps-src
+../../pkg/bump/.ci/sd4/bs/bin/opam exec --root ../../pkg/bump/.ci/o -- dune build
 ```
 
 ### Git
