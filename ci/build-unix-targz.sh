@@ -9,7 +9,7 @@ shift
 ver=$(.ci/cmake/bin/cmake -P cmake/get-version.cmake)
 
 case "$arch,$variant" in
-    linux_*,dockcross)      .ci/cmake/bin/cmake --preset ci-reproduce -G Ninja -D SKIP_CMDRUN=1 -D DKML_HOST_LINUX_DOCKER=0 ;;
+    linux_*,dockcross)      .ci/cmake/bin/cmake --preset ci-reproduce -G Ninja -D "SETUP_DKML_OVERRIDE=$PWD/.ci/sd4" -D DKML_HOST_LINUX_DOCKER=0 ;;
     linux_*,*)              .ci/cmake/bin/cmake --preset ci-reproduce -G Ninja -D DKML_HOST_LINUX_DOCKER=0 ;;
     darwin_x86_64,standard) .ci/cmake/bin/cmake --preset ci-reproduce -G Ninja -D DKML_HOST_ABI=darwin_x86_64 -D DKML_TARGET_ABI=darwin_x86_64 ;;
     darwin_arm64,standard)  .ci/cmake/bin/cmake --preset ci-reproduce -G Ninja -D DKML_HOST_ABI=darwin_arm64 -D DKML_TARGET_ABI=darwin_arm64 ;;

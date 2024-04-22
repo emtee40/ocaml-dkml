@@ -787,7 +787,7 @@ function(add_GenerateLaunchers_target)
     # setup-dkml not installing _any_ switches. We do that entirely with
     # CMake so we can set the FetchContent based local pins.
 
-    if(NOT SKIP_CMDRUN)
+    if(NOT SETUP_DKML_OVERRIDE)
         if(CMAKE_HOST_WIN32)
             set(runSetupScript "${POWERSHELL_EXECUTABLE}" "${dkml-workflows_SOURCE_DIR}/test/pc/setup-dkml-${DKML_TARGET_ABI}.ps1"
                 -PC_PROJECT_DIR "${CMAKE_CURRENT_BINARY_DIR}"
@@ -855,7 +855,7 @@ configure_file(anyrun.in.sh ${CMAKE_CURRENT_BINARY_DIR}/anyrun.sh
     @ONLY NEWLINE_STYLE UNIX)
 
 function(anyrun SCRIPT OUTVAR)
-    if(SKIP_CMDRUN)
+    if(SETUP_DKML_OVERRIDE)
         if(CMAKE_HOST_WIN32)
             set(${OUTVAR} ${MSYS2_BASH_RUN} ${SCRIPT} PARENT_SCOPE)
         else()

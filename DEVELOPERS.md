@@ -240,10 +240,10 @@ Inside the Linux container:
 sudo yum install sqlite-devel libX11-devel pkgconfig gcc-c++ libffi-devel -y
 
 # .linux:setup-dkml-no-matrix from test.gitlab-ci.yml
-./dk dkml.workflow.compilers CI Desktop
-sh /work/.ci/dkml-compilers/pc/setup-dkml-linux_x86_64.sh --in_docker=false --PRIMARY_SWITCH_SKIP_INSTALL=true --SKIP_OPAM_MODIFICATIONS=true 
+./dk dkml.workflow.compilers CI Desktop PRERELEASE
+sh /work/.ci/dkml-compilers/pc/setup-dkml-linux_x86_64.sh --in_docker=false --PRIMARY_SWITCH_SKIP_INSTALL=true --SKIP_OPAM_MODIFICATIONS=true
 
 # installer-linux_x86_64 build: steps from test.gitlab-ci.yml
-.ci/sd4/opamrun/cmdrun sh ./dk dksdk.cmake.copy QUIET
-.ci/sd4/opamrun/cmdrun sh ci/build-unix-targz.sh linux_x86_64 dockcross
+sh ./dk dksdk.cmake.copy QUIET
+sh ci/build-unix-targz.sh linux_x86_64 dockcross
 ```

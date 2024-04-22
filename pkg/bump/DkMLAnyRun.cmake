@@ -39,11 +39,12 @@ if(NOT DKML_TARGET_ABI)
     set(DKML_TARGET_ABI ${DKML_HOST_ABI})
 endif()
 
-set(anyrun_OPAMEXE ${CMAKE_CURRENT_BINARY_DIR}/.ci/sd4/bs/bin/opam${CMAKE_EXECUTABLE_SUFFIX})
-set(anyrun_OPAMROOT ${CMAKE_CURRENT_BINARY_DIR}/.ci/o) # $OPAMROOT is also set indirectly in anyrun.sh by [cmdrun] or [opamrun]
-if(SKIP_CMDRUN)
+set(anyrun_OPAMROOT "${CMAKE_CURRENT_BINARY_DIR}/.ci/o") # $OPAMROOT is also set indirectly in anyrun.sh by [cmdrun] or [opamrun]
+if(SETUP_DKML_OVERRIDE)
+    set(anyrun_OPAMEXE "${SETUP_DKML_OVERRIDE}/bs/bin/opam${CMAKE_EXECUTABLE_SUFFIX}")
     set(anyrun_OUTPUTS)
 else()
+    set(anyrun_OPAMEXE "${CMAKE_CURRENT_BINARY_DIR}/.ci/sd4/bs/bin/opam${CMAKE_EXECUTABLE_SUFFIX}")
     set(anyrun_OUTPUTS
         ${anyrun_OPAMEXE}
         ${CMAKE_CURRENT_BINARY_DIR}/.ci/sd4/opamrun/cmdrun
