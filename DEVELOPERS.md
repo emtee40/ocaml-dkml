@@ -203,8 +203,18 @@ cd Y:\source\dkml\build\pkg\bump\.ci\o\2.1.1\.opam-switch\build\ctypes.0.19.2-wi
 
 ```sh
 tag_DELETE=2.1.1-CHANGEME
-for i in diskuv-opam-repository; do git -C build/_deps/$i-src tag -d "$tag_DELETE"; git -C build/_deps/$i-src push origin --delete "$tag_DELETE"; done
-git tag -d "$tag_DELETE"; git push origin --delete "$tag_DELETE"
+cleanup_tag() {
+   git -C "$1" tag -d "$tag_DELETE" || true
+   git -C "$1" push origin --delete "$tag_DELETE" || true
+}
+cleanup_push() {
+   rm -f "build/pkg/bump/$tag_DELETE/GitPush/$1/pushed"
+}
+for i in diskuv-opam-repository dkml-compiler dkml-component-desktop dkml-component-ocamlcompiler dkml-component-ocamlrun dkml-installer-ocaml dkml-installer-ocaml-byte dkml-runtime-apps dkml-runtime-common dkml-runtime-distribution dkml-workflows; do
+   cleanup_tag "build/_deps/$i-src"
+   cleanup_push "$i"
+done
+cleanup_tag "."
 
 #build/pkg/bump/2.1.1/GitPush
 ```
