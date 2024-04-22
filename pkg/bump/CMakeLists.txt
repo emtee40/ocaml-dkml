@@ -1573,6 +1573,8 @@ function(add_all_stage_targets)
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINARY_DIR}/${DKML_VERSION_CMAKEVER}/finish .
         COMMAND ${GIT_EXECUTABLE} -c core.safecrlf=false add ${SELF_MODIFICATIONS}
         COMMAND ${GIT_EXECUTABLE} commit -m "Bump version: ${DKML_VERSION_SEMVER} -> ${DKML_VERSION_SEMVER}"
+        VERBATIM
+        USES_TERMINAL
     )
     add_GitPush_command(
         SOURCE_DIR ${PROJECT_SOURCE_DIR}
