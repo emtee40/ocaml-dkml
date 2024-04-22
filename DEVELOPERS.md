@@ -219,6 +219,6 @@ cleanup_tag "."
 cleanup_tag "." -final
 ```
 
-You will also need to edit:
+You will also need to edit and commit the changes ("Rollback to prior release"):
 - `CHANGES.md` to remove the release
 - `version.cmake` to rollback `DKML_PUBLICVERSION_CMAKEVER` to the last published version
