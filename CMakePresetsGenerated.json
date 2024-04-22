@@ -18,7 +18,7 @@
           "value": "bec718e9cc690ba6b3fec2f8f5842051190f0b1a"
         },
         "dkml-workflows_GIT_TAG": {
-          "value": "716d79db11595826c1404e6aa91a88a502ab2d5b"
+          "value": "cf7269893f66d70b5c9ec95f234c216393d89614"
         },
         "dkml-component-desktop_GIT_TAG": {
           "value": "a8304ebdd0caba3d23933bb0efcedea4985484b6"
@@ -30,13 +30,13 @@
           "value": "b0320c12c0cd36b3315e40469dc902ce92d476b2"
         },
         "dkml-installer-ocaml_GIT_TAG": {
-          "value": "a3153d6eefaf622696995be72cbff09ac11c6dc2"
+          "value": "94bb16631a368e1aafd439e1260068ba6a4ba9b8"
         },
         "dkml-installer-ocaml-byte_GIT_TAG": {
-          "value": "4154c5cff46fbdcc41698273b92d84cfd159c7ba"
+          "value": "5530358d3e03468ad08c3ffba1f84ad398d420c2"
         },
         "diskuv-opam-repository_GIT_TAG": {
-          "value": "3f5f4021aafe917263b3a0949f67c7ee5393980f"
+          "value": "e81d44590e599e74e493b482cdd0677d8cfe81ca"
         },
         "dkml-install-api_GIT_TAG": {
           "value": "f604bc6d9e9c8ad9c474779c1fa5b9b61ce2f9b5"

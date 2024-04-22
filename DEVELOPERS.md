@@ -215,6 +215,4 @@ for i in diskuv-opam-repository dkml-compiler dkml-component-desktop dkml-compon
    cleanup_push "$i"
 done
 cleanup_tag "."
-
-#build/pkg/bump/2.1.1/GitPush
 ```
