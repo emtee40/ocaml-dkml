@@ -77,17 +77,18 @@
 
    * Delete the `build/pkg/bump` directory
 
-2. Run CMake configure: Either run `cmake --preset develop` or press a "configure" button in your
+2. Bump the `DKML_VERSION_CMAKEVER` in `version.cmake` to a new major/minor/patch/prerelease version number.
+3. Run CMake configure: Either run `cmake --preset develop` or press a "configure" button in your
    CMake-enabled IDE with the `develop` configuration.
-3. Run one of the `Package-VersionBump-{PRERELEASE,PATCH,MINOR,MAJOR}` targets
-4. Rerun CMake configure (ex. `cmake --preset develop`).
-5. Edit `ocaml_opam_repository_gitref.txt` and set it to a commit id that you know works well with Windows, etc. Then commit the change. *You won't need to push it*.
-6. Run through each of the CMake stage targets **sequentially** starting from `Package-Stage01-` to
+4. Run one of the `Package-VersionBump-{PRERELEASE,PATCH,MINOR,MAJOR}` targets
+5. Rerun CMake configure (ex. `cmake --preset develop`).
+6. Edit `ocaml_opam_repository_gitref.txt` and set it to a commit id that you know works well with Windows, etc. Then commit the change. *You won't need to push it*.
+7. Run through each of the CMake stage targets **sequentially** starting from `Package-Stage01-` to
    the highest Stage number. Many stages require a re-configuration based on
    values obtained from the prior stages, so do not skip any targets. Consult the
    [Errata](#errata)
-7. Run `./dk dkml.workflow.compilers CI GitLab PRERELEASE`
-8. Finish with the CMake target `-PublishAssets`.
+8. Run `./dk dkml.workflow.compilers CI GitLab PRERELEASE`
+9. Finish with the CMake target `-PublishAssets`.
 
 ## Editing Source Code
 
@@ -204,4 +205,6 @@ cd Y:\source\dkml\build\pkg\bump\.ci\o\2.1.1\.opam-switch\build\ctypes.0.19.2-wi
 tag_DELETE=2.1.1-CHANGEME
 for i in diskuv-opam-repository; do git -C build/_deps/$i-src tag -d "$tag_DELETE"; git -C build/_deps/$i-src push origin --delete "$tag_DELETE"; done
 git tag -d "$tag_DELETE"; git push origin --delete "$tag_DELETE"
+
+#build/pkg/bump/2.1.1/GitPush
 ```

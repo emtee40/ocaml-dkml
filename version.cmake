@@ -26,7 +26,10 @@ endif()
 if(CMAKE_SCRIPT_MODE_FILE AND DKML_VERSION_CMAKEVER_OVERRIDE)
     set(DKML_VERSION_CMAKEVER "${DKML_VERSION_CMAKEVER_OVERRIDE}")
 else()
-    # Edited by pkg/bump/CMakeLists.txt. Do not change format.
+    # Bump this manually to a new major/minor/patch/prerelease to start a new version.
+    # - Prereleases are in the format major.minor.patch.prerelease.
+    # - Major/minor/patch releases are in the format major.minor.patch.
+    # Can be edited by pkg/bump/CMakeLists.txt. Do not change format.
     set(DKML_VERSION_CMAKEVER "2.1.1")
 endif()
 
