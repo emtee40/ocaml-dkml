@@ -24,6 +24,10 @@ if(NOT OCAML_OPAM_REPOSITORY_GITREF)
     message(FATAL_ERROR "Missing -D OCAML_OPAM_REPOSITORY_GITREF=...")
 endif()
 
+if(NOT BOOTSTRAP_OPAM_VERSION)
+    message(FATAL_ERROR "Missing -D BOOTSTRAP_OPAM_VERSION=...")
+endif()
+
 macro(_DkMLBumpVersionParticipant_Finish_Replace VERSION_TYPE)
     if(contents STREQUAL "${contents_NEW}")
         string(FIND "${contents_NEW}" "${DKML_VERSION_${VERSION_TYPE}_NEW}" idempotent)
@@ -234,6 +238,7 @@ endfunction()
 # ("DKML_VERSION", "1.1.0-prerel15"); -> ("DKML_VERSION", "1.2.1-3")
 # ("DEFAULT_DKML_COMPILER", "1.1.0-prerel15"); -> ("DEFAULT_DKML_COMPILER", "1.2.1-3");
 # ("DEFAULT_DISKUV_OPAM_REPOSITORY_TAG", "1.1.0-prerel15"); -> ("DEFAULT_DISKUV_OPAM_REPOSITORY_TAG", "1.2.1-3")
+# ("BOOTSTRAP_OPAM_VERSION", "..."); -> ("BOOTSTRAP_OPAM_VERSION", "2.2.0-alpha-20221228")
 #
 # dkml-compiler project has two types of opam files:
 # 1. dkml-base-compiler X.Y.Z~vM.N.O
@@ -244,17 +249,21 @@ function(DkMLBumpVersionParticipant_ModelReplace REL_FILENAME)
     file(READ ${REL_FILENAME} contents)
     set(contents_NEW "${contents}")
 
-    string(REGEX REPLACE # Match at beginning of line: ^|\n
+    string(REGEX REPLACE
         "\"DKML_VERSION\", \"${regex_DKML_VERSION_SEMVER}\""
         "\"DKML_VERSION\", \"${DKML_VERSION_SEMVER_NEW}\""
         contents_NEW "${contents_NEW}")
-    string(REGEX REPLACE # Match at beginning of line: ^|\n
+    string(REGEX REPLACE
         "\"DEFAULT_DKML_COMPILER\", \"${regex_DKML_VERSION_SEMVER}\""
         "\"DEFAULT_DKML_COMPILER\", \"${DKML_VERSION_SEMVER_NEW}\""
         contents_NEW "${contents_NEW}")
-    string(REGEX REPLACE # Match at beginning of line: ^|\n
+    string(REGEX REPLACE
         "\"DEFAULT_DISKUV_OPAM_REPOSITORY_TAG\", \"${regex_DKML_VERSION_SEMVER}\""
         "\"DEFAULT_DISKUV_OPAM_REPOSITORY_TAG\", \"${DKML_VERSION_SEMVER_NEW}\""
+        contents_NEW "${contents_NEW}")
+    string(REGEX REPLACE
+        "\"BOOTSTRAP_OPAM_VERSION\", \"[^\\\"]*\""
+        "\"BOOTSTRAP_OPAM_VERSION\", \"${BOOTSTRAP_OPAM_VERSION}\""
         contents_NEW "${contents_NEW}")
 
     _DkMLBumpVersionParticipant_Finish_Replace(SEMVER)

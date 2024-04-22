@@ -6,6 +6,12 @@ include(${CMAKE_CURRENT_LIST_DIR}/DkMLPackages.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/DkMLPatches.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/DkMLPublish.cmake)
 
+# Input variables
+#   Always prefer to configure the build with CMake variables
+#   rather than inside .gitlab-ci.yml so that desktop testing
+#   can mimic the CI.
+set(BOOTSTRAP_OPAM_VERSION 2.2.0-alpha-20221228) # 2.2.0-beta2-20240409 does not work
+
 if(CMAKE_HOST_WIN32)
     find_program(POWERSHELL_EXECUTABLE NAMES pwsh powershell REQUIRED)
 endif()
@@ -356,6 +362,7 @@ function(add_VersionBump_target_for_synced_projects)
             -D CMAKE_MESSAGE_CONTEXT=${proj}
             -D "DKML_BUMP_VERSION_PARTICIPANT_MODULE=${participant}"
             -D DKML_RELEASE_OCAML_VERSION=${DKML_RELEASE_OCAML_VERSION}
+            -D BOOTSTRAP_OPAM_VERSION=${BOOTSTRAP_OPAM_VERSION}
             -D "OCAML_OPAM_REPOSITORY_GITREF=${OCAML_OPAM_REPOSITORY_GITREF}"
             -D regex_DKML_VERSION_OPAMVER=${regex_DKML_VERSION_OPAMVER}
             -D regex_DKML_VERSION_SEMVER=${regex_DKML_VERSION_SEMVER}
