@@ -50,6 +50,10 @@ set(DKML_PATCH_EXCLUDE_PACKAGES
     ppx_expect # v0.15.1
     spawn # 0.15.1+android
     time_now # v0.15.0
+
+    # Haven't/won't spend the time to make work on Windows.
+    # So pin (through dkml-runtime-distribution pins) but do not build during DkML distribution.
+    tiny_httpd_camlzip # 0.16. Needs conf-zlib to be ported to Windows.
 )
 
 # Do GLOBs once
