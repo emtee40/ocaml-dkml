@@ -1570,9 +1570,10 @@ function(add_all_stage_targets)
     add_custom_command(
         OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${DKML_VERSION_CMAKEVER}/self/committed
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINARY_DIR}/${DKML_VERSION_CMAKEVER}/finish .
+        COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_BINARY_DIR}/${DKML_VERSION_CMAKEVER}/finish" .
         COMMAND ${GIT_EXECUTABLE} -c core.safecrlf=false add ${SELF_MODIFICATIONS}
         COMMAND ${GIT_EXECUTABLE} commit -m "Bump version: ${DKML_VERSION_SEMVER} -> ${DKML_VERSION_SEMVER}"
+        COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_CURRENT_BINARY_DIR}/${DKML_VERSION_CMAKEVER}/self/committed"
         VERBATIM
         USES_TERMINAL
     )
@@ -1583,7 +1584,7 @@ function(add_all_stage_targets)
         BRANCH ${self_BRANCH}
         INTENDED_TARGET Package-Stage13-GitPushRemaining
         OUTPUT_FILE ${selfOutput}/pushed-finished
-        DEPENDS ${selfOutput}/pushed-starting ${CMAKE_CURRENT_BINARY_DIR}/${DKML_VERSION_CMAKEVER}/self/committed)
+        DEPENDS ${selfOutput}/pushed-starting "${CMAKE_CURRENT_BINARY_DIR}/${DKML_VERSION_CMAKEVER}/self/committed")
     add_GitPush_commands_for_synced_projects(
         OUTPUT_LIST_VARIABLE gitPushRemainingTargetDepends
         EXCLUDE diskuv-opam-repository
