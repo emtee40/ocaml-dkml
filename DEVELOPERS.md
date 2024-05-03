@@ -201,6 +201,8 @@ cd Y:\source\dkml\build\pkg\bump\.ci\o\2.1.1\.opam-switch\build\ctypes.0.19.2-wi
 
 ### Nuclear Option
 
+In Unix shell:
+
 ```sh
 tag_DELETE=2.1.1-CHANGEME
 cleanup_tag() {
@@ -219,9 +221,34 @@ cleanup_tag "."
 cleanup_tag "." -final
 ```
 
+or in PowerShell:
+
+```powershell
+$tag_DELETE="2.1.1-CHANGEME"
+function CleanupTag {
+   param($pkg, $suffix)
+   git -C "$pkg" tag -d "$tag_DELETE$suffix"
+   git -C "$pkg" push origin --delete "$tag_DELETE$suffix"
+}
+function CleanupPush {
+   param($pkg)
+}
+function CleanupAll {
+   $packages = @("diskuv-opam-repository","dkml-compiler","dkml-component-desktop","dkml-component-ocamlcompiler","dkml-component-ocamlrun","dkml-installer-ocaml","dkml-installer-ocaml-byte","dkml-runtime-apps","dkml-runtime-common","dkml-runtime-distribution","dkml-workflows")
+   foreach ($pkg in $packages) {
+      CleanupTag "build/_deps/$pkg-src"
+      CleanupPush "$pkg"
+   }
+   CleanupTag "."
+   CleanupTag "." -final
+}
+CleanupAll
+```
+
 You will also need to edit and commit the changes ("Rollback to prior release"):
-- `CHANGES.md` to remove the release
-- `version.cmake` to rollback `DKML_PUBLICVERSION_CMAKEVER` to the last published version
+
+* `CHANGES.md` to remove the release
+* `version.cmake` to rollback `DKML_PUBLICVERSION_CMAKEVER` to the last published version
 
 ### dockcross
 
