@@ -240,7 +240,7 @@ function CleanupAll {
       CleanupPush "$pkg"
    }
    CleanupTag "."
-   CleanupTag "." -final
+   CleanupTag "." "-final"
 }
 CleanupAll
 ```
