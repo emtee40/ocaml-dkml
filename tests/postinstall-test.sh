@@ -6,6 +6,12 @@ export OPAMROOTISOK=1
 sandbox=$(dirname "$0")
 sandbox=$(cd "$sandbox" && pwd)
 
+if [ -x /usr/bin/cygpath ]; then
+    sandbox_NATIVE=$(/usr/bin/cygpath -aw "$sandbox")
+else
+    sandbox_NATIVE="$sandbox"
+fi
+
 # Place usr/bin/ and bin/ into PATH
 if [ -x /usr/bin/uname ] && [ "$(/usr/bin/uname -s)" = Darwin ]; then
     # bug: dkml-install-api/package/console/common/dkml_package_console_common.ml[i] says
@@ -21,10 +27,10 @@ export PATH
 # [ocamlfind] is no longer installed in the global environment. https://github.com/diskuv/dkml-installer-ocaml/issues/83
 # ocamlfind printconf
 
-utop-full "$sandbox/script1/script.ocamlinit"
+utop-full "$sandbox_NATIVE/script1/script.ocamlinit"
 
 # Once ocaml has a shim, turn off || true
-ocaml "$sandbox/script1/script.ocamlinit" || true
+ocaml "$sandbox_NATIVE/script1/script.ocamlinit" || true
 
 DKMLPARENTHOME_BUILDHOST="${XDG_DATA_HOME:-$HOME/.local/share}/dkml"
 if [ -e "$DKMLPARENTHOME_BUILDHOST/dkmlvars.sh" ]; then
@@ -66,6 +72,6 @@ else
 
     opam install ocamlformat --yes
 
-    opam exec -- dune build --root "$sandbox/proj2"
-    opam exec -- dune exec --root "$sandbox/proj2" ./best.exe    
+    opam exec -- dune build --root "$sandbox_NATIVE/proj2"
+    opam exec -- dune exec --root "$sandbox_NATIVE/proj2" ./best.exe    
 fi
