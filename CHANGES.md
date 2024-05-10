@@ -2,9 +2,57 @@
 
 ## 2.1.1 (2024-05-09)
 
-### Installing and using DkML
+### First-time install of DkML
 
-See <https://youtu.be/33niX94tn3U>
+Before you run the installer: Make sure your Windows username does not contain a space character (e.g. for `C:\Users\Jane Smith`, OCaml will not install properly).
+
+Run the following in a terminal (either Windows PowerShell or Command Prompt):
+
+```powershell
+winget install Microsoft.VisualStudio.2019.BuildTools --override "--wait --passive --installPath C:\VS --addProductLang En-us --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
+winget install Git.Git
+winget install Diskuv.OCaml
+```
+
+And then in a **NEW** terminal:
+
+```powershell
+dkml init --system
+```
+
+### Upgrading from version 2.1.0
+
+In PowerShell:
+
+```powershell
+1..6 | % {  @("bash","sh","with-dkml","ocamllsp","git","opam","dune","ocamlrun") | % { taskkill /F /IM "$_.exe" }; Start-Sleep 1 }
+
+winget upgrade dkml
+```
+
+### Upgrading from versions earlier than 2.1.0
+
+1. In PowerShell:
+
+   ```powershell
+   1..6 | % {  @("bash","sh","with-dkml","ocamllsp","git","opam","dune","ocamlrun") | % { taskkill /F /IM "$_.exe" }; Start-Sleep 1 }
+   ```
+
+2. Open **Add or remove programs** from Windows Search (type Windows key and then start typing "Add or remove programs")
+   1. Uninstall `Diskuv OCaml` and/or `DkML Native` and/or `DkML Bytecode` if you see them; you can ignore any failures. You can now close "Add or remove programs".
+   2. Download and run the "Windows/Intel 64-bit Native Uninstaller" from [DkML Releases 2.1.1](https://gitlab.com/dkml/distributions/dkml/-/releases/2.1.1).
+3. Open PowerShell and run the following:
+
+   ```powershell
+   if (Test-Path $env:LOCALAPPDATA\Programs\DkMLNative\bin) { del -force -recurse $env:LOCALAPPDATA\Programs\DkMLNative\bin }
+   if (Test-Path $env:LOCALAPPDATA\Programs\DkMLNative\usr\bin) { del -force -recurse $env:LOCALAPPDATA\Programs\DkMLNative\usr\bin }
+   ```
+
+4. In PowerShell:
+
+   ```powershell
+   winget install dkml
+   ```
 
 ### What do I do after the install is complete?
 
