@@ -3,11 +3,11 @@
 
 variables:
   # input variables which can be overridden with an include. Confer: https://docs.gitlab.com/ee/ci/variables/#pass-an-environment-variable-to-another-job
-  FDOPEN_OPAMEXE_BOOTSTRAP: "false"
   CACHE_PREFIX: "v1"
   OCAML_COMPILER: ""
   DKML_COMPILER: "" # "@repository@" = Opam ; "" = latest from default branch ("main") of git clone
   CONF_DKML_CROSS_TOOLCHAIN: "@repository@" # "@repository@" = Opam ; "" = latest from default branch of git clone
+  OCAML_OPAM_REPOSITORY: "" # DEFAULT_OCAML_OPAM_REPOSITORY_TAG is used as default for empty strings
   DISKUV_OPAM_REPOSITORY: "" # DEFAULT_DISKUV_OPAM_REPOSITORY_TAG is used as default for empty strings
   SKIP_OPAM_MODIFICATIONS: "false"
   PRIMARY_SWITCH_SKIP_INSTALL: "false"

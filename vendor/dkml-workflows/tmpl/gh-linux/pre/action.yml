@@ -6,10 +6,6 @@ author: Diskuv, Inc.
 description: Setup before building OCaml native executables for Linux
 
 inputs:
-  FDOPEN_OPAMEXE_BOOTSTRAP:
-    description: "Use opam.exe from fdopen on Windows. Typically only used when bootstrapping Opam for the first time. May be needed to solve '\"create_process\" failed on sleep: Bad file descriptor' which may need https://github.com/ocaml/opam/commit/417b97d8cfada35682a0f4107eb2e4f9e24fba91"
-    required: false
-    default: 'false'
   CACHE_PREFIX:
     description: The prefix of the cache keys.
     required: false
@@ -25,6 +21,10 @@ inputs:
     description: "Git branch, tag or commit for conf-dkml-cross-toolchain"
     required: false
     default: "@repository@" # "@repository@" = Opam ; "" = latest from default branch of git clone
+  OCAML_OPAM_REPOSITORY:
+    description: "Git branch, tag or commit for ocaml/opam-repository.git"
+    required: false
+    default: "" # DEFAULT_OCAML_OPAM_REPOSITORY_TAG is used as default for empty strings
   DISKUV_OPAM_REPOSITORY:
     description: "Git branch, tag or commit for diskuv-opam-repository"
     required: false

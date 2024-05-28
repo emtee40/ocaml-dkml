@@ -1,5 +1,11 @@
 # Changes
 
+## 2.1.2
+
+- Use a fixed commit of [ocaml/opam-repository.git](https://github.com/ocaml/opam-repository.git) by default.
+  Control through `OCAML_OPAM_REPOSITORY` and `DEFAULT_OCAML_OPAM_REPOSITORY_TAG` variables.
+- Remove `FDOPEN_OPAMEXE_BOOTSTRAP` from GitHub and GitLab input variables to make room for `OCAML_OPAM_REPOSITORY` (GitHub only allows 10)
+
 ## 2.1.1
 
 - `bootstrap_opam_version` and `FDOPEN_OPAMEXE_BOOTSTRAP` are no longer part of CI matrix. The bootstrap opam version is now tied to the DkML release and always comes from dkml-component-opam's release assets.

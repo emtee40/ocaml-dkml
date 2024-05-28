@@ -99,6 +99,7 @@ WORKSPACE=$setup_WORKSPACE
 Inputs
 ------
 DISKUV_OPAM_REPOSITORY=${DISKUV_OPAM_REPOSITORY:-}
+OCAML_OPAM_REPOSITORY=${OCAML_OPAM_REPOSITORY:-}
 DKML_COMPILER=${DKML_COMPILER:-}
 OCAML_COMPILER=${OCAML_COMPILER:-}
 CONF_DKML_CROSS_TOOLCHAIN=${CONF_DKML_CROSS_TOOLCHAIN:-}
@@ -114,6 +115,7 @@ DkML Release Constants
 ----------------------
 DKML_VERSION=$DKML_VERSION
 DEFAULT_DISKUV_OPAM_REPOSITORY_TAG=$DEFAULT_DISKUV_OPAM_REPOSITORY_TAG
+DEFAULT_OCAML_OPAM_REPOSITORY_TAG=$DEFAULT_OCAML_OPAM_REPOSITORY_TAG
 DEFAULT_DKML_COMPILER=$DEFAULT_DKML_COMPILER
 BOOTSTRAP_OPAM_VERSION=$BOOTSTRAP_OPAM_VERSION
 .
@@ -799,7 +801,7 @@ fi
 do_opam_repositories_update() {
     section_begin "opam-repo-update" "Update opam repositories"
     # The default repository may be the initial 'eor' (empty) repository
-    opamrun repository set-url default git+https://github.com/ocaml/opam-repository.git --yes
+    opamrun repository set-url default "git+https://github.com/ocaml/opam-repository.git#${OCAML_OPAM_REPOSITORY:-$DEFAULT_OCAML_OPAM_REPOSITORY_TAG}" --yes
     # Always set the `diskuv` repository url since it can change
     opamrun repository set-url diskuv "git+https://github.com/diskuv/diskuv-opam-repository.git#${DISKUV_OPAM_REPOSITORY:-$DEFAULT_DISKUV_OPAM_REPOSITORY_TAG}" --yes --dont-select
     # Update both `default` and `diskuv` Opam repositories
