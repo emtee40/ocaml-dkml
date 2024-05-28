@@ -10,6 +10,12 @@ set(PACKAGES_WITHOUT_META
     ocamlfind
 )
 
+# These projects are managed through [git subtree] into vendor/ directory
+set(dkml-compiler_BRANCH main)
+set(dkml-compiler_URL https://github.com/diskuv/dkml-compiler.git)
+set(DKML_SUBTREE_PROJECTS
+    dkml-compiler)
+
 set(DKML_PROJECTS_PREDUNE
 
     # These are the projects that are required to a) create a switch

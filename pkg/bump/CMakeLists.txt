@@ -24,7 +24,6 @@ cmake_path(GET GIT_EXECUTABLE PARENT_PATH GIT_EXECUTABLE_DIR)
 # TODO: This list is not authoritative, but dependencies/fetch-git-projects.cmake is.
 set(self_BRANCH next) # self is [dkml]
 set(diskuv-opam-repository_BRANCH main)
-set(dkml-compiler_BRANCH main)
 set(dkml-component-curl_BRANCH main)
 set(dkml-component-desktop_BRANCH main)
 set(dkml-component-ocamlcompiler_BRANCH main)
@@ -44,6 +43,33 @@ foreach(PROJECT IN LISTS DKML_PROJECTS_SYNCED)
 endforeach()
 
 file(READ ${PROJECT_SOURCE_DIR}/ocaml_opam_repository_gitref.txt OCAML_OPAM_REPOSITORY_GITREF)
+
+# Ported to [git subtree]
+# --------
+
+foreach(SUBTREE_PROJECT IN LISTS DKML_SUBTREE_PROJECTS)
+    # Reference: https://www.atlassian.com/git/tutorials/git-subtree
+    set(subtree_args --prefix "vendor/${SUBTREE_PROJECT}" "${${SUBTREE_PROJECT}_URL}" "${${SUBTREE_PROJECT}_BRANCH}" --squash)
+    if(IS_DIRECTORY "${PROJECT_SOURCE_DIR}/vendor/${SUBTREE_PROJECT}")
+        execute_process(
+            WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+            COMMAND "${GIT_EXECUTABLE}" subtree pull ${subtree_args}
+            COMMAND_ERROR_IS_FATAL ANY
+        )
+    else()
+        execute_process(
+            WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+            COMMAND "${GIT_EXECUTABLE}" subtree add ${subtree_args}
+            COMMAND_ERROR_IS_FATAL ANY
+        )
+    endif()
+
+    # Make available to rest of CMake
+    FetchContent_Declare(${SUBTREE_PROJECT}
+        SOURCE_DIR "${PROJECT_SOURCE_DIR}/vendor/${SUBTREE_PROJECT}"
+    )
+    FetchContent_MakeAvailable(${SUBTREE_PROJECT})
+endforeach()
 
 # ----------------
 # Make variables for all synced projects _and_ unsynced projects to have a
@@ -67,7 +93,7 @@ foreach(PROJECT IN LISTS DKML_PROJECTS_SYNCED DKML_PROJECTS_UNSYNCED)
 
     execute_process(
         WORKING_DIRECTORY ${${PROJECT}_SOURCE_DIR}
-        COMMAND ${GIT_EXECUTABLE} rev-parse --quiet --verify HEAD
+        COMMAND "${GIT_EXECUTABLE}" rev-parse --quiet --verify HEAD
         OUTPUT_STRIP_TRAILING_WHITESPACE
         OUTPUT_VARIABLE gitref
         COMMAND_ERROR_IS_FATAL ANY
@@ -543,7 +569,7 @@ function(audit_Git)
 
     execute_process(
         WORKING_DIRECTORY ${ARG_SOURCE_DIR}
-        COMMAND ${GIT_EXECUTABLE} rev-parse --quiet --verify HEAD
+        COMMAND "${GIT_EXECUTABLE}" rev-parse --quiet --verify HEAD
         OUTPUT_STRIP_TRAILING_WHITESPACE
         OUTPUT_VARIABLE currentCommit)
     message(STATUS "${ARG_SOURCE_DIR}: git commit ${currentCommit}")
@@ -557,7 +583,7 @@ function(update_Git_to_branch)
 
     execute_process(
         WORKING_DIRECTORY ${ARG_SOURCE_DIR}
-        COMMAND ${GIT_EXECUTABLE} branch --show-current
+        COMMAND "${GIT_EXECUTABLE}" branch --show-current
         OUTPUT_STRIP_TRAILING_WHITESPACE
         OUTPUT_VARIABLE currentBranch)
 
@@ -570,11 +596,11 @@ function(update_Git_to_branch)
         # FetchContent_Declare(GIT_TAG) in CMake 3.23.1 does not change HEAD (aka. no `git switch <branch>`).
         # So we'll do that if it looks like a detached HEAD.
         execute_process(
-            COMMAND ${GIT_EXECUTABLE} -C "${ARG_SOURCE_DIR}" switch "${ARG_BRANCH}"
+            COMMAND "${GIT_EXECUTABLE}" -C "${ARG_SOURCE_DIR}" switch "${ARG_BRANCH}"
             COMMAND_ERROR_IS_FATAL ANY
         )
         execute_process(
-            COMMAND ${GIT_EXECUTABLE} -C "${ARG_SOURCE_DIR}" pull --ff-only
+            COMMAND "${GIT_EXECUTABLE}" -C "${ARG_SOURCE_DIR}" pull --ff-only
             ERROR_VARIABLE execute_ERROR
         )
         if(execute_ERROR)
@@ -626,7 +652,7 @@ function(add_GitPush_command)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${newSemverFile} ${ARG_OUTPUT_FILE}
 
         # git push
-        COMMAND ${GIT_EXECUTABLE} push --atomic origin "${ARG_BRANCH}" ${refspec}
+        COMMAND "${GIT_EXECUTABLE}" push --atomic origin "${ARG_BRANCH}" ${refspec}
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${newSemverFile} ${ARG_OUTPUT_FILE}
 
         VERBATIM
@@ -996,7 +1022,7 @@ function(add_Flavor_targets)
     FetchContent_GetProperties(diskuv-opam-repository)
     execute_process(
         WORKING_DIRECTORY ${diskuv-opam-repository_SOURCE_DIR}
-        COMMAND ${GIT_EXECUTABLE} rev-parse --quiet --verify HEAD
+        COMMAND "${GIT_EXECUTABLE}" rev-parse --quiet --verify HEAD
         OUTPUT_STRIP_TRAILING_WHITESPACE
         OUTPUT_VARIABLE DISKUV_OPAM_REPOSITORY_GITREF
         COMMAND_ERROR_IS_FATAL ANY
@@ -1571,8 +1597,8 @@ function(add_all_stage_targets)
         OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${DKML_VERSION_CMAKEVER}/self/committed
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_BINARY_DIR}/${DKML_VERSION_CMAKEVER}/finish" .
-        COMMAND ${GIT_EXECUTABLE} -c core.safecrlf=false add ${SELF_MODIFICATIONS}
-        COMMAND ${GIT_EXECUTABLE} commit -m "Bump version: ${DKML_VERSION_SEMVER} -> ${DKML_VERSION_SEMVER}"
+        COMMAND "${GIT_EXECUTABLE}" -c core.safecrlf=false add ${SELF_MODIFICATIONS}
+        COMMAND "${GIT_EXECUTABLE}" commit -m "Bump version: ${DKML_VERSION_SEMVER} -> ${DKML_VERSION_SEMVER}"
         COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_CURRENT_BINARY_DIR}/${DKML_VERSION_CMAKEVER}/self/committed"
         VERBATIM
         USES_TERMINAL

@@ -65,13 +65,12 @@ if(CMAKE_SCRIPT_MODE_FILE)
     endif()
 endif()
 
+# Not ported to [git subtree]
+# --------
+
 FetchGit(diskuv-opam-repository
     GIT_REPOSITORY https://github.com/diskuv/diskuv-opam-repository.git
     GIT_TAG main # 315a344b354e883c0884eefdb7869a20d1ef5803 # 1.2.1-prerel1
-)
-FetchGit(dkml-compiler
-    GIT_REPOSITORY https://github.com/diskuv/dkml-compiler.git
-    GIT_TAG main # fd73aa1567099344e5d12c7acbc2a13cf1a9cd20 # 1.2.1-prerel1 + commits
 )
 FetchGit(dkml-component-desktop
     GIT_REPOSITORY https://gitlab.com/dkml/components/dkml-component-desktop.git
