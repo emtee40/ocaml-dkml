@@ -23,8 +23,9 @@ export DKML_HOME=
 # autogen from global_env_vars.
 export DKML_VERSION='2.1.1'
 export DEFAULT_DISKUV_OPAM_REPOSITORY_TAG='2.1.1'
+export DEFAULT_OCAML_OPAM_REPOSITORY_TAG='6c3f73f42890cc19f81eb1dec8023c2cd7b8b5cd'
 export DEFAULT_DKML_COMPILER='2.1.1'
-export BOOTSTRAP_OPAM_VERSION='v2.2.0-alpha-20221228'
+export BOOTSTRAP_OPAM_VERSION='2.2.0-alpha-20221228'
 export PIN_ASTRING='0.8.5'
 export PIN_BASE='v0.16.1'
 export PIN_BASE64='3.5.1'
@@ -228,6 +229,7 @@ usage() {
   echo "  --SECONDARY_SWITCH=true|false. If true then the secondary switch named 'two' is created. Defaults to: ${SECONDARY_SWITCH}" >&2
   echo "  --PRIMARY_SWITCH_SKIP_INSTALL=true|false. If true no dkml-base-compiler will be installed in the 'dkml' switch. Defaults to: ${PRIMARY_SWITCH_SKIP_INSTALL}" >&2
   echo "  --CONF_DKML_CROSS_TOOLCHAIN=<value>. Unspecified or blank is the latest from the default branch (main) of conf-dkml-cross-toolchain. @repository@ is the latest from Opam. Defaults to: ${CONF_DKML_CROSS_TOOLCHAIN}" >&2
+  echo "  --OCAML_OPAM_REPOSITORY=<value>. Defaults to the value of --DEFAULT_OCAML_OPAM_REPOSITORY_TAG (see below)" >&2
   echo "  --DISKUV_OPAM_REPOSITORY=<value>. Defaults to the value of --DEFAULT_DISKUV_OPAM_REPOSITORY_TAG (see below)" >&2
   echo "  --DKML_HOME=<value>. then DiskuvOCamlHome, DiskuvOCamlBinaryPaths and DiskuvOCamlDeploymentId will be set, in addition to the always-present DiskuvOCamlVarsVersion and DiskuvOCamlVersion." >&2
   echo "  --in_docker=true|false. When true, opamrun and cmdrun will launch commands inside a Docker container. Defaults to '${in_docker:-}'" >&2
@@ -237,6 +239,7 @@ usage() {
   # autogen from global_env_vars.
   echo "  --DKML_VERSION=<value>. Defaults to: ${DKML_VERSION}" >&2
   echo "  --DEFAULT_DISKUV_OPAM_REPOSITORY_TAG=<value>. Defaults to: ${DEFAULT_DISKUV_OPAM_REPOSITORY_TAG}" >&2
+  echo "  --DEFAULT_OCAML_OPAM_REPOSITORY_TAG=<value>. Defaults to: ${DEFAULT_OCAML_OPAM_REPOSITORY_TAG}" >&2
   echo "  --DEFAULT_DKML_COMPILER=<value>. Defaults to: ${DEFAULT_DKML_COMPILER}" >&2
   echo "  --BOOTSTRAP_OPAM_VERSION=<value>. Defaults to: ${BOOTSTRAP_OPAM_VERSION}" >&2
   echo "  --PIN_ASTRING=<value>. Defaults to: ${PIN_ASTRING}" >&2
@@ -460,6 +463,8 @@ while getopts :h-: option; do
     DKML_VERSION=*) DKML_VERSION=${OPTARG#*=} ;;
     DEFAULT_DISKUV_OPAM_REPOSITORY_TAG) fail "Option \"$OPTARG\" missing argument" ;;
     DEFAULT_DISKUV_OPAM_REPOSITORY_TAG=*) DEFAULT_DISKUV_OPAM_REPOSITORY_TAG=${OPTARG#*=} ;;
+    DEFAULT_OCAML_OPAM_REPOSITORY_TAG) fail "Option \"$OPTARG\" missing argument" ;;
+    DEFAULT_OCAML_OPAM_REPOSITORY_TAG=*) DEFAULT_OCAML_OPAM_REPOSITORY_TAG=${OPTARG#*=} ;;
     DEFAULT_DKML_COMPILER) fail "Option \"$OPTARG\" missing argument" ;;
     DEFAULT_DKML_COMPILER=*) DEFAULT_DKML_COMPILER=${OPTARG#*=} ;;
     BOOTSTRAP_OPAM_VERSION) fail "Option \"$OPTARG\" missing argument" ;;
@@ -1170,6 +1175,7 @@ WORKSPACE=$setup_WORKSPACE
 Inputs
 ------
 DISKUV_OPAM_REPOSITORY=${DISKUV_OPAM_REPOSITORY:-}
+OCAML_OPAM_REPOSITORY=${OCAML_OPAM_REPOSITORY:-}
 DKML_COMPILER=${DKML_COMPILER:-}
 OCAML_COMPILER=${OCAML_COMPILER:-}
 CONF_DKML_CROSS_TOOLCHAIN=${CONF_DKML_CROSS_TOOLCHAIN:-}
@@ -1185,6 +1191,7 @@ DkML Release Constants
 ----------------------
 DKML_VERSION=$DKML_VERSION
 DEFAULT_DISKUV_OPAM_REPOSITORY_TAG=$DEFAULT_DISKUV_OPAM_REPOSITORY_TAG
+DEFAULT_OCAML_OPAM_REPOSITORY_TAG=$DEFAULT_OCAML_OPAM_REPOSITORY_TAG
 DEFAULT_DKML_COMPILER=$DEFAULT_DKML_COMPILER
 BOOTSTRAP_OPAM_VERSION=$BOOTSTRAP_OPAM_VERSION
 .
@@ -1870,7 +1877,7 @@ fi
 do_opam_repositories_update() {
     section_begin "opam-repo-update" "Update opam repositories"
     # The default repository may be the initial 'eor' (empty) repository
-    opamrun repository set-url default git+https://github.com/ocaml/opam-repository.git --yes
+    opamrun repository set-url default "git+https://github.com/ocaml/opam-repository.git#${OCAML_OPAM_REPOSITORY:-$DEFAULT_OCAML_OPAM_REPOSITORY_TAG}" --yes
     # Always set the `diskuv` repository url since it can change
     opamrun repository set-url diskuv "git+https://github.com/diskuv/diskuv-opam-repository.git#${DISKUV_OPAM_REPOSITORY:-$DEFAULT_DISKUV_OPAM_REPOSITORY_TAG}" --yes --dont-select
     # Update both `default` and `diskuv` Opam repositories

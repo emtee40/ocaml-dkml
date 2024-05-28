@@ -37,6 +37,9 @@ Input variable. If true no dkml-base-compiler will be installed in the 'dkml' sw
 .PARAMETER CONF_DKML_CROSS_TOOLCHAIN
 Input variable. Unspecified or blank is the latest from the default branch (main) of conf-dkml-cross-toolchain. @repository@ is the latest from Opam.
 
+.PARAMETER OCAML_OPAM_REPOSITORY
+Input variable. Defaults to the value of -DEFAULT_OCAML_OPAM_REPOSITORY_TAG (see below)
+
 .PARAMETER DISKUV_OPAM_REPOSITORY
 Input variable. Defaults to the value of -DEFAULT_DISKUV_OPAM_REPOSITORY_TAG (see below)
 
@@ -49,6 +52,9 @@ and DiskuvOCamlMSYS2Dir.
 Environment variable.
 
 .PARAMETER DEFAULT_DISKUV_OPAM_REPOSITORY_TAG
+Environment variable.
+
+.PARAMETER DEFAULT_OCAML_OPAM_REPOSITORY_TAG
 Environment variable.
 
 .PARAMETER DEFAULT_DKML_COMPILER
@@ -608,6 +614,8 @@ param (
   [string]
   $CONF_DKML_CROSS_TOOLCHAIN = "@repository@",
   [string]
+  $OCAML_OPAM_REPOSITORY = "",
+  [string]
   $DISKUV_OPAM_REPOSITORY = "",
   [string]
   $DKML_HOME = ""
@@ -621,8 +629,9 @@ param (
   # autogen from global_env_vars.
   ,[Parameter()] [string] $DKML_VERSION = "2.1.1"
   ,[Parameter()] [string] $DEFAULT_DISKUV_OPAM_REPOSITORY_TAG = "2.1.1"
+  ,[Parameter()] [string] $DEFAULT_OCAML_OPAM_REPOSITORY_TAG = "6c3f73f42890cc19f81eb1dec8023c2cd7b8b5cd"
   ,[Parameter()] [string] $DEFAULT_DKML_COMPILER = "2.1.1"
-  ,[Parameter()] [string] $BOOTSTRAP_OPAM_VERSION = "v2.2.0-alpha-20221228"
+  ,[Parameter()] [string] $BOOTSTRAP_OPAM_VERSION = "2.2.0-alpha-20221228"
   ,[Parameter()] [string] $PIN_ASTRING = "0.8.5"
   ,[Parameter()] [string] $PIN_BASE = "v0.16.1"
   ,[Parameter()] [string] $PIN_BASE64 = "3.5.1"
@@ -823,6 +832,7 @@ $env:SKIP_OPAM_MODIFICATIONS = $SKIP_OPAM_MODIFICATIONS
 $env:SECONDARY_SWITCH = $SECONDARY_SWITCH
 $env:PRIMARY_SWITCH_SKIP_INSTALL = $PRIMARY_SWITCH_SKIP_INSTALL
 $env:CONF_DKML_CROSS_TOOLCHAIN = $CONF_DKML_CROSS_TOOLCHAIN
+$env:OCAML_OPAM_REPOSITORY = $OCAML_OPAM_REPOSITORY
 $env:DISKUV_OPAM_REPOSITORY = $DISKUV_OPAM_REPOSITORY
 $env:DKML_HOME = $DKML_HOME
 
@@ -845,6 +855,7 @@ $env:vsstudio_arch = "x64"
 # autogen from global_env_vars.
 $env:DKML_VERSION = $DKML_VERSION
 $env:DEFAULT_DISKUV_OPAM_REPOSITORY_TAG = $DEFAULT_DISKUV_OPAM_REPOSITORY_TAG
+$env:DEFAULT_OCAML_OPAM_REPOSITORY_TAG = $DEFAULT_OCAML_OPAM_REPOSITORY_TAG
 $env:DEFAULT_DKML_COMPILER = $DEFAULT_DKML_COMPILER
 $env:BOOTSTRAP_OPAM_VERSION = $BOOTSTRAP_OPAM_VERSION
 $env:PIN_ASTRING = $PIN_ASTRING
@@ -1429,6 +1440,7 @@ WORKSPACE=$setup_WORKSPACE
 Inputs
 ------
 DISKUV_OPAM_REPOSITORY=${DISKUV_OPAM_REPOSITORY:-}
+OCAML_OPAM_REPOSITORY=${OCAML_OPAM_REPOSITORY:-}
 DKML_COMPILER=${DKML_COMPILER:-}
 OCAML_COMPILER=${OCAML_COMPILER:-}
 CONF_DKML_CROSS_TOOLCHAIN=${CONF_DKML_CROSS_TOOLCHAIN:-}
@@ -1444,6 +1456,7 @@ DkML Release Constants
 ----------------------
 DKML_VERSION=$DKML_VERSION
 DEFAULT_DISKUV_OPAM_REPOSITORY_TAG=$DEFAULT_DISKUV_OPAM_REPOSITORY_TAG
+DEFAULT_OCAML_OPAM_REPOSITORY_TAG=$DEFAULT_OCAML_OPAM_REPOSITORY_TAG
 DEFAULT_DKML_COMPILER=$DEFAULT_DKML_COMPILER
 BOOTSTRAP_OPAM_VERSION=$BOOTSTRAP_OPAM_VERSION
 .
@@ -2129,7 +2142,7 @@ fi
 do_opam_repositories_update() {
     section_begin "opam-repo-update" "Update opam repositories"
     # The default repository may be the initial 'eor' (empty) repository
-    opamrun repository set-url default git+https://github.com/ocaml/opam-repository.git --yes
+    opamrun repository set-url default "git+https://github.com/ocaml/opam-repository.git#${OCAML_OPAM_REPOSITORY:-$DEFAULT_OCAML_OPAM_REPOSITORY_TAG}" --yes
     # Always set the `diskuv` repository url since it can change
     opamrun repository set-url diskuv "git+https://github.com/diskuv/diskuv-opam-repository.git#${DISKUV_OPAM_REPOSITORY:-$DEFAULT_DISKUV_OPAM_REPOSITORY_TAG}" --yes --dont-select
     # Update both `default` and `diskuv` Opam repositories

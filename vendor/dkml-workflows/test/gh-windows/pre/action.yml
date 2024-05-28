@@ -12,10 +12,6 @@ author: Diskuv, Inc.
 description: Setup before building OCaml native executables for Windows
 
 inputs:
-  FDOPEN_OPAMEXE_BOOTSTRAP:
-    description: "Use opam.exe from fdopen on Windows. Typically only used when bootstrapping Opam for the first time. May be needed to solve '\"create_process\" failed on sleep: Bad file descriptor' which may need https://github.com/ocaml/opam/commit/417b97d8cfada35682a0f4107eb2e4f9e24fba91"
-    required: false
-    default: 'false'
   CACHE_PREFIX:
     description: The prefix of the cache keys.
     required: false
@@ -31,6 +27,10 @@ inputs:
     description: "Git branch, tag or commit for conf-dkml-cross-toolchain"
     required: false
     default: "@repository@" # "@repository@" = Opam ; "" = latest from default branch of git clone
+  OCAML_OPAM_REPOSITORY:
+    description: "Git branch, tag or commit for ocaml/opam-repository.git"
+    required: false
+    default: "" # DEFAULT_OCAML_OPAM_REPOSITORY_TAG is used as default for empty strings
   DISKUV_OPAM_REPOSITORY:
     description: "Git branch, tag or commit for diskuv-opam-repository"
     required: false
@@ -489,6 +489,7 @@ runs:
         Inputs
         ------
         DISKUV_OPAM_REPOSITORY=${DISKUV_OPAM_REPOSITORY:-}
+        OCAML_OPAM_REPOSITORY=${OCAML_OPAM_REPOSITORY:-}
         DKML_COMPILER=${DKML_COMPILER:-}
         OCAML_COMPILER=${OCAML_COMPILER:-}
         CONF_DKML_CROSS_TOOLCHAIN=${CONF_DKML_CROSS_TOOLCHAIN:-}
@@ -504,6 +505,7 @@ runs:
         ----------------------
         DKML_VERSION=$DKML_VERSION
         DEFAULT_DISKUV_OPAM_REPOSITORY_TAG=$DEFAULT_DISKUV_OPAM_REPOSITORY_TAG
+        DEFAULT_OCAML_OPAM_REPOSITORY_TAG=$DEFAULT_OCAML_OPAM_REPOSITORY_TAG
         DEFAULT_DKML_COMPILER=$DEFAULT_DKML_COMPILER
         BOOTSTRAP_OPAM_VERSION=$BOOTSTRAP_OPAM_VERSION
         .
@@ -1189,7 +1191,7 @@ runs:
         do_opam_repositories_update() {
             section_begin "opam-repo-update" "Update opam repositories"
             # The default repository may be the initial 'eor' (empty) repository
-            opamrun repository set-url default git+https://github.com/ocaml/opam-repository.git --yes
+            opamrun repository set-url default "git+https://github.com/ocaml/opam-repository.git#${OCAML_OPAM_REPOSITORY:-$DEFAULT_OCAML_OPAM_REPOSITORY_TAG}" --yes
             # Always set the `diskuv` repository url since it can change
             opamrun repository set-url diskuv "git+https://github.com/diskuv/diskuv-opam-repository.git#${DISKUV_OPAM_REPOSITORY:-$DEFAULT_DISKUV_OPAM_REPOSITORY_TAG}" --yes --dont-select
             # Update both `default` and `diskuv` Opam repositories
@@ -1880,7 +1882,7 @@ runs:
       shell: bash
       run: |
         set -x
-        echo '623272-${{ steps.full_matrix_vars.outputs.dkml_host_abi }}-${{ steps.full_matrix_vars.outputs.opam_abi }}' > .ci/sd4/cachekey.opam.binaries
+        echo 'e80534-${{ steps.full_matrix_vars.outputs.dkml_host_abi }}-${{ steps.full_matrix_vars.outputs.opam_abi }}' > .ci/sd4/cachekey.opam.binaries
         echo '${{ steps.full_matrix_vars.outputs.abi_pattern }}-${{ steps.full_matrix_vars.outputs.vsstudio_arch }}-${{ steps.full_matrix_vars.outputs.vsstudio_hostarch }}-${{ steps.full_matrix_vars.outputs.vsstudio_dir }}-${{ steps.full_matrix_vars.outputs.vsstudio_vcvarsver }}-${{ steps.full_matrix_vars.outputs.vsstudio_winsdkver }}-${{ steps.full_matrix_vars.outputs.vsstudio_msvspreference }}-${{ steps.full_matrix_vars.outputs.vsstudio_cmakegenerator }}' > .ci/sd4/cachekey.vsstudio
         echo '${{ inputs.OCAML_COMPILER }}-${{ inputs.DISKUV_OPAM_REPOSITORY }}-${{ inputs.DKML_COMPILER }}-${{ inputs.CONF_DKML_CROSS_TOOLCHAIN }}' > .ci/sd4/cachekey.ci.inputs
 
@@ -1982,8 +1984,9 @@ runs:
         # autogen from global_env_vars.
         DKML_VERSION: '2.1.1'
         DEFAULT_DISKUV_OPAM_REPOSITORY_TAG: '2.1.1'
+        DEFAULT_OCAML_OPAM_REPOSITORY_TAG: '6c3f73f42890cc19f81eb1dec8023c2cd7b8b5cd'
         DEFAULT_DKML_COMPILER: '2.1.1'
-        BOOTSTRAP_OPAM_VERSION: 'v2.2.0-alpha-20221228'
+        BOOTSTRAP_OPAM_VERSION: '2.2.0-alpha-20221228'
         PIN_ASTRING: '0.8.5'
         PIN_BASE: 'v0.16.1'
         PIN_BASE64: '3.5.1'
