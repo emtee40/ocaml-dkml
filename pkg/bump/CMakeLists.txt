@@ -48,7 +48,9 @@ file(READ ${PROJECT_SOURCE_DIR}/ocaml_opam_repository_gitref.txt OCAML_OPAM_REPO
 
 foreach(SUBTREE_PROJECT IN LISTS DKML_SUBTREE_PROJECTS)
     # Reference: https://www.atlassian.com/git/tutorials/git-subtree
-    set(subtree_args --prefix "vendor/${SUBTREE_PROJECT}" "${${SUBTREE_PROJECT}_URL}" "${${SUBTREE_PROJECT}_BRANCH}" --squash)
+    set(subtree_URL "${${SUBTREE_PROJECT}_URL}")
+    set(subtree_BRANCH "${${SUBTREE_PROJECT}_BRANCH}")
+    set(subtree_args --prefix "vendor/${SUBTREE_PROJECT}" "${subtree_URL}" "${subtree_BRANCH}" --squash)
     if(IS_DIRECTORY "${PROJECT_SOURCE_DIR}/vendor/${SUBTREE_PROJECT}")
         execute_process(
             WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
@@ -68,6 +70,11 @@ foreach(SUBTREE_PROJECT IN LISTS DKML_SUBTREE_PROJECTS)
         SOURCE_DIR "${PROJECT_SOURCE_DIR}/vendor/${SUBTREE_PROJECT}"
     )
     FetchContent_MakeAvailable(${SUBTREE_PROJECT})
+
+    # Helpers for manual pushing
+    configure_file(push-subtree-project.in.sh ${CMAKE_CURRENT_BINARY_DIR}/push-${SUBTREE_PROJECT}.sh
+        FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+        @ONLY NEWLINE_STYLE UNIX)
 endforeach()
 
 # ----------------
