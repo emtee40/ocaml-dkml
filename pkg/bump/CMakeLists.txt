@@ -101,10 +101,12 @@ foreach(PROJECT IN LISTS DKML_PROJECTS_SYNCED DKML_PROJECTS_UNSYNCED)
     string(SUBSTRING "${gitref}" 0 6 ${PROJECT}_SHORTREF)
 
     # Add to CMakePresetsGenerated
-    list(APPEND generatedCacheVariables "        \"${PROJECT}_GIT_TAG\": {
-          \"value\": \"${gitref}\"
-        }")
-    list(APPEND clearedCacheVariables "        \"${PROJECT}_GIT_TAG\": \"\"")
+    if(NOT ${PROJECT} IN_LIST DKML_SUBTREE_PROJECTS)
+        list(APPEND generatedCacheVariables "        \"${PROJECT}_GIT_TAG\": {
+    \"value\": \"${gitref}\"
+}")
+        list(APPEND clearedCacheVariables "        \"${PROJECT}_GIT_TAG\": \"\"")
+    endif()
     # Only write if content has changed
     file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/depends/${PROJECT}.shortref" CONTENT "${gitref}")
 endforeach()
