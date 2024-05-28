@@ -1,0 +1,517 @@
+# setup-dkml
+#   Short form: sd4
+
+variables:
+  # input variables which can be overridden with an include. Confer: https://docs.gitlab.com/ee/ci/variables/#pass-an-environment-variable-to-another-job
+  FDOPEN_OPAMEXE_BOOTSTRAP: "false"
+  CACHE_PREFIX: "v1"
+  OCAML_COMPILER: ""
+  DKML_COMPILER: "" # "@repository@" = Opam ; "" = latest from default branch ("main") of git clone
+  CONF_DKML_CROSS_TOOLCHAIN: "@repository@" # "@repository@" = Opam ; "" = latest from default branch of git clone
+  DISKUV_OPAM_REPOSITORY: "" # DEFAULT_DISKUV_OPAM_REPOSITORY_TAG is used as default for empty strings
+  SKIP_OPAM_MODIFICATIONS: "false"
+  PRIMARY_SWITCH_SKIP_INSTALL: "false"
+  SECONDARY_SWITCH: "false"
+  VERBOSE: "false"
+  DKML_HOME: ""
+  MSYS2_BASEDIR: "." # The msys64 is automatically appended
+
+  # autogen from global_env_vars.{% for var in global_env_vars %}{{ nl }}  {{ var.name }}: {{ squot }}{{ var.value }}{{ squot }}{% endfor %}
+
+.common:setup-dkml-allplusmincache:
+  stage: build
+  artifacts:
+    untracked: false
+    name: ${abi_pattern}
+    paths:
+      - dist
+    expire_in: "1 days"
+  # Only 4 caches allowed in GitLab CI
+  cache:
+    - key: "a2_{{ cachebust }}_${CACHE_PREFIX}-{{ gl_cachekey_compact }}"
+      paths:
+        - ${opam_root_cacheable}/download-cache
+
+.common:setup-dkml-cache:
+  # Only 4 caches allowed in GitLab CI
+  cache:
+    - key: "b2_{{ cachebust }}_${CACHE_PREFIX}-{{ gl_cachekey_compact }}"
+      paths:
+        - .ci/sd4/bs
+        - ${opam_root_cacheable}/config
+        - ${opam_root_cacheable}/opam-init
+        - ${opam_root_cacheable}/dkml/.dkml
+        - ${opam_root_cacheable}/dkml/.opam-switch/config
+        - ${opam_root_cacheable}/dkml/.opam-switch/install
+        - ${opam_root_cacheable}/dkml/.opam-switch/overlay
+        - ${opam_root_cacheable}/dkml/.opam-switch/packages
+        - ${opam_root_cacheable}/dkml/.opam-switch/environment
+        - ${opam_root_cacheable}/dkml/.opam-switch/switch-config
+        - ${opam_root_cacheable}/dkml/.opam-switch/switch-state
+        - ${opam_root_cacheable}/dkml/bin
+        - ${opam_root_cacheable}/dkml/doc
+        - ${opam_root_cacheable}/dkml/lib
+        - ${opam_root_cacheable}/dkml/man
+        - ${opam_root_cacheable}/dkml/sbin
+        - ${opam_root_cacheable}/dkml/share
+        - ${opam_root_cacheable}/dkml/src-ocaml
+        - ${opam_root_cacheable}/two/.dkml
+        - ${opam_root_cacheable}/two/.opam-switch/config
+        - ${opam_root_cacheable}/two/.opam-switch/install
+        - ${opam_root_cacheable}/two/.opam-switch/overlay
+        - ${opam_root_cacheable}/two/.opam-switch/packages
+        - ${opam_root_cacheable}/two/.opam-switch/environment
+        - ${opam_root_cacheable}/two/.opam-switch/switch-config
+        - ${opam_root_cacheable}/two/.opam-switch/switch-state
+        - ${opam_root_cacheable}/two/bin
+        - ${opam_root_cacheable}/two/doc
+        - ${opam_root_cacheable}/two/lib
+        - ${opam_root_cacheable}/two/man
+        - ${opam_root_cacheable}/two/sbin
+        - ${opam_root_cacheable}/two/share
+        - ${opam_root_cacheable}/two/src-ocaml
+        - ${opam_root_cacheable}/repo
+        - ${opam_root_cacheable}/.ci.root-init
+        - ${opam_root_cacheable}/.ci.dkml.repo-init
+        - ${opam_root_cacheable}/.ci.two.repo-init
+        - .ci/sd4/g
+        - .ci/sd4/vsenv.sh
+        - .ci/sd4/vsenv.ps1
+        - msys64
+
+.common:setup-dkml:
+  extends:
+    - .common:setup-dkml-allplusmincache
+    - .common:setup-dkml-cache
+
+.win32:setup-dkml-allplusmincache:
+  extends: .common:setup-dkml-allplusmincache
+  variables:
+    # https://patchwork.kernel.org/project/qemu-devel/patch/20211215073402.144286-17-thuth@redhat.com/
+    CHERE_INVOKING: "yes" # Preserve the current working directory
+    MSYSTEM: '${msys2_system}' # Start a 64 bit environment if CLANG64, etc.
+  tags: [shared-windows, windows, windows-1809]
+  timeout: 2h
+  before_script:
+    # For dos2unix and any other direct MSYS2 invocation that does not go through `bash -lc` first.
+    - $env:LANG = "en_US.UTF-8"
+
+    # ------------------
+    # Section formatting
+    # ------------------
+    #
+    # https://docs.gitlab.com/ee/ci/jobs/index.html#expand-and-collapse-job-log-sections
+    #
+    # Within the shell scripts `setup-dkml.sh` and `checkout-code.sh` the section color is
+    # bright blue (ESC [94m); we purposely use a different color so we know whether to look
+    # in this GitLab script (cyan) or in a script (bright blue).
+    #
+    # Note: This is repeated in the after_script section.
+    - $esc="$([char]27)"; $cr="$([char]13)"; $TXT_SECTION="${esc}[36m"; $TXT_CLEAR="${esc}[0m"
+    - |
+      function Get-CurrentEpochSecs {
+          [long]$timestamp = [math]::Round((([datetime]::UtcNow) - (Get-Date -Date '1/1/1970')).TotalMilliseconds)
+          [math]::Round($timestamp / 1000)
+      }
+
+    # ------------------ SECTION BEGIN Install MSYS2
+    #   MSYS2
+    #   -----
+    #
+    #   https://www.msys2.org/docs/ci/
+    #   https://patchwork.kernel.org/project/qemu-devel/patch/20211215073402.144286-17-thuth@redhat.com/
+    - Write-Host "${esc}[0Ksection_start:$(Get-CurrentEpochSecs):install-msys2[collapsed=true]${cr}${esc}[0K"$TXT_SECTION"Install MSYS2"
+
+    # Troubleshooting
+    - If ( "${env:VERBOSE}" -eq "true" ) { dir 'env:' }
+
+    - |
+      if ( Test-Path -Path "${env:MSYS2_BASEDIR}\msys64\usr\bin\pacman.exe" ) {
+        Write-Host "Re-using MSYS2 from cache."
+      } else {
+          Write-Host "Download the archive ..."
+          If ( !(Test-Path -Path "${env:MSYS2_BASEDIR}\msys64" ) ) { New-Item "${env:MSYS2_BASEDIR}\msys64" -ItemType Directory | Out-Null }
+          If ( !(Test-Path -Path "${env:MSYS2_BASEDIR}\msys64\msys2.exe" ) ) {
+              Invoke-WebRequest "https://github.com/msys2/msys2-installer/releases/download/2024-01-13/msys2-base-x86_64-20240113.sfx.exe" -outfile "${env:MSYS2_BASEDIR}\msys64\msys2.exe"
+              $Msys2ActualHash = (Get-FileHash -Algorithm SHA256 "${env:MSYS2_BASEDIR}\msys64\msys2.exe").Hash
+              if ("$Msys2ActualHash" -ne "DBA7E6D27E6A9AB850F502DA44F6BFCD16D4D7B175FC2B25BEE37207335CB12F") {
+                  Write-Error "The MSYS2 installer was corrupted. You will need to retry the CI job. If that fails contact MSYS2 (file an issue) for why their installer executable changed"
+                  Exit 79
+              }
+          }
+
+          Write-Host "Extract the archive ..."
+          & "${env:MSYS2_BASEDIR}\msys64\msys2.exe" -y "-o${env:MSYS2_BASEDIR}"
+          Remove-Item "${env:MSYS2_BASEDIR}\msys64\msys2.exe" # Delete the archive again
+          ((Get-Content -path "${env:MSYS2_BASEDIR}\msys64\etc\post-install\07-pacman-key.post" -Raw) -replace '--refresh-keys', '--version') | Set-Content -Path "${env:MSYS2_BASEDIR}\msys64\etc\post-install\07-pacman-key.post"
+          & "${env:MSYS2_BASEDIR}\msys64\usr\bin\bash" -lc "sed -i 's/^CheckSpace/#CheckSpace/g' /etc/pacman.conf"
+
+          Write-Host "Run for the first time ..."
+          & "${env:MSYS2_BASEDIR}\msys64\usr\bin\bash" -lc ' '
+      }
+    - Write-Host "Update MSYS2 ..."
+    - '& "${env:MSYS2_BASEDIR}\msys64\usr\bin\bash" -lc "pacman --noconfirm -Syuu"' # Core update (in case any core packages are outdated)
+    - '& "${env:MSYS2_BASEDIR}\msys64\usr\bin\bash" -lc "pacman --noconfirm -Syuu"' # Normal update
+    - taskkill /F /FI "MODULES eq msys-2.0.dll"
+
+    - Write-Host "Install matrix, required and CI packages ..."
+    #   Packages for GitLab CI:
+    #     dos2unix (used to translate PowerShell written files below in this CI .yml into MSYS2 scripts)
+    - |
+      & "${env:MSYS2_BASEDIR}\msys64\usr\bin\bash" -lc 'set -x; pacman -Sy --noconfirm --needed ${msys2_packages} {% for var in required_msys2_packages %} {{ var }} {%- endfor %} dos2unix'
+
+    - Write-Host "Uninstall MSYS2 conflicting executables ..."
+    - |
+      & "${env:MSYS2_BASEDIR}\msys64\usr\bin\bash" -lc 'rm -vf /usr/bin/link.exe' # link.exe interferes with MSVC's link.exe
+
+    # ------------------ SECTION END Install MSYS2
+    - Write-Host "${esc}[0Ksection_end:$(Get-CurrentEpochSecs):install-msys2${cr}${esc}[0K"
+
+    # ------------------ SECTION BEGIN Install VSSetup
+    - Write-Host "${esc}[0Ksection_start:$(Get-CurrentEpochSecs):install-vssetup[collapsed=true]${cr}${esc}[0K"$TXT_SECTION"Install VSSetup"
+
+    # Avoid https://microsoft.github.io/PSRule/v2/troubleshooting/#windows-powershell-is-in-noninteractive-mode
+    # during `Install-Module VSSetup`:
+    #     Exception calling "ShouldContinue" with "2" argument(s): "Windows PowerShell is in NonInteractive mode. Read and
+    #     Prompt functionality is not available."
+    #     At C:\Program Files\WindowsPowerShell\Modules\PowerShellGet\1.0.0.1\PSModule.psm1:7455 char:8
+    #     +     if($Force -or $psCmdlet.ShouldContinue($shouldContinueQueryMessag ...
+    #     +        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #         + CategoryInfo          : NotSpecified: (:) [], MethodInvocationException
+    #         + FullyQualifiedErrorId : PSInvalidOperationException
+    #
+    #     Install-Module : NuGet provider is required to interact with NuGet-based repositories. Please ensure that '2.8.5.201'
+    #     or newer version of NuGet provider is installed.
+    #     At line:705 char:1
+    #     + Install-Module VSSetup -Scope CurrentUser -Force
+    #     + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #         + CategoryInfo          : InvalidOperation: (:) [Install-Module], InvalidOperationException
+    #         + FullyQualifiedErrorId : CouldNotInstallNuGetProvider,Install-Module
+    - Write-Host "Installing NuGet ..."
+    - if ($Null -eq (Get-PackageProvider -Name NuGet -ErrorAction Ignore)) { Install-PackageProvider -Name NuGet -Force -Scope CurrentUser; }
+
+    - Write-Host "Installing VSSetup for the Get-VSSetupInstance function ..."
+    - Install-Module VSSetup -Scope CurrentUser -Force
+
+    # ------------------ SECTION END Install VSSetup
+    - Write-Host "${esc}[0Ksection_end:$(Get-CurrentEpochSecs):install-vssetup${cr}${esc}[0K"
+
+    # ------------------ SECTION BEGIN Write pre scripts
+    - Write-Host "${esc}[0Ksection_start:$(Get-CurrentEpochSecs):write-pre-scripts[collapsed=true]${cr}${esc}[0K"$TXT_SECTION"Write pre scripts"
+
+    #   POSIX and AWK scripts
+
+    - If ( !(Test-Path -Path .ci\sd4 ) ) { New-Item .ci\sd4 -ItemType Directory | Out-Null }
+
+    - |
+      $Content = @'
+      {{ gl_common_values_script }}
+      '@
+      Set-Content -Path ".ci\sd4\common-values.sh" -Encoding Unicode -Value $Content
+      & "${env:MSYS2_BASEDIR}\msys64\usr\bin\dos2unix" .ci/sd4/common-values.sh
+
+    - |
+      $Content = @'
+      {{ gl_checkout_code_script }}
+      '@
+      Set-Content -Path ".ci\sd4\run-checkout-code.sh" -Encoding Unicode -Value $Content
+      & "${env:MSYS2_BASEDIR}\msys64\usr\bin\dos2unix" .ci/sd4/run-checkout-code.sh
+
+    - |
+      $Content = @'
+      {{ gl_setup_dkml_script }}
+      '@
+      Set-Content -Path ".ci\sd4\run-setup-dkml.sh" -Encoding Unicode -Value $Content
+      & "${env:MSYS2_BASEDIR}\msys64\usr\bin\dos2unix" .ci/sd4/run-setup-dkml.sh
+
+    - |
+      $Content = @'
+      {{ gl_msvcenv_awk }}
+      '@
+      Set-Content -Path ".ci\sd4\msvcenv.awk" -Encoding Unicode -Value $Content
+      & "${env:MSYS2_BASEDIR}\msys64\usr\bin\dos2unix" .ci/sd4/msvcenv.awk
+
+    - |
+      $Content = @'
+      {{ gl_msvcpath_awk }}
+      '@
+      Set-Content -Path ".ci\sd4\msvcpath.awk" -Encoding Unicode -Value $Content
+      & "${env:MSYS2_BASEDIR}\msys64\usr\bin\dos2unix" .ci/sd4/msvcpath.awk
+
+    #   PowerShell (UTF-16) and Batch (ANSI) scripts
+
+    - |
+      $Content = @'
+      {{ gl_config_vsstudio_ps1 }}
+      '@
+      Set-Content -Path ".ci\sd4\config-vsstudio.ps1" -Encoding Unicode -Value $Content
+
+    - |
+      $Content = @'
+      {{ gl_get_msvcpath_cmd }}
+
+      REM * We can't use `bash -lc` directly to query for all MSVC environment variables
+      REM   because it stomps over the PATH. So we are inside a Batch script to do the query.
+      "%MSYS2_BASEDIR%\msys64\usr\bin\bash" -lc "set | grep -v '^PATH=' | awk -f .ci/sd4/msvcenv.awk > .ci/sd4/msvcenv"
+      '@
+      Set-Content -Path ".ci\sd4\get-msvcpath-into-msys2.bat" -Encoding Default -Value $Content
+
+    # ------------------ SECTION END Write pre scripts
+    - Write-Host "${esc}[0Ksection_end:$(Get-CurrentEpochSecs):write-pre-scripts${cr}${esc}[0K"
+
+    - |
+      & "${env:MSYS2_BASEDIR}\msys64\usr\bin\bash" -lc "sh .ci/sd4/run-checkout-code.sh CI_PROJECT_DIR '${env:CI_PROJECT_DIR}'"
+
+    # ------------------ SECTION BEGIN Detect Visual Studio
+    - Write-Host "${esc}[0Ksection_start:$(Get-CurrentEpochSecs):detect-vs[collapsed=true]${cr}${esc}[0K"$TXT_SECTION"Detect Visual Studio"
+
+      # Diagnose Visual Studio environment variables (Windows)
+      # This wastes time and has lots of rows! Only run if "VERBOSE" GitHub input key.
+    - |
+      If ( "${env:VERBOSE}" -eq "true" ) {
+          if (Test-Path -Path "C:\Program Files (x86)\Windows Kits\10\include") {
+            dir "C:\Program Files (x86)\Windows Kits\10\include"
+          }
+          if (Test-Path -Path "C:\Program Files (x86)\Windows Kits\10\Extension SDKs\WindowsDesktop") {
+            dir "C:\Program Files (x86)\Windows Kits\10\Extension SDKs\WindowsDesktop"
+          }
+
+          $env:PSModulePath += "$([System.IO.Path]::PathSeparator).ci\sd4\g\dkml-component-ocamlcompiler\assets\staging-files\win32\SingletonInstall"
+          Import-Module Machine
+
+          $allinstances = Get-VSSetupInstance
+          $allinstances | ConvertTo-Json -Depth 5
+      }
+    - .ci\sd4\config-vsstudio.ps1
+    - |
+      & "${env:MSYS2_BASEDIR}\msys64\usr\bin\dos2unix" .ci/sd4/vsenv.sh
+    - Get-Content .ci/sd4/vsenv.sh
+    - Get-Content .ci/sd4/vsenv.ps1
+
+      # Capture Visual Studio compiler environment
+    - '& .ci\sd4\vsenv.ps1'
+    - '& .ci\sd4\get-msvcpath-into-msys2.bat'
+    - |
+      & "${env:MSYS2_BASEDIR}\msys64\usr\bin\bash" -lc "cat .ci/sd4/msvcpath | tr -d '\r' | cygpath --path -f - | awk -f .ci/sd4/msvcpath.awk >> .ci/sd4/msvcenv"
+    - |
+      & "${env:MSYS2_BASEDIR}\msys64\usr\bin\bash" -lc "tail -n100 .ci/sd4/msvcpath .ci/sd4/msvcenv"
+
+    # ------------------ SECTION END Detect Visual Studio
+    - Write-Host "${esc}[0Ksection_end:$(Get-CurrentEpochSecs):detect-vs${cr}${esc}[0K"
+
+    - |
+      & "${env:MSYS2_BASEDIR}\msys64\usr\bin\bash" -lc "sh .ci/sd4/run-setup-dkml.sh CI_PROJECT_DIR '${env:CI_PROJECT_DIR}'"
+  script:
+    - 'Write-Host "Override the .gitlab-ci.yml configuration ...`n  build_win32:`n    script:`nto configure your Windows build."'
+  after_script:
+    # ------------------
+    # Section formatting
+    # ------------------
+    #
+    # Note: This is repeated in the before_script section.
+    - $esc="$([char]27)"; $cr="$([char]13)"; $TXT_SECTION="${esc}[36m"; $TXT_CLEAR="${esc}[0m"
+    - |
+      function Get-CurrentEpochSecs {
+          [long]$timestamp = [math]::Round((([datetime]::UtcNow) - (Get-Date -Date '1/1/1970')).TotalMilliseconds)
+          [math]::Round($timestamp / 1000)
+      }
+
+    # ------------------ SECTION BEGIN Write post scripts
+    - Write-Host "${esc}[0Ksection_start:$(Get-CurrentEpochSecs):write-post-scripts[collapsed=true]${cr}${esc}[0K"$TXT_SECTION"Write post scripts"
+
+    #   POSIX and AWK scripts
+
+    - If ( !(Test-Path -Path .ci\sd4 ) ) { New-Item .ci\sd4 -ItemType Directory | Out-Null }
+
+    - |
+      $Content = @'
+      {{ gl_teardown_dkml_script }}
+      '@
+      Set-Content -Path ".ci\sd4\run-teardown-dkml.sh" -Encoding Unicode -Value $Content
+    - if (Test-Path -Path "${env:MSYS2_BASEDIR}\msys64\usr\bin\dos2unix.exe") { & "${env:MSYS2_BASEDIR}\msys64\usr\bin\dos2unix" .ci/sd4/run-teardown-dkml.sh }
+
+    # ------------------ SECTION END Write post scripts
+    - Write-Host "${esc}[0Ksection_end:$(Get-CurrentEpochSecs):write-post-scripts${cr}${esc}[0K"
+
+    - |
+      & "${env:MSYS2_BASEDIR}\msys64\usr\bin\bash" -lc "sh .ci/sd4/run-teardown-dkml.sh CI_PROJECT_DIR '${env:CI_PROJECT_DIR}'"
+
+# Advanced job: Typically you use .win32:setup-dkml, but sometimes you have to
+# work around GitLab bugs with declaring dependencies on parallel jobs, where
+# the dependent job is itself a parallel job. Only solution is to _not_ use
+# parallel jobs. Confer:
+# https://forum.gitlab.com/t/ci-specifying-artifact-dependencies-when-using-parallel-matrix/45026/2
+# https://gitlab.com/gitlab-org/gitlab/-/merge_requests/82734
+# https://gitlab.com/gitlab-org/gitlab/-/issues/373992
+.win32-windows_x86:setup-dkml-allplusmincache:
+  extends: .win32:setup-dkml-allplusmincache
+  # prettier-ignore
+  variables:
+    # autogen from gl_vars. only win32-windows_x86{% for (abi,abi_vars) in gl_vars %}{%- if abi_vars.abi_pattern == "win32-windows_x86" -%}{{ nl }}    { {% for (name,value) in abi_vars %}{{ name }}: {{ squot }}{{ value }}{{ squot }} {%- if loop.last %} } {%- else -%} , {%- endif %}{{ nl }}      {% endfor %}{%- endif %}{% endfor %}
+
+# Advanced job: Typically you use .win32:setup-dkml
+.win32-windows_x86_64:setup-dkml-allplusmincache:
+  extends: .win32:setup-dkml-allplusmincache
+  # prettier-ignore
+  variables:
+    # autogen from gl_vars. only win32-windows_x86_64{% for (abi,abi_vars) in gl_vars %}{%- if abi_vars.abi_pattern == "win32-windows_x86_64" -%}{{ nl }}    { {% for (name,value) in abi_vars %}{{ name }}: {{ squot }}{{ value }}{{ squot }} {%- if loop.last %} } {%- else -%} , {%- endif %}{{ nl }}      {% endfor %}{%- endif %}{% endfor %}
+
+.win32:setup-dkml:
+  extends:
+    - .win32:setup-dkml-allplusmincache
+    - .common:setup-dkml-cache
+  # prettier-ignore
+  parallel:
+    matrix: [
+      # autogen from gl_vars. only windows{% for (abi,abi_vars) in gl_vars %}{%- if abi_vars.dkml_host_os == "windows" -%}{{ nl }}      { {% for (name,value) in abi_vars %}{{ name }}: {{ squot }}{{ value }}{{ squot }} {%- if loop.last %} }, {%- else -%} , {%- endif %}{{ nl }}        {% endfor %}{%- endif %}{% endfor %}
+    ]
+
+.macos:setup-dkml:
+  # prettier-ignore
+  parallel:
+    matrix: [
+      # autogen from gl_vars. only darwin{% for (abi,abi_vars) in gl_vars %}{%- if abi_vars.dkml_host_os == "darwin" -%}{{ nl }}      { {% for (name,value) in abi_vars %}{{ name }}: {{ squot }}{{ value }}{{ squot }} {%- if loop.last %} }, {%- else -%} , {%- endif %}{{ nl }}        {% endfor %}{%- endif %}{% endfor %}
+    ]
+  image: $gl_image
+  tags: [saas-macos-medium-m1]
+  extends: .common:setup-dkml
+  before_script:
+    - echo "Writing pre scripts ..."
+    - |
+      install -d .ci/sd4
+      cat > .ci/sd4/common-values.sh <<'end_of_script'
+      {{ gl_common_values_script }}
+      end_of_script
+
+      cat > .ci/sd4/run-checkout-code.sh <<'end_of_script'
+      {{ gl_checkout_code_script }}
+      end_of_script
+
+      cat > .ci/sd4/run-setup-dkml.sh <<'end_of_script'
+      {{ gl_setup_dkml_script }}
+      end_of_script
+
+    - 'sh .ci/sd4/run-checkout-code.sh CI_PROJECT_DIR "${CI_PROJECT_DIR}"'
+    - 'sh .ci/sd4/run-setup-dkml.sh CI_PROJECT_DIR "${CI_PROJECT_DIR}"'
+  script:
+    - 'printf "Override the .gitlab-ci.yml configuration ...\n  build_macos:\n    script:\nto configure your macOS build.\n"'
+  after_script:
+    - echo "Writing post scripts ..."
+    - |
+      install -d .ci/sd4
+
+      cat > .ci/sd4/run-teardown-dkml.sh <<'end_of_script'
+      {{ gl_teardown_dkml_script }}
+      end_of_script
+
+    - 'sh .ci/sd4/run-teardown-dkml.sh CI_PROJECT_DIR "${CI_PROJECT_DIR}"'
+
+# Everything except Docker-in-Docker based matrix
+.linux:setup-dkml-no-matrix:
+  extends: .common:setup-dkml
+  variables:
+    DEBIAN_FRONTEND: noninteractive # for apt-get
+  before_script:
+    - echo "Installing system packages ..."
+    # Packages
+    #   tar: GNU tar. BusyBox tar can't do 'tar r' replacements needed by setup-dkml.sh
+    #   bash: dockcross needs Bash
+    #   git: For checkout-code.sh, and for opam
+    #   wget or curl: For setup-dkml.sh, for do_bootstrap() of opam
+    # Distros
+    #   docker:25.0.3 (uses /sbin/apk)
+    #   debian:stable-slim (uses /usr/bin/apt-get)
+    - |
+      if [ -x /sbin/apk ]; then
+        /sbin/apk add tar bash git wget
+      elif [ -x /usr/bin/apt-get ]; then
+        /usr/bin/apt-get update -qq -o=Dpkg::Use-Pty=0
+        /usr/bin/apt-get install -qq -o=Dpkg::Use-Pty=0 -y --no-install-suggests tar bash git wget
+      fi
+    - echo "Writing pre scripts ..."
+    - |
+      install -d .ci/sd4
+
+      cat > .ci/sd4/common-values.sh <<'end_of_script'
+      {{ gl_common_values_script }}
+      end_of_script
+
+      cat > .ci/sd4/run-checkout-code.sh <<'end_of_script'
+      {{ gl_checkout_code_script }}
+      end_of_script
+
+      cat > .ci/sd4/run-setup-dkml.sh <<'end_of_script'
+      {{ gl_setup_dkml_script }}
+      end_of_script
+
+    - 'sh .ci/sd4/run-checkout-code.sh CI_PROJECT_DIR "${CI_PROJECT_DIR}"'
+    - 'sh .ci/sd4/run-setup-dkml.sh CI_PROJECT_DIR "${CI_PROJECT_DIR}"'
+  script:
+    - 'printf "Override the .gitlab-ci.yml configuration ...\n  build_linux:\n    script:\nto configure your Linux build.\n"'
+  after_script:
+    - echo "Writing post scripts ..."
+    - |
+      install -d .ci/sd4
+
+      cat > .ci/sd4/run-teardown-dkml.sh <<'end_of_script'
+      {{ gl_teardown_dkml_script }}
+      end_of_script
+
+    - 'sh .ci/sd4/run-teardown-dkml.sh CI_PROJECT_DIR "${CI_PROJECT_DIR}"'
+
+.linux:setup-dkml:
+  # prettier-ignore
+  parallel:
+    matrix: [
+      # autogen from gl_vars. only linux{% for (abi,abi_vars) in gl_vars %}{%- if abi_vars.dkml_host_os == "linux" -%}{{ nl }}      { {% for (name,value) in abi_vars %}{{ name }}: {{ squot }}{{ value }}{{ squot }} {%- if loop.last %} }, {%- else -%} , {%- endif %}{{ nl }}        {% endfor %}{%- endif %}{% endfor %}
+    ]
+  extends: .linux:setup-dkml-no-matrix
+  #     ---------------
+  #     Docker in Docker
+  #       https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#use-docker-in-docker
+  #       We need it to do 'docker run' for the dockcross scripts
+  #     ---------------
+  #
+  #     Debugging on desktop? Get a shell session with:
+  #
+  #       docker network create gitlab-dind-network
+  #       docker volume create gitlab-dind-certs-ca
+  #       docker volume create gitlab-dind-certs-client
+  #
+  #       docker run --privileged --name gitlab-dind -d \
+  #           --network gitlab-dind-network --network-alias docker \
+  #           -e DOCKER_TLS_CERTDIR=/certs \
+  #           -v gitlab-dind-certs-ca:/certs/ca \
+  #           -v gitlab-dind-certs-client:/certs/client \
+  #       	  docker:25.0.3-dind
+  #
+  #       docker logs gitlab-dind
+  #
+  #       docker run -it --rm --network gitlab-dind-network \
+  #           -e DOCKER_TLS_CERTDIR=/certs \
+  #           -v gitlab-dind-certs-client:/certs/client:ro \
+  #           docker:25.0.3
+  image: docker:25.0.3
+  services:
+    - docker:25.0.3-dind
+  variables:
+    # Whether to use the ManyLinux Docker container.
+    # Yes; we have Docker-in-Docker to support exactly this.
+    MANYLINUX: "true"
+    # When you use the dind service, you must instruct Docker to talk with
+    # the daemon started inside of the service. The daemon is available
+    # with a network connection instead of the default
+    # /var/run/docker.sock socket. Docker 19.03 does this automatically
+    # by setting the DOCKER_HOST in
+    # https://github.com/docker-library/docker/blob/d45051476babc297257df490d22cbd806f1b11e4/19.03/docker-entrypoint.sh#L23-L29
+    #
+    # The 'docker' hostname is the alias of the service container as described at
+    # https://docs.gitlab.com/ee/ci/services/#accessing-the-services.
+    #
+    # Specify to Docker where to create the certificates. Docker
+    # creates them automatically on boot, and creates
+    # `/certs/client` to share between the service and job
+    # container, thanks to volume mount from config.toml
+    DOCKER_TLS_CERTDIR: "/certs"
+    # GitLab CI uses Docker-in-Docker, so no need for a custom dockcross image
+    dockcross_image_custom_prefix: ""

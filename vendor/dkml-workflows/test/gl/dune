@@ -1,0 +1,13 @@
+(rule
+ (target setup-dkml.gen.gitlab-ci.yml)
+ (alias runtest)
+ (action
+  (setenv
+   OCAMLRUNPARAM
+   b
+   (run ../../src/gl_setup_dkml_yml.exe --output-file %{target}))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff setup-dkml.gitlab-ci.yml setup-dkml.gen.gitlab-ci.yml)))

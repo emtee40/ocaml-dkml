@@ -1,0 +1,66 @@
+name: Test personal computer (PC) backend
+
+on:
+  push:
+    branches:
+      - main
+      - v*
+      - feature-*
+    tags:
+      - v*
+  # ... or trigger manually from GitHub web interface
+  workflow_dispatch:
+
+jobs:
+  setup-windows:
+    strategy:
+      fail-fast: true
+      matrix:
+        dkml_host_abi:
+          - windows_x86
+          - windows_x86_64
+    runs-on: windows-2019
+    name: build / ${{ matrix.dkml_host_abi }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run test/pc/setup-dkml-${{ matrix.dkml_host_abi }}.ps1
+        run: test/pc/setup-dkml-${{ matrix.dkml_host_abi }}.ps1
+
+  setup-linux:
+    strategy:
+      fail-fast: true
+      matrix:
+        dkml_host_abi:
+          - linux_x86_64
+    runs-on: ubuntu-latest
+    name: build / ${{ matrix.dkml_host_abi }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run test/pc/setup-dkml-${{ matrix.dkml_host_abi }}.sh
+        run: sh test/pc/setup-dkml-${{ matrix.dkml_host_abi }}.sh
+
+  setup-macos:
+    strategy:
+      fail-fast: false # until finished testing darwin_arm64
+      matrix:
+        include:
+          - dkml_host_abi: darwin_x86_64
+            runs-on: macos-latest
+          # macos-13-xlarge is NOT FREE even for Public projects as of 2023-11-25.
+          # - dkml_host_abi: darwin_arm64
+          #   runs-on: macos-13-xlarge # Apple Silicon. https://github.blog/2023-10-02-introducing-the-new-apple-silicon-powered-m1-macos-larger-runner-for-github-actions/
+    runs-on: ${{ matrix.runs-on }}
+    name: build / ${{ matrix.dkml_host_abi }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run test/pc/setup-dkml-${{ matrix.dkml_host_abi }}.sh
+        run: sh test/pc/setup-dkml-${{ matrix.dkml_host_abi }}.sh
