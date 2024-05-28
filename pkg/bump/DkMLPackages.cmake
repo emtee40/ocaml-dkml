@@ -11,10 +11,18 @@ set(PACKAGES_WITHOUT_META
 )
 
 # These projects are managed through [git subtree] into vendor/ directory
+# Transition steps: 
+# 1. Move *_BRANCH from pkg/bump/CMakeLists.txt
+# 2. Move *_URL from dependencies/fetch-git-projects.cmake
+# 3. Remove from dependencies/CMakeLists.txt
 set(dkml-compiler_BRANCH main)
 set(dkml-compiler_URL https://github.com/diskuv/dkml-compiler.git)
+set(dkml-workflows_BRANCH v1)
+set(dkml-workflows_URL https://github.com/diskuv/dkml-workflows-prerelease.git)
+
 set(DKML_SUBTREE_PROJECTS
-    dkml-compiler)
+    dkml-compiler
+    dkml-workflows)
 
 set(DKML_PROJECTS_PREDUNE
 

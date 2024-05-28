@@ -14,5 +14,4 @@ FetchContent_MakeAvailable(
     dkml-runtime-apps
     dkml-runtime-common
     dkml-runtime-distribution
-    dkml-workflows
 )
