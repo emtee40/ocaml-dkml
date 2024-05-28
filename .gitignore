@@ -1,0 +1,34 @@
+# Opam
+_opam/
+
+# Visual Studio Code
+.vscode/settings.json
+
+# Dune
+_build/
+/*.install
+
+# GitHub Actions
+/download-cache/
+
+#   direnv (https://direnv.net/)
+.envrc
+
+# CI
+dist/
+_release/
+stage/
+
+# when developing patches with: opam install ./dkml-base-compiler.opam --inplace-build
+/dkmldir/
+/ocaml.config
+/where
+/Brewfile
+.vscode/c_cpp_properties.json
+/change*.log
+
+# CI using dkml-workflows' DkML compilers.
+#   DkML compilers populate the .opam folder.
+/.opam/
+#   Desktop testing on Windows uses MSYS2.
+/msys64/
