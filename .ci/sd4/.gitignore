@@ -1,0 +1,3 @@
+# Let test/pc/setup*.sh scripts run
+*
+!.gitignore
