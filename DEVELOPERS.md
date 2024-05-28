@@ -75,7 +75,7 @@
 
 1. If you have a build directory:
 
-   * Delete the `build/pkg/bump` directory
+   * Delete the `build` directory
 
 2. Bump the `DKML_VERSION_CMAKEVER` in `version.cmake` to a new major/minor/patch/prerelease version number.
 3. Run CMake configure: Either run `cmake --preset develop` or press a "configure" button in your

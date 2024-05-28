@@ -30,7 +30,7 @@ else()
     # - Prereleases are in the format major.minor.patch.prerelease.
     # - Major/minor/patch releases are in the format major.minor.patch.
     # Can be edited by pkg/bump/CMakeLists.txt. Do not change format.
-    set(DKML_VERSION_CMAKEVER "2.1.1")
+    set(DKML_VERSION_CMAKEVER "2.1.2")
 endif()
 
 macro(ExpandDkmlVersion VERSIONTYPE)
