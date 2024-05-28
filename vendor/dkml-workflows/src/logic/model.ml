@@ -15,7 +15,7 @@ let global_env_vars =
     ("DEFAULT_DISKUV_OPAM_REPOSITORY_TAG", "2.1.1");
     ("DEFAULT_OCAML_OPAM_REPOSITORY_TAG", "6c3f73f42890cc19f81eb1dec8023c2cd7b8b5cd");
     ("DEFAULT_DKML_COMPILER", "2.1.1");
-    ("BOOTSTRAP_OPAM_VERSION", "2.2.0-alpha-20221228");
+    ("BOOTSTRAP_OPAM_VERSION", "v2.2.0-alpha-20221228");
 
     (* BEGIN pin-env-vars. DO NOT EDIT THE LINES IN THIS SECTION *)
     (* Managed by bump-packages.cmake *)
