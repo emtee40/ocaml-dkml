@@ -101,7 +101,7 @@ foreach(PROJECT IN LISTS DKML_PROJECTS_SYNCED DKML_PROJECTS_UNSYNCED)
     string(SUBSTRING "${gitref}" 0 6 ${PROJECT}_SHORTREF)
 
     # Add to CMakePresetsGenerated
-    if(NOT ${PROJECT} IN_LIST DKML_SUBTREE_PROJECTS)
+    if(NOT PROJECT IN_LIST DKML_SUBTREE_PROJECTS)
         list(APPEND generatedCacheVariables "        \"${PROJECT}_GIT_TAG\": {
     \"value\": \"${gitref}\"
 }")
@@ -637,29 +637,48 @@ function(add_GitPush_command)
     # it in each re-configure by deleting the output file during re-configure.
     file(REMOVE ${ARG_OUTPUT_FILE})
 
-    add_custom_command(
-        OUTPUT ${ARG_OUTPUT_FILE}
-        WORKING_DIRECTORY ${ARG_SOURCE_DIR}
-        DEPENDS ${ARG_DEPENDS}
+    if(ARG_CONTEXT IN_LIST DKML_SUBTREE_PROJECTS)
+        # Reference: https://www.atlassian.com/git/tutorials/git-subtree
+        set(subtree_args --prefix "vendor/${ARG_CONTEXT}" "${${ARG_CONTEXT}_URL}")
 
-        # git tag
-        COMMAND
-        ${CMAKE_COMMAND}
-        -D CMAKE_MESSAGE_CONTEXT=${ARG_CONTEXT}
-        -D "GIT_EXECUTABLE=${GIT_EXECUTABLE}"
-        -D "DKML_VERSION_PRERELEASE_NEW=${DKML_VERSION_PRERELEASE}"
-        -D "DKML_VERSION_SEMVER_NEW=${DKML_VERSION_SEMVER}${ARG_TAG_SUFFIX}"
-        -D "DKML_VERSION_OPAMVER_NEW=${DKML_VERSION_OPAMVER}"
-        -P ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/idempotent-tag.cmake
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${newSemverFile} ${ARG_OUTPUT_FILE}
+        add_custom_command(
+            OUTPUT ${ARG_OUTPUT_FILE}
+            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+            DEPENDS ${ARG_DEPENDS}
 
-        # git push
-        COMMAND "${GIT_EXECUTABLE}" push --atomic origin "${ARG_BRANCH}" ${refspec}
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${newSemverFile} ${ARG_OUTPUT_FILE}
+            # git push branch and tag
+            COMMAND "${GIT_EXECUTABLE}" subtree push ${subtree_args} ${${ARG_CONTEXT}_BRANCH}
+            COMMAND "${GIT_EXECUTABLE}" subtree push ${subtree_args} ${refspec}
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${newSemverFile} ${ARG_OUTPUT_FILE}
 
-        VERBATIM
-        USES_TERMINAL
-    )
+            VERBATIM
+            USES_TERMINAL
+        )
+    else()
+        add_custom_command(
+            OUTPUT ${ARG_OUTPUT_FILE}
+            WORKING_DIRECTORY ${ARG_SOURCE_DIR}
+            DEPENDS ${ARG_DEPENDS}
+
+            # git tag
+            COMMAND
+            ${CMAKE_COMMAND}
+            -D CMAKE_MESSAGE_CONTEXT=${ARG_CONTEXT}
+            -D "GIT_EXECUTABLE=${GIT_EXECUTABLE}"
+            -D "DKML_VERSION_PRERELEASE_NEW=${DKML_VERSION_PRERELEASE}"
+            -D "DKML_VERSION_SEMVER_NEW=${DKML_VERSION_SEMVER}${ARG_TAG_SUFFIX}"
+            -D "DKML_VERSION_OPAMVER_NEW=${DKML_VERSION_OPAMVER}"
+            -P ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/idempotent-tag.cmake
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${newSemverFile} ${ARG_OUTPUT_FILE}
+
+            # git push
+            COMMAND "${GIT_EXECUTABLE}" push --atomic origin "${ARG_BRANCH}" ${refspec}
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${newSemverFile} ${ARG_OUTPUT_FILE}
+
+            VERBATIM
+            USES_TERMINAL
+        )
+    endif()
 endfunction()
 
 function(add_GitPush_commands_for_synced_projects)
@@ -756,7 +775,7 @@ if(DKML_GOLDEN_SOURCE_CODE)
     endforeach()
 else()
     foreach(proj IN LISTS DKML_PROJECTS_SYNCED)
-        if(NOT ${proj} IN_LIST DKML_SUBTREE_PROJECTS)
+        if(NOT proj IN_LIST DKML_SUBTREE_PROJECTS)
             FetchContent_GetProperties(${proj})
             set(srcDir ${${proj}_SOURCE_DIR})
             set(branch ${${proj}_BRANCH})
