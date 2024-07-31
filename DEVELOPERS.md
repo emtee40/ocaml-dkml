@@ -80,7 +80,7 @@
 2. Bump the `DKML_VERSION_CMAKEVER` in `version.cmake` to a new major/minor/patch/prerelease version number.
 3. Run CMake configure: Either run `cmake --preset develop` or press a "configure" button in your
    CMake-enabled IDE with the `develop` configuration.
-4. Run one of the `Package-VersionBump-{PRERELEASE,PATCH,MINOR,MAJOR}` targets
+4. Run the appropriate `Package-VersionBump-{PRERELEASE,PATCH,MINOR,MAJOR}` target.
 5. Rerun CMake configure (ex. `cmake --preset develop`).
 6. Edit `ocaml_opam_repository_gitref.txt` and set it to a commit id that you know works well with Windows, etc. Then commit the change. *You won't need to push it*.
 7. Run through each of the CMake stage targets **sequentially** starting from `Package-Stage01-` to
