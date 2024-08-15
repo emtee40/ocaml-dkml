@@ -92,14 +92,6 @@ FetchGit(dkml-runtime-apps
     GIT_REPOSITORY https://github.com/diskuv/dkml-runtime-apps.git
     GIT_TAG main
 )
-FetchGit(dkml-runtime-common
-    GIT_REPOSITORY https://github.com/diskuv/dkml-runtime-common.git
-    GIT_TAG main # 90426df0bdda1e0cb7675b6f746aa152b222c6c8 # 1.2.1-prerel1 + commits
-)
-FetchGit(dkml-runtime-distribution
-    GIT_REPOSITORY https://github.com/diskuv/dkml-runtime-distribution.git
-    GIT_TAG main # b1a1403eded259a49a57134054633df526d3addb # 1.2.1-prerel1 + commits
-)
 FetchGit(dkml-component-curl
     GIT_REPOSITORY https://github.com/diskuv/dkml-component-curl.git
     GIT_TAG main

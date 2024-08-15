@@ -15,16 +15,24 @@ set(PACKAGES_WITHOUT_META
 # 1. Move *_BRANCH from pkg/bump/CMakeLists.txt
 # 2. Move *_URL from dependencies/fetch-git-projects.cmake
 # 3. Remove from dependencies/CMakeLists.txt
+# 4. Add to DKML_SUBTREE_PROJECTS in this file
 set(dkml-compiler_BRANCH main)
 set(dkml-compiler_URL https://github.com/diskuv/dkml-compiler.git)
 set(dkml-component-ocamlcompiler_BRANCH main)
 set(dkml-component-ocamlcompiler_URL https://github.com/diskuv/dkml-component-ocamlcompiler.git)
+set(dkml-runtime-common_BRANCH main)
+set(dkml-runtime-common_URL https://github.com/diskuv/dkml-runtime-common.git)
+set(dkml-runtime-distribution_BRANCH main)
+set(dkml-runtime-distribution_URL https://github.com/diskuv/dkml-runtime-distribution.git)
+
 set(dkml-workflows_BRANCH v1)
 set(dkml-workflows_URL https://github.com/diskuv/dkml-workflows-prerelease.git)
 
 set(DKML_SUBTREE_PROJECTS
     dkml-compiler
     dkml-component-ocamlcompiler
+    dkml-runtime-common
+    dkml-runtime-distribution
     dkml-workflows)
 
 set(DKML_PROJECTS_PREDUNE

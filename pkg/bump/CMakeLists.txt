@@ -30,8 +30,6 @@ set(dkml-component-ocamlrun_BRANCH main)
 set(dkml-installer-ocaml_BRANCH main)
 set(dkml-installer-ocaml-byte_BRANCH main)
 set(dkml-runtime-apps_BRANCH main)
-set(dkml-runtime-common_BRANCH main)
-set(dkml-runtime-distribution_BRANCH main)
 
 # Sanity check
 foreach(PROJECT IN LISTS DKML_PROJECTS_SYNCED)

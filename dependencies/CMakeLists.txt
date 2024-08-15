@@ -11,6 +11,4 @@ FetchContent_MakeAvailable(
     dkml-installer-ocaml
     dkml-installer-ocaml-byte
     dkml-runtime-apps
-    dkml-runtime-common
-    dkml-runtime-distribution
 )
