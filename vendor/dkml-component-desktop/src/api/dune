@@ -1,0 +1,5 @@
+(library
+ (name staging_dkmlconfdir_api)
+ (public_name dkml-component-staging-dkmlconfdir.api)
+ (modules staging_dkmlconfdir_api conf_loader)
+ (libraries bos dkml-install.api sexplib))

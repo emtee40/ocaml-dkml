@@ -1,0 +1,84 @@
+(library
+ (name installlib)
+ (modules install uninstall)
+ (libraries bos cmdliner diskuvbox dkml-install.api jsonm fmt.cli fmt.tty logs.cli logs.fmt))
+
+(executable
+ (package dkml-component-offline-desktop-ci)
+ (name install_ci)
+ (public_name offline_desktop_install_ci)
+ (modes
+  (byte exe))
+ (modules install_ci)
+ (libraries installlib))
+
+(executable
+ (package dkml-component-offline-desktop-ci)
+ (name uninstall_ci)
+ (public_name offline_desktop_uninstall_ci)
+ (modes
+  (byte exe))
+ (modules uninstall_ci)
+ (libraries installlib))
+
+(executable
+ (package dkml-component-offline-desktop-full)
+ (name install_full)
+ (public_name offline_desktop_install_full)
+ (modes
+  (byte exe))
+ (modules install_full)
+ (libraries installlib))
+
+(executable
+ (package dkml-component-offline-desktop-full)
+ (name uninstall_full)
+ (public_name offline_desktop_uninstall_full)
+ (modes
+  (byte exe))
+ (modules uninstall_full)
+ (libraries installlib))
+
+(install
+ (package dkml-component-offline-desktop-ci)
+ (section share)
+ (files
+  (install_ci.bc as staging-files/generic/install.bc)
+  (uninstall_ci.bc as staging-files/generic/uninstall.bc)))
+
+(install
+ (package dkml-component-offline-desktop-full)
+ (section share)
+ (files
+  (install_full.bc as staging-files/generic/install.bc)
+  (uninstall_full.bc as staging-files/generic/uninstall.bc)))
+
+(rule
+ (alias runtest)
+ (package dkml-component-offline-desktop-ci)
+ (deps
+  (:bc1 install_ci.bc) (:bc2 uninstall_ci.bc))
+ (action
+  (progn
+   (with-stdout-to
+    info.ci.txt
+    (run ocamlobjinfo %{bc1} %{bc2}))
+   (with-stdout-to
+    dlls.ci.corrected.txt
+    (run awk "/.*:/ {x=0} /Used DLLs:/{x=1} x==1 {print}" info.ci.txt))
+   (diff? dlls.ci.txt dlls.ci.corrected.txt))))
+
+(rule
+ (alias runtest)
+ (package dkml-component-offline-desktop-full)
+ (deps
+  (:bc1 install_full.bc) (:bc2 uninstall_full.bc))
+ (action
+  (progn
+   (with-stdout-to
+    info.full.txt
+    (run ocamlobjinfo %{bc1} %{bc2}))
+   (with-stdout-to
+    dlls.full.corrected.txt
+    (run awk "/.*:/ {x=0} /Used DLLs:/{x=1} x==1 {print}" info.full.txt))
+   (diff? dlls.full.txt dlls.full.corrected.txt))))

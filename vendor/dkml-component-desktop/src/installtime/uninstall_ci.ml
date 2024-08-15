@@ -1,0 +1,1 @@
+let () = Installlib.Uninstall.cli ()
