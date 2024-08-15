@@ -1019,6 +1019,7 @@ do_pins() {
         case "${OCAML_COMPILER:-}" in
         4.12.1) true ;;
         4.14.0) true ;;
+        4.14.2) true ;;
         *)
             echo "OCAML_COMPILER version ${OCAML_COMPILER:-} is not supported"
             exit 109

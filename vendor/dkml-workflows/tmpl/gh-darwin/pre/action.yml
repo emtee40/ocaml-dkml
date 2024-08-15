@@ -149,7 +149,8 @@ runs:
       shell: bash
       env:
         # Push down inputs variables for GitHub/GitLab portable scripts
-        VERBOSE:          "{% raw -%}${{ inputs.VERBOSE }}{%- endraw %}"
+        VERBOSE:                        "{% raw -%}${{ inputs.VERBOSE }}{%- endraw %}"
+        PIN_DKML_RUNTIME_DISTRIBUTION:  "{{ dkml_runtime_compiler_version }}"
       run: 'sh .ci/sd4/run-checkout-code.sh GITHUB_WORKSPACE "$GITHUB_WORKSPACE"'
 
     # Setup C compiler

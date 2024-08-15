@@ -18,6 +18,7 @@ export SKIP_OPAM_MODIFICATIONS=false
 export PRIMARY_SWITCH_SKIP_INSTALL=false
 export SECONDARY_SWITCH=false
 export CONF_DKML_CROSS_TOOLCHAIN=@repository@
+export OCAML_OPAM_REPOSITORY=
 export DISKUV_OPAM_REPOSITORY=
 export DKML_HOME=
 # autogen from global_env_vars.
@@ -450,6 +451,8 @@ while getopts :h-: option; do
     PRIMARY_SWITCH_SKIP_INSTALL=*) PRIMARY_SWITCH_SKIP_INSTALL=${OPTARG#*=} ;;
     CONF_DKML_CROSS_TOOLCHAIN) fail "Option \"$OPTARG\" missing argument" ;;
     CONF_DKML_CROSS_TOOLCHAIN=*) CONF_DKML_CROSS_TOOLCHAIN=${OPTARG#*=} ;;
+    OCAML_OPAM_REPOSITORY) fail "Option \"$OPTARG\" missing argument" ;;
+    OCAML_OPAM_REPOSITORY=*) OCAML_OPAM_REPOSITORY=${OPTARG#*=} ;;
     DISKUV_OPAM_REPOSITORY) fail "Option \"$OPTARG\" missing argument" ;;
     DISKUV_OPAM_REPOSITORY=*) DISKUV_OPAM_REPOSITORY=${OPTARG#*=} ;;
     DKML_HOME) fail "Option \"$OPTARG\" missing argument" ;;
@@ -1030,6 +1033,9 @@ git_checkout() {
 
 section_begin checkout-info "Summary: code checkout"
 
+PIN_DKML_RUNTIME_DISTRIBUTION=${PIN_DKML_RUNTIME_DISTRIBUTION:-}
+TAG_DKML_RUNTIME_DISTRIBUTION=${TAG_DKML_RUNTIME_DISTRIBUTION:-$PIN_DKML_RUNTIME_DISTRIBUTION}
+
 # shellcheck disable=SC2154
 echo "
 ================
@@ -1052,24 +1058,29 @@ Matrix
 ------
 dkml_host_abi=$dkml_host_abi
 .
+---------
+Constants
+---------
+PIN_DKML_RUNTIME_DISTRIBUTION=${PIN_DKML_RUNTIME_DISTRIBUTION}
+TAG_DKML_RUNTIME_DISTRIBUTION=${TAG_DKML_RUNTIME_DISTRIBUTION}
+.
 "
 
 section_end checkout-info
 
 install -d .ci/sd4/g
 
-# dkml-component-ocamlcompiler
+# dkml-runtime-distribution
 
-#   For 'Diagnose Visual Studio environment variables (Windows)' we need dkml-component-ocamlcompiler
+#   For 'Diagnose Visual Studio environment variables (Windows)' we need dkml-runtime-distribution
 #   so that 'Import-Module Machine' and 'Get-VSSetupInstance' can be run.
-#   The version doesn't matter too much, as long as it has a functioning Get-VSSetupInstance
-#   that supports the Visual Studio versions of the latest GitLab CI and GitHub Actions machines.
-#   commit 4d6f1bfc3510c55ba4273cb240e43727854b5718 = WinSDK 19041 and VS 14.29
+#   More importantly, for 'Locate Visual Studio (Windows)' we need dkml-runtime-distribution's
+#   'Get-CompatibleVisualStudios' and 'Get-VisualStudioProperties'.
 case "$dkml_host_abi" in
 windows_*)
-    section_begin checkout-dkml-component-ocamlcompiler 'Checkout dkml-component-ocamlcompiler'
-    git_checkout dkml-component-ocamlcompiler https://github.com/diskuv/dkml-component-ocamlcompiler.git "b9142380b0b8771a0d02f8b88ea786152a6e3d09"
-    section_end checkout-dkml-component-ocamlcompiler
+    section_begin checkout-dkml-runtime-distribution 'Checkout dkml-runtime-distribution'
+    git_checkout dkml-runtime-distribution https://github.com/diskuv/dkml-runtime-distribution.git "$TAG_DKML_RUNTIME_DISTRIBUTION"
+    section_end checkout-dkml-runtime-distribution
     ;;
 esac
 
@@ -2097,6 +2108,7 @@ do_pins() {
         case "${OCAML_COMPILER:-}" in
         4.12.1) true ;;
         4.14.0) true ;;
+        4.14.2) true ;;
         *)
             echo "OCAML_COMPILER version ${OCAML_COMPILER:-} is not supported"
             exit 109

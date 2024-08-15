@@ -4,8 +4,8 @@
 $ opam install . --deps-only --yes
 
 # If you need IDE support
-$ opam install ocaml-lsp-server ocamlformat.0.19.0 ocamlformat-rpc.0.19.0 --yes
+$ opam install ocaml-lsp-server ocamlformat ocamlformat-rpc --yes
 
-$ dune runtest
-$ dune runtest --auto-promote
+$ opam exec -- dune runtest
+$ opam exec -- dune runtest --auto-promote
 ```

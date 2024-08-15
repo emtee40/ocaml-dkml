@@ -18,6 +18,7 @@ export SKIP_OPAM_MODIFICATIONS=false
 export PRIMARY_SWITCH_SKIP_INSTALL=false
 export SECONDARY_SWITCH=false
 export CONF_DKML_CROSS_TOOLCHAIN=@repository@
+export OCAML_OPAM_REPOSITORY=
 export DISKUV_OPAM_REPOSITORY=
 export DKML_HOME=
 # autogen from global_env_vars.{% for var in global_env_vars %}{{ nl }}export {{ var.name }}='{{ var.value }}'{% endfor %}
@@ -81,6 +82,8 @@ while getopts :h-: option; do
     PRIMARY_SWITCH_SKIP_INSTALL=*) PRIMARY_SWITCH_SKIP_INSTALL=${OPTARG#*=} ;;
     CONF_DKML_CROSS_TOOLCHAIN) fail "Option \"$OPTARG\" missing argument" ;;
     CONF_DKML_CROSS_TOOLCHAIN=*) CONF_DKML_CROSS_TOOLCHAIN=${OPTARG#*=} ;;
+    OCAML_OPAM_REPOSITORY) fail "Option \"$OPTARG\" missing argument" ;;
+    OCAML_OPAM_REPOSITORY=*) OCAML_OPAM_REPOSITORY=${OPTARG#*=} ;;
     DISKUV_OPAM_REPOSITORY) fail "Option \"$OPTARG\" missing argument" ;;
     DISKUV_OPAM_REPOSITORY=*) DISKUV_OPAM_REPOSITORY=${OPTARG#*=} ;;
     DKML_HOME) fail "Option \"$OPTARG\" missing argument" ;;

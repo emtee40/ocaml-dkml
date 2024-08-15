@@ -65,6 +65,9 @@ git_checkout() {
 
 section_begin checkout-info "Summary: code checkout"
 
+PIN_DKML_RUNTIME_DISTRIBUTION=${PIN_DKML_RUNTIME_DISTRIBUTION:-}
+TAG_DKML_RUNTIME_DISTRIBUTION=${TAG_DKML_RUNTIME_DISTRIBUTION:-$PIN_DKML_RUNTIME_DISTRIBUTION}
+
 # shellcheck disable=SC2154
 echo "
 ================
@@ -87,23 +90,28 @@ Matrix
 ------
 dkml_host_abi=$dkml_host_abi
 .
+---------
+Constants
+---------
+PIN_DKML_RUNTIME_DISTRIBUTION=${PIN_DKML_RUNTIME_DISTRIBUTION}
+TAG_DKML_RUNTIME_DISTRIBUTION=${TAG_DKML_RUNTIME_DISTRIBUTION}
+.
 "
 
 section_end checkout-info
 
 install -d .ci/sd4/g
 
-# dkml-component-ocamlcompiler
+# dkml-runtime-distribution
 
-#   For 'Diagnose Visual Studio environment variables (Windows)' we need dkml-component-ocamlcompiler
+#   For 'Diagnose Visual Studio environment variables (Windows)' we need dkml-runtime-distribution
 #   so that 'Import-Module Machine' and 'Get-VSSetupInstance' can be run.
-#   The version doesn't matter too much, as long as it has a functioning Get-VSSetupInstance
-#   that supports the Visual Studio versions of the latest GitLab CI and GitHub Actions machines.
-#   commit 4d6f1bfc3510c55ba4273cb240e43727854b5718 = WinSDK 19041 and VS 14.29
+#   More importantly, for 'Locate Visual Studio (Windows)' we need dkml-runtime-distribution's
+#   'Get-CompatibleVisualStudios' and 'Get-VisualStudioProperties'.
 case "$dkml_host_abi" in
 windows_*)
-    section_begin checkout-dkml-component-ocamlcompiler 'Checkout dkml-component-ocamlcompiler'
-    git_checkout dkml-component-ocamlcompiler https://github.com/diskuv/dkml-component-ocamlcompiler.git "b9142380b0b8771a0d02f8b88ea786152a6e3d09"
-    section_end checkout-dkml-component-ocamlcompiler
+    section_begin checkout-dkml-runtime-distribution 'Checkout dkml-runtime-distribution'
+    git_checkout dkml-runtime-distribution https://github.com/diskuv/dkml-runtime-distribution.git "$TAG_DKML_RUNTIME_DISTRIBUTION"
+    section_end checkout-dkml-runtime-distribution
     ;;
 esac

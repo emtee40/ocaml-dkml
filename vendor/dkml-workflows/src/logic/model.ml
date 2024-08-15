@@ -197,6 +197,9 @@ let global_env_vars =
     (* END pin-env-vars. DO NOT EDIT THE LINES ABOVE *)
   ] [@@ocamlformat "disable"]
 
+let dkml_runtime_compiler_version =
+  List.assoc "PIN_DKML_RUNTIME_DISTRIBUTION" global_env_vars
+
 let required_msys2_packages =
   (*
    Install utilities
@@ -684,6 +687,8 @@ let model ~allow_dkml_host_abi ~read_script =
              Jg_types.Tobj
                [ ("name", Jg_types.Tstr name); ("value", Jg_types.Tstr value) ])
            global_env_vars) );
+    ( "dkml_runtime_compiler_version",
+      Jg_types.Tstr dkml_runtime_compiler_version );
     ( "gh_matrix",
       Jg_types.Tlist
         (full_matrix_as_list ~allow_dkml_host_abi ~must_support_gh:()

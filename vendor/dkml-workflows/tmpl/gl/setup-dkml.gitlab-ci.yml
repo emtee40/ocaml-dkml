@@ -90,7 +90,7 @@ variables:
     # https://patchwork.kernel.org/project/qemu-devel/patch/20211215073402.144286-17-thuth@redhat.com/
     CHERE_INVOKING: "yes" # Preserve the current working directory
     MSYSTEM: '${msys2_system}' # Start a 64 bit environment if CLANG64, etc.
-  tags: [shared-windows, windows, windows-1809]
+  tags: [saas-windows-medium-amd64]
   timeout: 2h
   before_script:
     # For dos2unix and any other direct MSYS2 invocation that does not go through `bash -lc` first.
@@ -276,7 +276,7 @@ variables:
             dir "C:\Program Files (x86)\Windows Kits\10\Extension SDKs\WindowsDesktop"
           }
 
-          $env:PSModulePath += "$([System.IO.Path]::PathSeparator).ci\sd4\g\dkml-component-ocamlcompiler\assets\staging-files\win32\SingletonInstall"
+          $env:PSModulePath += "$([System.IO.Path]::PathSeparator).ci\sd4\g\dkml-runtime-distribution\src\windows"
           Import-Module Machine
 
           $allinstances = Get-VSSetupInstance
