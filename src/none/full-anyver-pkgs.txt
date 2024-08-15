@@ -1,0 +1,117 @@
+# All packages listed in this file are installed as part of
+# the "dkml" system switch as part of the "Full" distribution.
+
+# See README.md for a description of this file format.
+
+##      global-install
+#       bin/ocp-indent
+#       man/man1/ocp-indent.1
+#       share/emacs/site-lisp/ocp-indent.el
+#       share/ocp-indent/vim/indent/ocaml.vim
+ocp-indent.1.8.2-windowssupport
+
+# ------------ tiny_httpd and its transitive dependencies ------------
+
+##      global-compile
+#       note: http_of_dir is a sample executable. don't actually want it
+#       bin/http_of_dir.exe
+tiny_httpd.0.16
+##      global-compile
+hmap.0.8.1
+##      global-compile
+iostream.0.2.2
+
+# ------------ utop and its transitive dependencies ------------
+
+##      global-compile
+#       note: bin/utop is a executable will become a bytecode shim
+#       bin/utop
+#       bin/utop-full
+#       man/man1/utop-full.1
+#       man/man1/utop.1
+#       man/man5/utoprc.5
+#       share/emacs/site-lisp/utop.el
+#       share/utop
+#       share/utop/utoprc-dark
+#       share/utop/utoprc-light
+utop.2.13.1
+
+# To get all transitive dependencies, we use:
+#   opam list --resolve=utop --columns=package
+# and exclude:
+#   base-*.base, cppo,
+#   ocaml, ocaml-config, ocaml-system, ocamlbuild,
+#   ocamlfind, topkg
+
+##      global-compile
+csexp.1.5.2
+##      global-compile
+#       bin/lambda-term-actions # not in [is_bytecode_exe] in dkml-runtime-apps
+lambda-term.3.3.2
+##      global-compile
+logs.0.7.0
+##      global-compile
+lwt.5.7.0
+##      global-compile
+lwt_react.1.2.0
+##      global-compile
+mew.0.1.0
+##      global-compile
+mew_vi.0.5.0
+##      global-compile
+ocplib-endian.1.2
+##      global-compile
+react.1.2.2
+##      global-compile
+result.1.5
+##      global-compile
+trie.1.0.0
+##      global-compile
+uchar.0.0.2
+##      global-compile
+uucp.15.0.0
+##      global-compile
+#       bin/usegtrip.exe # not in [is_bytecode_exe] in dkml-runtime-apps
+uuseg.15.0.0
+##      global-compile
+uutf.1.0.3
+##      global-compile
+#       note: xdg.3.9.0+ is used by utop.2.13.0, and is independent from the
+#             rest of the Dune packages
+#       lib/stublibs/dllxdg_stubs.dll
+xdg.3.15.0
+##      global-compile
+zed.3.2.3
+
+# ------------ graphics and its transitive dependencies ------------
+
+##      global-compile
+graphics.5.1.2
+
+# To get all transitive dependencies, we use:
+#   opam list --resolve=graphics --columns=package
+# and exclude:
+#   base-*.base, cppo,
+#   dune (dune*, xdg),
+#   ocaml, ocaml-config, ocaml-system, ocamlbuild,
+#   ocamlfind, topkg
+
+#already part of utop: csexp.1.5.2
+
+# ------------ sqlite3 and its transitive dependencies ------------
+
+##      global-compile
+#       lib/sqlite3/libsqlite3_stubs.lib
+#       lib/stublibs/dllsqlite3_stubs.dll
+sqlite3.5.1.0+msvc
+
+# To get all transitive dependencies, we use:
+#   opam list --resolve=sqlite3 --columns=package
+# and exclude:
+#   base-*.base, cppo,
+#   dune (dune*, xdg),
+#   ocaml, ocaml-config, ocaml-system, ocamlbuild,
+#   ocamlfind, topkg
+
+##      global-compile
+conf-sqlite3.3.1+cpkgs

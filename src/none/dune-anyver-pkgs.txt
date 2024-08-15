@@ -1,0 +1,32 @@
+# All packages listed in this file are installed as part of
+# the "dkml" system switch.
+
+# See README.md for a description of this file format.
+
+# As of DkML 2.1.0, dune is not installed globally. But that non-installation
+# is performed by the gitlab.com/dkml/distributions/dkml's cmake scripts
+# (and dkml-component-desktop) only using the [ci] and [full] flavors, rather
+# than also this [dune] flavor.
+##      global-install
+#       bin/dune
+#       bin/dune-real
+#       man/man1/dune-build.1
+#       man/man1/...
+#       man/man1/dune.1
+#       man/man5/dune-config.5
+dune.3.15.0
+#   [dune-*] must be compatible with [dune]
+dune-action-plugin.3.15.0
+dune-build-info.3.15.0
+dune-configurator.3.15.0
+dune-glob.3.15.0
+dune-private-libs.3.15.0
+dune-rpc.3.15.0
+dune-rpc-lwt.3.15.0
+dune-site.3.15.0
+dyn.3.15.0
+#   fiber is special; does not go past 3.7.0
+fiber.3.7.0
+ordering.3.15.0
+stdune.3.15.0
+# xdg is a Dune related package but is listed separately in full-anyver-pkgs.txt
