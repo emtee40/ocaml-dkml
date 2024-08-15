@@ -26,6 +26,11 @@ set -euf
 # ------- 3 -------
 # Add or upgrade dkml-runtime-apps
 #
+# ------- 4 -------
+# Add or upgrade conf-pkg-config.
+# * sqlite3 > conf-sqlite3[build] > conf-pkg-config[build]
+# * The 'build' dependency type is causing conf-pkg-config not to install, so we do it explicitly.
+#
 # ------- Why all at once? -------
 # Install diskuv-opam-repository packages at
 # the same time as FULL_NOT_DUNE packages so
@@ -51,4 +56,5 @@ idempotent_opam_local_install unmanaged-patched-full-no-dune-withdkml-and-apps \
     '@dkml-runtime-distribution_REL_SOURCE_DIR@/dkml-runtime-distribution.opam' \
     @DKML_UNMANAGED_PATCHED_PACKAGES_SPACED_PKGVERS@ \
     @FULL_NOT_DUNE_FLAVOR_NO_WITHDKML_SPACED_PKGVERS@ \
-    @dkml-runtime-apps_SPACED_REL_INSTALLABLE_OPAMFILES@
+    @dkml-runtime-apps_SPACED_REL_INSTALLABLE_OPAMFILES@ \
+    conf-pkg-config.2+cpkgs
