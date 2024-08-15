@@ -68,37 +68,9 @@ endif()
 # Not ported to [git subtree]
 # --------
 
-FetchGit(diskuv-opam-repository
-    GIT_REPOSITORY https://github.com/diskuv/diskuv-opam-repository.git
-    GIT_TAG main # 315a344b354e883c0884eefdb7869a20d1ef5803 # 1.2.1-prerel1
-)
-FetchGit(dkml-component-desktop
-    GIT_REPOSITORY https://gitlab.com/dkml/components/dkml-component-desktop.git
-    GIT_TAG main
-)
 FetchGit(dkml-install-api
     GIT_REPOSITORY https://github.com/diskuv/dkml-install-api.git
     GIT_TAG 0.5 # TODO: Release this to opam repository
-)
-FetchGit(dkml-installer-ocaml
-    GIT_REPOSITORY https://github.com/diskuv/dkml-installer-ocaml.git
-    GIT_TAG main
-)
-FetchGit(dkml-installer-ocaml-byte
-    GIT_REPOSITORY https://github.com/diskuv/dkml-installer-ocaml-byte.git
-    GIT_TAG main
-)
-FetchGit(dkml-runtime-apps
-    GIT_REPOSITORY https://github.com/diskuv/dkml-runtime-apps.git
-    GIT_TAG main
-)
-FetchGit(dkml-component-curl
-    GIT_REPOSITORY https://github.com/diskuv/dkml-component-curl.git
-    GIT_TAG main
-)
-FetchGit(dkml-component-ocamlrun
-    GIT_REPOSITORY https://github.com/diskuv/dkml-component-ocamlrun.git
-    GIT_TAG main
 )
 FetchGit(dkml-component-unixutils
     GIT_REPOSITORY https://github.com/diskuv/dkml-component-unixutils.git

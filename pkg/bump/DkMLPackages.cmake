@@ -16,21 +16,41 @@ set(PACKAGES_WITHOUT_META
 # 2. Move *_URL from dependencies/fetch-git-projects.cmake
 # 3. Remove from dependencies/CMakeLists.txt
 # 4. Add to DKML_SUBTREE_PROJECTS in this file
+set(diskuv-opam-repository_BRANCH main)
+set(diskuv-opam-repository_URL https://github.com/diskuv/diskuv-opam-repository.git)
 set(dkml-compiler_BRANCH main)
 set(dkml-compiler_URL https://github.com/diskuv/dkml-compiler.git)
+set(dkml-component-curl_BRANCH main)
+set(dkml-component-curl_URL https://github.com/diskuv/dkml-component-curl.git)
+set(dkml-component-desktop_BRANCH main)
+set(dkml-component-desktop_URL https://gitlab.com/dkml/components/dkml-component-desktop.git)
 set(dkml-component-ocamlcompiler_BRANCH main)
 set(dkml-component-ocamlcompiler_URL https://github.com/diskuv/dkml-component-ocamlcompiler.git)
+set(dkml-component-ocamlrun_BRANCH main)
+set(dkml-component-ocamlrun_URL https://github.com/diskuv/dkml-component-ocamlrun.git)
+set(dkml-installer-ocaml_BRANCH main)
+set(dkml-installer-ocaml_URL https://github.com/diskuv/dkml-installer-ocaml.git)
+set(dkml-installer-ocaml-byte_BRANCH main)
+set(dkml-installer-ocaml-byte_URL https://github.com/diskuv/dkml-installer-ocaml-byte.git)
+set(dkml-runtime-apps_BRANCH main)
+set(dkml-runtime-apps_URL https://github.com/diskuv/dkml-runtime-apps.git)
 set(dkml-runtime-common_BRANCH main)
 set(dkml-runtime-common_URL https://github.com/diskuv/dkml-runtime-common.git)
 set(dkml-runtime-distribution_BRANCH main)
 set(dkml-runtime-distribution_URL https://github.com/diskuv/dkml-runtime-distribution.git)
-
 set(dkml-workflows_BRANCH v1)
 set(dkml-workflows_URL https://github.com/diskuv/dkml-workflows-prerelease.git)
 
 set(DKML_SUBTREE_PROJECTS
+    diskuv-opam-repository
     dkml-compiler
+    dkml-component-curl
+    dkml-component-desktop
     dkml-component-ocamlcompiler
+    dkml-component-ocamlrun
+    dkml-installer-ocaml
+    dkml-installer-ocaml-byte
+    dkml-runtime-apps
     dkml-runtime-common
     dkml-runtime-distribution
     dkml-workflows)

@@ -1,14 +1,7 @@
 include(${CMAKE_CURRENT_LIST_DIR}/fetch-git-projects.cmake)
 
 FetchContent_MakeAvailable(
-    diskuv-opam-repository
-    dkml-component-curl
-    dkml-component-desktop
-    dkml-component-ocamlrun
     dkml-component-opam
     dkml-component-unixutils
     dkml-install-api
-    dkml-installer-ocaml
-    dkml-installer-ocaml-byte
-    dkml-runtime-apps
 )
