@@ -1,0 +1,25 @@
+(executable
+ (name setup_userprofile)
+ (public_name setup_userprofile)
+ (package dkml-component-ocamlcompiler-common)
+ (modes
+  (byte exe))
+ (libraries
+  dkml-component-ocamlcompiler-common
+  dkml-install.api
+  diskuvbox
+  bos
+  fpath
+  base64
+  cmdliner
+  logs
+  logs.cli
+  logs.fmt
+  fmt.cli
+  fmt.tty))
+
+(install
+ (section share)
+ (package dkml-component-ocamlcompiler-common)
+ (files
+  (setup_userprofile.bc as staging-files/generic/setup_userprofile.bc)))

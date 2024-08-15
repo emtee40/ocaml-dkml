@@ -1,0 +1,9 @@
+(library
+ (public_name dkml-component-ocamlcompiler-network)
+ (name dkml_component_ocamlcompiler_network)
+ (libraries
+  dkml-install.register
+  dkml-component-staging-ocamlrun.api
+  bos
+  logs
+  dkml-component-ocamlcompiler-common.api))

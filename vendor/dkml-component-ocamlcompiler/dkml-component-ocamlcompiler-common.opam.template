@@ -1,0 +1,57 @@
+build: [
+  # Portable shell scripts for OCaml compiling
+  #
+  # ** The only portable shell scripts needed are that that compile the bytecode
+  # ** interpreter for use in the dkml-component-staging-ocamlrun build:[] section.
+  # ** Any other logic needed for compiling the full native-code compiler
+  # ** can be done in OCaml bytecode. But since the portable shell scripts
+  # ** do 90% of the work needed for the native-code compiler, no strong
+  # ** reason (yet) to convert the native-code compiler installation into OCaml
+  # ** bytecode.
+  #
+  #   Create a minimal DKMLDIR (no dkml-runtime-distribution) that can build
+  #   the r-c-ocaml-* OCaml compiler. Its structure mimics a
+  #   git submodule setup.
+  #
+  #   <dkmldir>/vendor/drc/
+  ["diskuvbox" "copy-dir" "%{dkml-runtime-common:lib}%/unix" "dkmldir/vendor/drc/unix"]
+  #   <dkmldir>/.dkmlroot
+  ["diskuvbox" "copy-file" "%{dkml-runtime-common:lib}%/template.dkmlroot" "dkmldir/.dkmlroot"]
+
+  #   <dkmldir>/vendor/dkml-compiler/
+  ["diskuvbox" "copy-dir" "%{dkml-compiler-src:lib}%/src" "dkmldir/vendor/dkml-compiler/src"]
+  ["diskuvbox" "copy-dir" "%{dkml-compiler-src:lib}%/env" "dkmldir/vendor/dkml-compiler/env"]
+
+  # Build component
+  ["dune" "subst"] {dev}
+  [
+    "dune"
+    "build"
+    "-p"
+    name
+    "-j"
+    jobs
+    "@install"
+    "@runtest" {with-test}
+    "@doc" {with-doc}
+  ]
+]
+install: [
+  # Copy minimal dkmldir into staging, adding distribution which has
+  # PowerShell scripts and other Unix scripts needed by setup-userprofile.ps1
+
+  #   Clone minimal dkmldir
+  ["diskuvbox" "copy-dir" "dkmldir" "%{_:share}%/staging-files/windows_x86/dkmldir"]
+  ["diskuvbox" "copy-dir" "dkmldir" "%{_:share}%/staging-files/windows_x86_64/dkmldir"]
+  #   Unpack runtime-distribution
+  ["diskuvbox" "copy-dir" "%{dkml-runtime-distribution:lib}%/src/none" "%{_:share}%/staging-files/windows_x86/dkmldir/vendor/drd/src/none"]
+  ["diskuvbox" "copy-dir" "%{dkml-runtime-distribution:lib}%/src/none" "%{_:share}%/staging-files/windows_x86_64/dkmldir/vendor/drd/src/none"]
+  ["diskuvbox" "copy-dir" "%{dkml-runtime-distribution:lib}%/src/unix" "%{_:share}%/staging-files/windows_x86/dkmldir/vendor/drd/src/unix"]
+  ["diskuvbox" "copy-dir" "%{dkml-runtime-distribution:lib}%/src/unix" "%{_:share}%/staging-files/windows_x86_64/dkmldir/vendor/drd/src/unix"]
+  ["diskuvbox" "copy-dir" "%{dkml-runtime-distribution:lib}%/src/windows" "%{_:share}%/staging-files/windows_x86/dkmldir/vendor/drd/src/windows"]
+  ["diskuvbox" "copy-dir" "%{dkml-runtime-distribution:lib}%/src/windows" "%{_:share}%/staging-files/windows_x86_64/dkmldir/vendor/drd/src/windows"]
+
+  # Copy assets
+  ["diskuvbox" "copy-dir" "assets/staging-files/win32" "%{_:share}%/staging-files/windows_x86"]
+  ["diskuvbox" "copy-dir" "assets/staging-files/win32" "%{_:share}%/staging-files/windows_x86_64"]
+]

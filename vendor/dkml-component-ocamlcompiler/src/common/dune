@@ -1,0 +1,4 @@
+(library
+ (name ocamlcompiler_common)
+ (public_name dkml-component-ocamlcompiler-common.api)
+ (libraries bos dkml-install.api fpath re))
