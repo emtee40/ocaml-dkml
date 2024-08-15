@@ -1,0 +1,33 @@
+opam-version: "2.0"
+synopsis: "Compatibility module for OCaml standard library"
+description:
+  "Compatibility module for OCaml standard library allowing programs to use some recent additions to the OCaml standard library while preserving the ability to be compiled on former versions of OCaml."
+maintainer: "Thierry Martinez <martinez@nsup.org>"
+authors: "Thierry Martinez <martinez@nsup.org>"
+license: "BSD-2-Clause"
+homepage: "https://github.com/thierry-martinez/stdcompat"
+bug-reports: "https://github.com/thierry-martinez/stdcompat/issues"
+depends: [
+  "ocaml" {>= "3.07"}
+  "dune" {>= "2.0"}
+]
+depopts: [ "result" "seq" "uchar" "ocamlfind"
+  # Moved this here. Confer https://github.com/thierry-martinez/stdcompat/issues/29
+  "conf-autoconf"
+]
+build: [
+  ["dune" "subst"] {dev}
+  ["dune" "build" "-p" name "-j" jobs]
+  ["dune" "runtest" "-p" name "-j" jobs] {with-test}
+]
+dev-repo: "git+https://github.com/thierry-martinez/stdcompat.git"
+url {
+  src:
+    # Fix for https://github.com/thierry-martinez/stdcompat/issues/27 that removes
+    # the unnecessary README symlink.
+    #"https://github.com/thierry-martinez/stdcompat/releases/download/v19/stdcompat-19.tar.gz"
+    "https://github.com/jonahbeckford/stdcompat/releases/download/v19%2Bnoreadmesymlink/stdcompat-19-noreadmesymlink.tar.gz"
+  checksum: [
+    "sha512=55a236743b9fd6c21ccf88e4df37642dc6d72dc62c5ee23d204b2b51a1faeda25591e7f843e2e767190643dabfdcc1893792358f5b9dcc2e80d8f5231432b5cf"
+  ]
+}

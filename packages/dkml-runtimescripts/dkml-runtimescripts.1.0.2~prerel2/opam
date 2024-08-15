@@ -1,0 +1,69 @@
+opam-version: "2.0"
+synopsis:
+  "Runtime scripts used by CLI applications and Opam plugins in a Diskuv OCaml installation"
+maintainer: ["opensource+diskuv-ocaml@support.diskuv.com"]
+authors: ["Diskuv, Inc. <opensource+diskuv-ocaml@support.diskuv.com>"]
+license: "Apache-2.0"
+homepage: "https://diskuv.gitlab.io/diskuv-ocaml"
+bug-reports: "https://github.com/diskuv/dkml-runtime-apps/issues"
+depends: [
+  "dune" {>= "2.9"}
+  "ocaml" {>= "4.12.1"}
+  "bos" {>= "0.2.0"}
+  "fpath" {>= "0.7.0"}
+  "rresult" {>= "0.7.0"}
+  "dkml-compiler-env"
+  "dkml-runtime-common" {>= "1.0.2~prerel0"}
+  "dkml-runtime-distribution"
+  "crunch" {>= "3.2.0"}
+  "odoc" {with-doc}
+]
+build: [
+  ["dune" "subst"] {dev}
+  [
+    "dune"
+    "build"
+    "-p"
+    name
+    "-j"
+    jobs
+    "--promote-install-files=false"
+    "@install"
+    "@runtest" {with-test}
+    "@doc" {with-doc}
+  ]
+  ["dune" "install" "-p" name "--create-install-files" name]
+]
+dev-repo: "git+https://github.com/diskuv/dkml-runtime-apps.git"
+pin-depends: [
+  [
+    "dkml-compiler-env.~dev"
+    "git+https://github.com/diskuv/dkml-compiler.git"
+  ]
+  [
+    "dkml-runtime-common.1.0.2~prerel0"
+    "git+https://github.com/diskuv/dkml-runtime-common.git"
+  ]
+  [
+    "dkml-runtime-distribution.~dev"
+    "git+https://github.com/diskuv/dkml-runtime-distribution.git"
+  ]
+]
+extra-source "dl/dkml-runtime-common.tar.gz" {
+  src: "https://github.com/diskuv/dkml-runtime-common/archive/refs/tags/1.0.2-prerel2.tar.gz"
+  checksum: [
+    "sha256=24962bef6c64fffcc8c4a87bfb4936e28e5eebdbb9b13914d9ef40ce37494b7b"
+  ]
+}
+extra-source "dl/dkml-runtime-distribution.tar.gz" {
+  src: "https://github.com/diskuv/dkml-runtime-distribution/archive/refs/tags/1.0.2-prerel2.tar.gz"
+  checksum: [
+    "sha256=12c4a2ad2b96f3b39dad0ee7fb6c969988802f1e0848d30eed941a8711239780"
+  ]
+}
+url {
+  src: "https://github.com/diskuv/dkml-runtime-apps/archive/refs/tags/1.0.2-prerel2.tar.gz"
+  checksum: [
+    "sha256=0f9ccd81d4285344361ff515aba2f8b6ee73bcf6351172823e4d06eade9bd6fe"
+  ]
+}

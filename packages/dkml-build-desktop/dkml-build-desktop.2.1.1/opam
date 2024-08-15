@@ -1,0 +1,42 @@
+opam-version: "2.0"
+synopsis: "Tools for building desktop executables"
+description: "Tools for building desktop executables"
+maintainer: ["opensource+diskuv-ocaml@support.diskuv.com"]
+authors: ["Diskuv, Inc. <opensource+diskuv-ocaml@support.diskuv.com>"]
+license: "Apache-2.0"
+homepage: "https://gitlab.com/dkml/components/dkml-component-desktop"
+doc:
+  "https://gitlab.com/dkml/components/dkml-component-desktop/-/blob/main/README.md"
+bug-reports:
+  "https://gitlab.com/dkml/components/dkml-component-desktop/-/issues"
+depends: [
+  "dune" {>= "3.6"}
+  "re" {>= "1.10.0"}
+  "diskuvbox" {>= "0.1.0"}
+  "yaml" {>= "3.0.0" & with-test}
+  "with-dkml" {>= version}
+  "dkml-runtime-common" {>= version}
+  "dkml-runtime-distribution" {>= version}
+  "odoc" {with-doc}
+]
+build: [
+  ["dune" "subst"] {dev}
+  [
+    "dune"
+    "build"
+    "-p"
+    name
+    "-j"
+    jobs
+    "@install"
+    "@runtest" {with-test}
+    "@doc" {with-doc}
+  ]
+]
+dev-repo: "git+https://gitlab.com/dkml/components/dkml-component-desktop.git"
+url {
+  src: "https://gitlab.com/dkml/distributions/dkml/-/releases/2.1.1/downloads/src.dkml-component-desktop.tar.gz"
+  checksum: [
+    "sha512=d1afca5af922b87f65b2904136a676173f0b5bb5ca0d36384ca54cf47bd061031f58b2a809a6a7904a0c5ea7c37b817d5cdbe1c3eb30f06120656df467797672"
+  ]
+}

@@ -1,0 +1,69 @@
+opam-version: "2.0"
+synopsis:
+  "Collection of end-user installers of the CI flavor of desktop executables"
+description:
+  "`desktop` provides desktop executables for all DKML installable platforms"
+maintainer: ["opensource+diskuv-ocaml@support.diskuv.com"]
+authors: ["Diskuv, Inc. <opensource+diskuv-ocaml@support.diskuv.com>"]
+license: "Apache-2.0"
+homepage: "https://gitlab.com/diskuv-ocaml/components/dkml-component-desktop"
+doc:
+  "https://gitlab.com/diskuv-ocaml/components/dkml-component-desktop/-/blob/main/README.md"
+bug-reports:
+  "https://gitlab.com/diskuv-ocaml/components/dkml-component-desktop/-/issues"
+depends: [
+  "dkml-build-desktop" {= version}
+  "dkml-install" {>= "0.2.0"}
+  "diskuvbox" {>= "0.1.0"}
+  "dune" {>= "3.6" & = "3.8.3" | = "3.8.3+shim"}
+  "dkml-apps" {= "1.2.1~prerel10"}
+  "dkml-exe" {= "1.2.1~prerel10"}
+  "with-dkml" {= "1.2.1~prerel10"}
+  "odoc" {with-doc}
+]
+depopts: ["conf-withdkml"]
+dev-repo:
+  "git+https://gitlab.com/diskuv-ocaml/components/dkml-component-desktop.git"
+available: [ ?dkml-sys-opam-exe ]
+build: [
+  ["dune" "subst"] {dev}
+  [
+    "dune"
+    "build"
+    "-p"
+    name
+    "-j"
+    jobs
+    "@install"
+    "@runtest" {with-test}
+    "@doc" {with-doc}
+  ]
+
+  # BEGIN build-flavor-ci. DO NOT EDIT THE LINES IN THIS SECTION
+  # Managed by bump-packages.cmake. TODO: Use [opam] from dkml-component-opam
+  [ "sh" "-c" "'%{dkml-sys-opam-exe}%' show --list-files dkml-apps > opamshow-dkml-apps.txt" ]
+  [ "sh" "-c" "'%{dkml-sys-opam-exe}%' show --list-files dkml-exe > opamshow-dkml-exe.txt" ]
+  [ "sh" "-c" "'%{dkml-sys-opam-exe}%' show --list-files dune > opamshow-dune.txt" ]
+  # END build-flavor-ci. DO NOT EDIT THE LINES ABOVE
+
+  # Overwrite opamshow-dkml-apps.txt to exclude what we staged in staging-dkmlconfdir. There should not be overlap.
+  [ "sh" "-c" "'%{dkml-sys-opam-exe}%' show --list-files dkml-apps | grep -v dkml-confdir > opamshow-dkml-apps.txt" ]
+]
+install: [
+  # BEGIN install-flavor-ci. DO NOT EDIT THE LINES IN THIS SECTION
+  # Managed by bump-packages.cmake
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-dkml-apps.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-dkml-exe.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-dune.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%" ]
+  # END install-flavor-ci. DO NOT EDIT THE LINES ABOVE
+
+  [ "diskuvbox" "copy-file" "%{with-dkml:bin}%/with-dkml%{exe}%" "%{_:share}%/staging-files/%{dkml-abi}%/bin/dune%{exe}%" ]
+  [ "diskuvbox" "copy-file" "%{dune:bin}%/dune%{exe}%"      "%{_:share}%/staging-files/%{dkml-abi}%/bin/dune-real%{exe}%" ] {!(conf-withdkml:installed)}
+  [ "diskuvbox" "copy-file" "%{dune:bin}%/dune-real%{exe}%" "%{_:share}%/staging-files/%{dkml-abi}%/bin/dune-real%{exe}%" ] {  conf-withdkml:installed}
+]
+url {
+  src: "https://gitlab.com/diskuv-ocaml/distributions/dkml/-/releases/1.2.1-10/downloads/src.dkml-component-desktop.tar.gz"
+  checksum: [
+    "sha512=2b54c097b0805778993cd09b95bf3312410009aaddac582e08bc3488fc76bd894a7ccf88fb81fc071e7feebc0826b457b17edaa9dde9f185fcec2247ee0e82ac"
+  ]
+}

@@ -1,0 +1,54 @@
+opam-version: "2.0"
+synopsis: "Minimal HTTP server using threads"
+maintainer: "c-cube"
+authors: "c-cube"
+license: "MIT"
+tags: [
+  "http" "thread" "server" "tiny_httpd" "http_of_dir" "simplehttpserver"
+]
+homepage: "https://github.com/c-cube/tiny_httpd/"
+bug-reports: "https://github.com/c-cube/tiny_httpd/issues"
+depends: [
+  "dune" {>= "2.9"}
+  "seq"
+  "base-threads"
+  "result"
+  "hmap"
+  "iostream" {>= "0.2"}
+  "ocaml" {>= "4.08"}
+  "odoc" {with-doc}
+  "logs" {with-test}
+  "conf-libcurl" {with-test}
+  "ptime" {with-test}
+  "qcheck-core" {>= "0.9" & with-test}
+]
+depopts: [
+  "logs"
+  "magic-mime"
+  "mtime" {>= "2.0"}
+]
+build: [
+  ["dune" "subst"] {dev}
+  [
+    "dune"
+    "build"
+    "-p"
+    name
+    "-j"
+    jobs
+    "--promote-install-files=false"
+    "@install"
+    "@runtest" {with-test}
+    "@doc" {with-doc}
+  ]
+  ["dune" "install" "-p" name "--create-install-files" name]
+]
+dev-repo: "git+https://github.com/c-cube/tiny_httpd.git"
+url {
+  src:
+    "https://github.com/jonahbeckford/tiny_httpd/releases/download/v0.16-win32/src.tar.gz"
+  checksum: [
+    "md5=a24d16a4829a2cf78041f35ad6dc2c38"
+    "sha512=cb4387df1e569e62b5ade77ada3e370696b6e12aff11849bef151e3aaaba35622d69f82b98b132820d4124fa64d4d5c12e33df8863c5c1ed545d510b39794d5b"
+  ]
+}

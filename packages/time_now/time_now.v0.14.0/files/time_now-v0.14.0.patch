@@ -1,0 +1,100 @@
+--- ./src/time_now_stubs.c
++++ ./src/time_now_stubs.c
+@@ -7,6 +7,62 @@
+ 
+ #if defined(JSC_POSIX_TIMERS)
+ 
++#ifdef _WIN32
++#include <windows.h>
++#include <stdint.h>
++
++#ifndef CLOCK_REALTIME
++#define CLOCK_REALTIME 1
++#endif
++
++#define POW10_7                 10000000
++#define DELTA_EPOCH_IN_100NS    INT64_C(116444736000000000)
++
++typedef void (WINAPI *GetSystemTimeAsFileTime_t)(LPFILETIME lpSystemTimeAsFileTime);
++static GetSystemTimeAsFileTime_t i_GetSystemTimeAsFileTime = GetSystemTimeAsFileTime;
++static int clock_gettime_init_called = 0;
++
++static void clock_gettime_init(void) {
++  /* Use GetSystemTimePreciseAsFileTime when available */
++  HMODULE h ;
++  clock_gettime_init_called = 1;
++  h = LoadLibrary("kernel32.dll");
++  if (h != NULL) {
++    GetSystemTimeAsFileTime_t proc = (GetSystemTimeAsFileTime_t)GetProcAddress(h, "GetSystemTimePreciseAsFileTime");
++    if (proc != NULL) {
++      i_GetSystemTimeAsFileTime = proc;
++    }
++    else {
++      FreeLibrary(h);
++    }
++  }
++}
++
++#define clock_gettime my_clock_gettime
++static int my_clock_gettime(int clock_id, struct timespec *tp)
++{
++  uint64_t t;
++  FILETIME ft;
++  ULARGE_INTEGER lft;
++  (void) clock_id;
++  if ( clock_gettime_init_called == 0 ){
++    clock_gettime_init();
++  }
++
++  i_GetSystemTimeAsFileTime(&ft);
++
++  lft.LowPart  = ft.dwLowDateTime;
++  lft.HighPart = ft.dwHighDateTime;
++
++  t = lft.QuadPart - DELTA_EPOCH_IN_100NS;
++  tp->tv_sec = t / POW10_7;
++  tp->tv_nsec = ((int) (t % POW10_7)) * 100;
++
++  return 0;
++}
++#endif /* _WIN32 */
++
++
+ /* Note: this is imported noalloc if (and only if) ARCH_SIXTYFOUR is defined.
+  * This is OK because caml_alloc_int63 doesn't actually allocate in that case. */
+ CAMLprim value time_now_nanoseconds_since_unix_epoch_or_zero()
+@@ -22,7 +78,34 @@
+ #else
+ 
+ #include <sys/types.h>
++#ifndef _MSC_VER
+ #include <sys/time.h>
++#endif
++#ifdef _MSC_VER
++#include <time.h>
++
++#define DELTA_EPOCH_IN_MICROSECS  116444736000000000Ui64
++
++static int gettimeofday(struct timeval *tp, void *tz)
++{
++  FILETIME    file_time;
++  SYSTEMTIME  system_time;
++  ULARGE_INTEGER ularge;
++  (void)tz;
++
++  GetSystemTime(&system_time);
++  SystemTimeToFileTime(&system_time, &file_time);
++  ularge.LowPart = file_time.dwLowDateTime;
++  ularge.HighPart = file_time.dwHighDateTime;
++
++  tp->tv_sec = (long) ((ularge.QuadPart - DELTA_EPOCH_IN_MICROSECS) / 10000000L);
++  tp->tv_usec = (long) (system_time.wMilliseconds * 1000);
++
++  return 0;
++}
++
++#endif
++
+ 
+ CAMLprim value time_now_nanoseconds_since_unix_epoch_or_zero()
+ {

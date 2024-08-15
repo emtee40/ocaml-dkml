@@ -1,0 +1,38 @@
+opam-version: "2.0"
+synopsis: "Opam plugin for DkML. Deprecated; use 'dkml' executable instead"
+description:
+  "An opam plugin where 'opam dkml init' creates a local Windows-friendly Opam switch configured with DkML Opam repositories and options"
+maintainer: ["opensource+diskuv-ocaml@support.diskuv.com"]
+authors: ["Diskuv, Inc. <opensource+diskuv-ocaml@support.diskuv.com>"]
+license: "Apache-2.0"
+homepage: "https://diskuv.gitlab.io/diskuv-ocaml"
+bug-reports: "https://github.com/diskuv/dkml-runtime-apps/issues"
+depends: [
+  "dune" {>= "2.9"}
+  "dkml-exe-lib" {= version}
+  "odoc" {with-doc}
+]
+build: [
+  ["dune" "subst"] {dev}
+  [
+    "dune"
+    "build"
+    "-p"
+    name
+    "-j"
+    jobs
+    "--promote-install-files=false"
+    "@install"
+    "@runtest" {with-test}
+    "@doc" {with-doc}
+  ]
+  ["dune" "install" "-p" name "--create-install-files" name]
+]
+dev-repo: "git+https://github.com/diskuv/dkml-runtime-apps.git"
+flags: plugin
+url {
+  src: "https://gitlab.com/dkml/distributions/dkml/-/releases/2.1.0/downloads/src.dkml-runtime-apps.tar.gz"
+  checksum: [
+    "sha512=d2a7a6afcebed5d9fefe737135d10d633dc1ad1770df00fb428a5b3c6a54007c4bebd187faba102194c79284ee9295bc0d8765a86eabfbc86e03cbeab3e13cb4"
+  ]
+}

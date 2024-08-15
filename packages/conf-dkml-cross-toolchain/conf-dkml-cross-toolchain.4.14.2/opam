@@ -1,0 +1,58 @@
+opam-version: "2.0"
+synopsis: "Add findlib 1.9.5 toolchains for all installed DKML cross-compilers"
+authors: ["Diskuv, Inc. <opensource+diskuv-ocaml@support.diskuv.com>"]
+license: "Apache-2.0"
+homepage: "https://github.com/diskuv/conf-dkml-cross-toolchain"
+bug-reports: "https://github.com/diskuv/conf-dkml-cross-toolchain/issues"
+dev-repo: "git+https://github.com/diskuv/conf-dkml-cross-toolchain"
+depends: [
+  "ocaml"               {= "4.14.2"}
+  "ocaml-system"        {>= "4.14.2~" & < "4.14.3~"} |
+  "dkml-base-compiler"  {>= "4.14.2~" & < "4.14.3~"}
+]
+build: [
+  [
+    "bash"
+    "toolchain/findlib-configure.sh"
+    "%{_:build}%/dl/findlib-1.9.5.tar.gz"
+    "1.9.5"
+    "%{_:build}%/extra-findlib"
+    "%{ocaml:preinstalled}%"
+    "%{prefix}%"
+    "%{ocaml-system:path}%/../opt/mlcross"  { ocaml-system:installed }
+    "%{dkml-base-compiler:share}%/mlcross"  { dkml-base-compiler:installed }
+  ]
+]
+install: [
+  [ "install" "-d" "%{lib}%/findlib.conf.d" ]
+  [
+    "bash"
+    "toolchain/findlib-install.sh"
+    "%{_:build}%/extra-findlib"
+    "%{ocaml:native}%"
+    "%{ocaml-system:path}%/../opt/mlcross"  { ocaml-system:installed }
+    "%{dkml-base-compiler:share}%/mlcross"  { dkml-base-compiler:installed }
+  ]
+  [
+    "bash"
+    "toolchain/add-findlib-conf.sh"
+    "%{prefix}%"
+    "%{ocaml-system:path}%/../opt/mlcross"  { ocaml-system:installed }
+    "%{dkml-base-compiler:share}%/mlcross"  { dkml-base-compiler:installed }
+  ]
+]
+maintainer: ["opensource+diskuv-ocaml@support.diskuv.com"]
+extra-source "dl/findlib-1.9.5.tar.gz" {
+  src: "http://download.camlcity.org/download/findlib-1.9.5.tar.gz"
+  checksum: [
+    "md5=8b893525ce36cb3d4d4952483bcc7cf4"
+    "sha512=03514c618a16b02889db997c6c4789b3436b3ad7d974348d2c6dea53eb78898ab285ce5f10297c074bab4fd2c82931a8b7c5c113b994447a44abb30fca74c715"
+  ]
+}
+url {
+  src: "https://github.com/diskuv/conf-dkml-cross-toolchain/archive/refs/tags/v4.12.1-prerel3.tar.gz"
+  checksum: [
+    "md5=63b2ecad76cf56102074f3203fc8c0be"
+    "sha512=c797264f96bd1264e4ac8d597f0a24487580009dfba580a98e98cb4b2669fdbf645a004ed02a9c6e0d2a7b8d11b8fb8004a17449f2d3665a840f31985f34194d"
+  ]
+}

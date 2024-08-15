@@ -1,0 +1,20 @@
+opam-version: "2.0"
+synopsis: "DEPRECATED; use dkml-compiler-src instead. Scripts to configure DKML compilation in various environments"
+maintainer: ["opensource+diskuv-ocaml@support.diskuv.com"]
+authors: ["Diskuv, Inc. <opensource+diskuv-ocaml@support.diskuv.com>"]
+license: "Apache-2.0"
+homepage: "https://github.com/diskuv/dkml-compiler"
+bug-reports: "https://github.com/diskuv/dkml-compiler/issues"
+depends: []
+dev-repo: "git+https://github.com/diskuv/dkml-compiler.git"
+build: []
+install: [
+  [".\\install-env.cmd"  "%{_:lib}%"] {os = "win32"}
+  ["sh" "./install-env.sh" "%{_:lib}%"]  {!(os = "win32")}
+]
+url {
+  src: "https://gitlab.com/dkml/distributions/dkml/-/releases/2.1.0/downloads/src.dkml-compiler.tar.gz"
+  checksum: [
+    "sha512=11fb7d740f539a60b9ac91cbe64f6af1c13ae2d9801c5258dae1cc1e7da6763944734ab3344291313d95431a6012e762335a3e3f29e06a84fd524298caffd3ed"
+  ]
+}

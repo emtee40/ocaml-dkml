@@ -1,0 +1,55 @@
+opam-version: "2.0"
+synopsis:
+  "OCamlbuild is a build system with builtin rules to easily build most OCaml projects"
+maintainer: "Gabriel Scherer <gabriel.scherer@gmail.com>"
+authors: ["Nicolas Pouillard" "Berke Durak"]
+license: "LGPL-2.0-or-later WITH OCaml-LGPL-linking-exception"
+homepage: "https://github.com/ocaml/ocamlbuild/"
+doc: "https://github.com/ocaml/ocamlbuild/blob/master/manual/manual.adoc"
+bug-reports: "https://github.com/ocaml/ocamlbuild/issues"
+depends: [
+  "ocaml" {>= "4.03"}
+]
+conflicts: [
+  "base-ocamlbuild"
+  "ocamlfind" {< "1.6.2"}
+]
+build: [
+  [
+    make
+    "-f"
+    "configure.make"
+    "all"
+    "OCAMLBUILD_PREFIX=%{prefix}%"
+    "OCAMLBUILD_BINDIR=%{bin}%"
+    "OCAMLBUILD_LIBDIR=%{lib}%"
+    "OCAMLBUILD_MANDIR=%{man}%"
+    "OCAML_NATIVE=%{ocaml:native}%"
+    "OCAML_NATIVE_TOOLS=%{ocaml:native}%"
+  ] { os != "win32" }
+  [make "check-if-preinstalled" "all" "opam-install"] { os != "win32" }
+  [make "all"] { os = "win32" }
+]
+install: [
+  [make "install"] { os = "win32" }
+  ["mkdir" "-p" "%{lib}%/ocamlbuild"] { os = "win32" }
+  ["install" "-m" "0644" "META" "%{lib}%/ocamlbuild"] { os = "win32" }
+]
+dev-repo: "git+https://github.com/ocaml/ocamlbuild.git"
+url {
+  # 0.14.2 + the following:
+  # - https://github.com/ocaml/ocamlbuild/pull/323
+  # - https://github.com/ocaml/ocamlbuild/pull/324
+  src: "https://github.com/jonahbeckford/ocamlbuild/releases/download/0.14.2-win32-all-r1/src.tar.gz"
+  checksum: [
+    "md5=849d3726409e35a5625a36676fcf5306"
+    "sha512=ab4099c321a54537dd7c7f0225bad0ce1689314ca806602d6ac92b4598f56191147d1e35782286beb96d0b34d7275e2c5a0cf9de82dced9a9beaea7719ace374"
+  ]
+}
+extra-source "ocamlbuild-0.14.2.patch" {
+  src: "https://raw.githubusercontent.com/ocaml-opam/opam-repository-mingw/354a87b397856f2a70024c5c83fc5001074935b6/packages/ocamlbuild/ocamlbuild.0.14.2/files/ocamlbuild-0.14.2.patch"
+  checksum: "sha256=a9b7e1829a3304e5a073d8ddea29d3d8272698e93b7e1ee659ae5e31e5cfb6b9"
+}
+patches: [
+    "ocamlbuild-0.14.2.patch" {os = "win32"}
+]

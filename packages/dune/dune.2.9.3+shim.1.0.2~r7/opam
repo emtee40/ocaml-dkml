@@ -1,0 +1,118 @@
+opam-version: "2.0"
+synopsis: "Fast, portable, and opinionated build system"
+description: """
+
+dune is a build system that was designed to simplify the release of
+Jane Street packages. It reads metadata from "dune" files following a
+very simple s-expression syntax.
+
+dune is fast, has very low-overhead, and supports parallel builds on
+all platforms. It has no system dependencies; all you need to build
+dune or packages using dune is OCaml. You don't need make or bash
+as long as the packages themselves don't use bash explicitly.
+
+dune supports multi-package development by simply dropping multiple
+repositories into the same directory.
+
+It also supports multi-context builds, such as building against
+several opam roots/switches simultaneously. This helps maintaining
+packages across several versions of OCaml and gives cross-compilation
+for free.
+"""
+maintainer: ["Jane Street Group, LLC <opensource@janestreet.com>"]
+authors: ["Jane Street Group, LLC <opensource@janestreet.com>"]
+license: "MIT"
+homepage: "https://github.com/ocaml/dune"
+doc: "https://dune.readthedocs.io/"
+bug-reports: "https://github.com/ocaml/dune/issues"
+conflicts: [
+  "merlin" {< "3.4.0"}
+  "ocaml-lsp-server" {< "1.3.0"}
+  "dune-configurator" {< "2.3.0"}
+  "odoc" {< "1.3.0"}
+  "dune-release" {< "1.3.0"}
+  "js_of_ocaml-compiler" {< "3.6.0"}
+  "jbuilder" {= "transition"}
+]
+dev-repo: "git+https://github.com/ocaml/dune.git"
+build: [
+  # modification 1: rename [dune.exe -> dune-real.exe] and [with-dkml.exe -> dune.exe]
+  [
+    "sh"
+    "-eucx"
+    """
+    # Rename dune.exe to dune-real.exe
+    sed 's/(dune.exe as dune)/(dune.exe as dune-real)/'  bin/dune     > bin/dune.new
+    sed 's/(run dune /(run dune-real /'                  doc/dune.inc > doc/dune.inc.new
+    sed 's/{bin:dune}/{bin:dune-real}/g'                 doc/dune     > doc/dune.new
+    mv bin/dune.new     bin/dune
+    mv doc/dune.inc.new doc/dune.inc
+    mv doc/dune.new     doc/dune
+
+    # Extract source for dkml-runtime-apps which includes a Dune vendored
+    # directory that can build with-dkml.exe
+    install -d dkml-runtime-apps
+    tar xCfz dkml-runtime-apps dkml-runtime-apps.tar.gz --strip-components=1
+
+    # 1. Rename with-dkml.exe to dune.exe
+    # 2. Build duniverse vendored with-dkml.exe instead of relying on Opam/findlib dependencies
+    mv _dune-of-dkml-runtime-apps dkml-runtime-apps/dune
+
+    # Use this Opam package as the Dune project
+    rm dkml-runtime-apps/dune-project
+    mv dkml-runtime-apps/*.opam .
+    echo '(package (name with-dkml))' >> dune-project
+    echo '(package (name opam-dkml))' >> dune-project
+    echo '(package (name dkml-runtimelib))' >> dune-project
+    echo '(package (name dkml-runtimescripts))' >> dune-project
+    echo '(package (name dkml-apps))' >> dune-project
+
+    # Don't bundle the duniverse Dune since this Opam package already builds a Dune bootstrap.
+    # sigh: need to workaround https://github.com/trapexit/mergerfs/issues/468
+    # * when deleting in Vagrant on macos-12 GitHub CI machine, can encounter these failures.
+    if ! rm -rf dkml-runtime-apps/duniverse/dune_; then
+      for i in $(seq 1 1000); do rm -rf dkml-runtime-apps/duniverse/dune_ || true; done
+      rm -rf dkml-runtime-apps/duniverse/dune_
+    fi
+    """
+  ] {name = "dune"}
+  # opam 2 sets OPAM_SWITCH_PREFIX, so we don't need a hardcoded path
+  ["ocaml" "configure.ml" "--libdir" lib] {opam-version < "2"}
+  ["ocaml" "bootstrap.ml" "-j" jobs]
+  #   modification 2:
+  #     a) build both dune and with-dkml (and all of its dependencies because the bootstrap Dune does not do transitive dependencies)
+  ["./dune.exe" "build" "-p" "%{name}%,dkml-runtimelib,dune-configurator,with-dkml" "--profile" "dune-bootstrap" "-j" jobs] {name = "dune"}
+  #     b) potential problem: dkml-runtimelib and dune-configurator are dependencies of with-dkml, and they (including with-dkml source code)
+  #        will be installed as a undesired side-effect. So we remove any of their generated '.install' files.
+  ["rm" "dkml-runtimelib.install" "dune-configurator.install" "with-dkml.install"] {name = "dune"}
+  #   original when not modification 2
+  ["./dune.exe" "build" "-p" name "--profile" "dune-bootstrap" "-j" jobs] { !(name = "dune") }
+]
+depends: [
+  # Please keep the lower bound in sync with .github/workflows/workflow.yml,
+  # dune-project and min_ocaml_version in bootstrap.ml
+  ("ocaml" {>= "4.08"} | ("ocaml" {< "4.08~~"} & "ocamlfind-secondary"))
+  "base-unix"
+  "base-threads"
+  #   modification 3: install dkml-runtime-common
+  "dkml-runtime-common" {>= "1.0.2~prerel7"}
+]
+url {
+  src:
+    "https://github.com/ocaml/dune/releases/download/2.9.3/dune-site-2.9.3.tbz"
+  checksum: [
+    "sha256=3e65ec73ab2c80d50d4ffd6c46cbfb22eacd0e5587a4be8af8ae69547d5f88d6"
+    "sha512=04b48501ac16c3608e3b6bfbdbabf810df0fb844ea3b7d25ba50f03b9d6cb1d2c933cf747d694029d82a9777a774e48e5c38ab010fe53ce1eae367da0ed04d6d"
+  ]
+}
+extra-source "dkml-runtime-apps.tar.gz" {
+  src: "https://github.com/diskuv/dkml-runtime-apps/releases/download/1.0.2-prerel7/src.tar.gz"
+  checksum: [
+    "sha256=47a88e510f720d45d24e33ddb1c08825a3bbd9f3cfb51a266589ca21ff2f41e3"
+    "sha512=1ccb94497fa6523c0dfd8e241d702047812ee2b06bbf3f8f50cf12c87915efbca913ea3e47f8d4baf185a4c9b29785079328f64bee287fd415d7f4fd4ba8758d"
+  ]
+}
+extra-files: [
+  ["_dune-of-dkml-runtime-apps" "md5=9089511e3630c473a574b39479abafd7"]
+]
+x-commit-hash: "dea03875affccc0620e902d28fed8d6b4351e112"

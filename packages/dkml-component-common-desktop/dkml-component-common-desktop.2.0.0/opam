@@ -1,0 +1,40 @@
+opam-version: "2.0"
+synopsis:
+  "Common code for installers of desktop executables for all DKML installable platforms"
+description:
+  "`desktop` provides desktop executables for all DKML installable platforms"
+maintainer: ["opensource+diskuv-ocaml@support.diskuv.com"]
+authors: ["Diskuv, Inc. <opensource+diskuv-ocaml@support.diskuv.com>"]
+license: "Apache-2.0"
+homepage: "https://gitlab.com/diskuv-ocaml/components/dkml-component-desktop"
+doc:
+  "https://gitlab.com/diskuv-ocaml/components/dkml-component-desktop/-/blob/main/README.md"
+bug-reports:
+  "https://gitlab.com/diskuv-ocaml/components/dkml-component-desktop/-/issues"
+depends: [
+  "dune" {>= "3.6"}
+  "dkml-install" {>= "0.2.0"}
+  "odoc" {with-doc}
+]
+build: [
+  ["dune" "subst"] {dev}
+  [
+    "dune"
+    "build"
+    "-p"
+    name
+    "-j"
+    jobs
+    "@install"
+    "@runtest" {with-test}
+    "@doc" {with-doc}
+  ]
+]
+dev-repo:
+  "git+https://gitlab.com/diskuv-ocaml/components/dkml-component-desktop.git"
+url {
+  src: "https://gitlab.com/diskuv-ocaml/distributions/dkml/-/releases/2.0.0/downloads/src.dkml-component-desktop.tar.gz"
+  checksum: [
+    "sha512=fd31a9438de3acb6399d2bc945a7e7cde819dfabf11020b9bef4c6bfca2fa7c9e0b19f8226d435dacb12397826247106131e8eaf2520ff599d0835305954c2a5"
+  ]
+}
