@@ -1,0 +1,6 @@
+(executable
+ (name opam_dkml)
+ (public_name opam-dkml)
+ (package opam-dkml)
+ (modules opam_dkml)
+ (libraries dkml-exe-lib))
