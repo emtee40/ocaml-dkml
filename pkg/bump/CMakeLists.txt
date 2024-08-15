@@ -26,7 +26,6 @@ set(self_BRANCH next) # self is [dkml]
 set(diskuv-opam-repository_BRANCH main)
 set(dkml-component-curl_BRANCH main)
 set(dkml-component-desktop_BRANCH main)
-set(dkml-component-ocamlcompiler_BRANCH main)
 set(dkml-component-ocamlrun_BRANCH main)
 set(dkml-installer-ocaml_BRANCH main)
 set(dkml-installer-ocaml-byte_BRANCH main)
@@ -55,6 +54,7 @@ foreach(SUBTREE_PROJECT IN LISTS DKML_SUBTREE_PROJECTS)
         execute_process(
             WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
             COMMAND "${GIT_EXECUTABLE}" subtree pull ${subtree_args}
+            COMMAND_ECHO STDOUT
             COMMAND_ERROR_IS_FATAL ANY
         )
     else()

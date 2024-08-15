@@ -108,10 +108,6 @@ FetchGit(dkml-component-ocamlrun
     GIT_REPOSITORY https://github.com/diskuv/dkml-component-ocamlrun.git
     GIT_TAG main
 )
-FetchGit(dkml-component-ocamlcompiler
-    GIT_REPOSITORY https://github.com/diskuv/dkml-component-ocamlcompiler.git
-    GIT_TAG main
-)
 FetchGit(dkml-component-unixutils
     GIT_REPOSITORY https://github.com/diskuv/dkml-component-unixutils.git
     GIT_TAG main

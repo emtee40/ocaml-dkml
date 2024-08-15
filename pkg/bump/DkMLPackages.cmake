@@ -17,11 +17,14 @@ set(PACKAGES_WITHOUT_META
 # 3. Remove from dependencies/CMakeLists.txt
 set(dkml-compiler_BRANCH main)
 set(dkml-compiler_URL https://github.com/diskuv/dkml-compiler.git)
+set(dkml-component-ocamlcompiler_BRANCH main)
+set(dkml-component-ocamlcompiler_URL https://github.com/diskuv/dkml-component-ocamlcompiler.git)
 set(dkml-workflows_BRANCH v1)
 set(dkml-workflows_URL https://github.com/diskuv/dkml-workflows-prerelease.git)
 
 set(DKML_SUBTREE_PROJECTS
     dkml-compiler
+    dkml-component-ocamlcompiler
     dkml-workflows)
 
 set(DKML_PROJECTS_PREDUNE

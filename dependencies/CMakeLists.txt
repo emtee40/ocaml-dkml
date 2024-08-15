@@ -4,7 +4,6 @@ FetchContent_MakeAvailable(
     diskuv-opam-repository
     dkml-component-curl
     dkml-component-desktop
-    dkml-component-ocamlcompiler
     dkml-component-ocamlrun
     dkml-component-opam
     dkml-component-unixutils
