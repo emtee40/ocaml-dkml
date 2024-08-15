@@ -65,22 +65,22 @@ if(CMAKE_SCRIPT_MODE_FILE)
     endif()
 endif()
 
-# Not ported to [git subtree]
+# DkML subprojects that are not versioned with DkML releases
 # --------
 
 FetchGit(dkml-install-api
     GIT_REPOSITORY https://github.com/diskuv/dkml-install-api.git
-    GIT_TAG 0.5 # TODO: Release this to opam repository
+    GIT_TAG 0.5
 )
 FetchGit(dkml-component-unixutils
     GIT_REPOSITORY https://github.com/diskuv/dkml-component-unixutils.git
-    GIT_TAG main
+    GIT_TAG 0.3.0
 )
 FetchGit(dkml-component-opam
     GIT_REPOSITORY https://github.com/diskuv/dkml-component-opam.git
-    GIT_TAG 2.2.0-alpha # should be main once 2.2.0 series fixed
+    GIT_TAG 2.2.0 # opam 2.2.0
 )
 FetchGit(dkml-c-probe
     GIT_REPOSITORY https://github.com/diskuv/dkml-c-probe.git
-    GIT_TAG main # 20802884d9f5da9030d368cf48aec3f8ddf63c76 # Past v3.0.0
+    GIT_TAG 3.1.0
 )
