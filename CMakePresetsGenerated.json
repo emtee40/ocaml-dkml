@@ -5,12 +5,6 @@
       "name": "ci-generated",
       "hidden": true,
       "cacheVariables": {
-        "dkml-runtime-common_GIT_TAG": {
-    "value": "c8e1fddc63001c3d654613d516f1e1aa2e350644"
-},
-        "dkml-runtime-distribution_GIT_TAG": {
-    "value": "5e7961659bed297a68a0a75578e8ab73df09261a"
-},
         "dkml-runtime-apps_GIT_TAG": {
     "value": "bec718e9cc690ba6b3fec2f8f5842051190f0b1a"
 },
