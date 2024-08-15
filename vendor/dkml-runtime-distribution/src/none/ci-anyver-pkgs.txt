@@ -1,0 +1,20 @@
+# All packages listed in this file are installed as part of
+# the "dkml" system switch.
+
+# See README.md for a description of this file format.
+
+# ocamlfind has hardcoded paths in lib/ocaml/topfind so make sure that it is
+# installed once in the system switch
+##      global-compile
+#       bin/ocamlfind
+#       lib/findlib.conf
+#       man/man1/ocamlfind.1
+#       man/man5/META.5
+#       man/man5/findlib.conf.5
+#       man/man5/site-lib.5
+ocamlfind.1.9.5
+
+# ocaml-config.3 is first version supporting DKML compiler (and Windows)
+# BUT ocaml-config.3 requires OCaml 5 for non-Windows machines. So do _not_ pin it
+# until we've upgraded to OCaml 5
+# ocaml-config.3
