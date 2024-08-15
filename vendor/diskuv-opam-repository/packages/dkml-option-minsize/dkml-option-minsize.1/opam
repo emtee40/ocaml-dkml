@@ -1,0 +1,5 @@
+opam-version: "2.0"
+synopsis: "Set OCaml to be compiled to optimize for minimal size"
+description: "Useful for CPUs with small cache sizes. Confer https://wiki.gentoo.org/wiki/GCC_optimization"
+maintainer: ["opensource+diskuv-ocaml@support.diskuv.com"]
+flags: compiler

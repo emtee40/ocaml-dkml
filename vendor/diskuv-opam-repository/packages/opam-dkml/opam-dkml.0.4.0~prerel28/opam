@@ -1,0 +1,39 @@
+opam-version: "2.0"
+synopsis: "Opam plugin for Diskuv OCaml (DKML)"
+description:
+  "An opam plugin where 'opam dkml init' creates a local Windows-friendly Opam switch configured with DKML Opam repositories and options"
+maintainer: ["opensource+diskuv-ocaml@support.diskuv.com"]
+authors: ["Diskuv, Inc. <opensource+diskuv-ocaml@support.diskuv.com>"]
+license: "Apache-2.0"
+homepage: "https://diskuv.gitlab.io/diskuv-ocaml"
+bug-reports: "https://github.com/diskuv/dkml-runtime-apps/issues"
+depends: [
+  "dune" {>= "2.9"}
+  "ocaml" {>= "4.12.1"}
+  "dkml-runtime" {= version}
+  "cmdliner" {>= "1.0"}
+  "odoc" {with-doc}
+]
+build: [
+  ["dune" "subst"] {dev}
+  [
+    "dune"
+    "build"
+    "-p"
+    name
+    "-j"
+    jobs
+    "--promote-install-files=false"
+    "@install"
+    "@runtest" {with-test}
+    "@doc" {with-doc}
+  ]
+  ["dune" "install" "-p" name "--create-install-files" name]
+]
+dev-repo: "git+https://github.com/diskuv/dkml-runtime-apps.git"
+url {
+  src: "https://github.com/diskuv/dkml-runtime-apps/archive/refs/tags/v0.4.0-prerel28.tar.gz"
+  checksum: [
+    "sha256=74c90ea9a3af97c03cacbded47fa392ebac6b36042f13da42ec0ba04548d6073"
+  ]
+}

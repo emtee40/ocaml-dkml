@@ -1,0 +1,13 @@
+;; filename=dkml-runtime-apps/dune
+
+;; Original `dkml-runtime-apps/dune` did nothing except skip `dkml-runtime-apps/duniverse/`.
+;; Here we DO NOT skip `dkml-runtime-apps/duniverse/`.
+
+; Install with-dkml.exe (the shim) as dune.exe
+(install
+ (section bin)
+ (enabled_if
+  (= %{profile} dune-bootstrap))
+ (package dune)
+ (files
+  (src/with-dkml/with_dkml.exe as dune)))

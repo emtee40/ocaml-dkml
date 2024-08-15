@@ -1,0 +1,42 @@
+opam-version: "2.0"
+synopsis: "CLI applications available in Diskuv OCaml installations"
+description:
+  "'with-dkml' gives Windows access to Opam and MSYS2 environments. 'findup' locates an ancestor directory containing a searched-for file. (deprecated; use diskuvbox instead)."
+maintainer: ["opensource+diskuv-ocaml@support.diskuv.com"]
+authors: ["Diskuv, Inc. <opensource+diskuv-ocaml@support.diskuv.com>"]
+license: "Apache-2.0"
+homepage: "https://diskuv.gitlab.io/diskuv-ocaml"
+bug-reports: "https://github.com/diskuv/dkml-runtime-apps/issues"
+depends: [
+  "dune" {>= "2.9"}
+  "ocaml" {>= "4.12.1"}
+  "dkml-runtime" {= version}
+  "sexplib" {>= "0.14.0"}
+  "logs" {>= "0.7.0"}
+  "fmt" {>= "0.8.9"}
+  "sha" {>= "1.15.2"}
+  "odoc" {with-doc}
+]
+build: [
+  ["dune" "subst"] {dev}
+  [
+    "dune"
+    "build"
+    "-p"
+    name
+    "-j"
+    jobs
+    "--promote-install-files=false"
+    "@install"
+    "@runtest" {with-test}
+    "@doc" {with-doc}
+  ]
+  ["dune" "install" "-p" name "--create-install-files" name]
+]
+dev-repo: "git+https://github.com/diskuv/dkml-runtime-apps.git"
+url {
+  src: "https://github.com/diskuv/dkml-runtime-apps/archive/refs/tags/v0.4.0-prerel88.tar.gz"
+  checksum: [
+    "sha256=414e94a00eeabf545d3ec03bc9d80dde07cd0b5c378f1c761c901580324b2d2e"
+  ]
+}

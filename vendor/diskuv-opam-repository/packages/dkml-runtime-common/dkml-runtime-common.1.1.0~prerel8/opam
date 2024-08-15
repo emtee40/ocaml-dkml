@@ -1,0 +1,24 @@
+opam-version: "2.0"
+synopsis: "Common runtime code used in DKML"
+description: "Common runtime code used in DKML.
+
+The runtime code will be available in the 'lib/dkml-runtime-common' folder
+of your Opam switch or findlib installation."
+maintainer: ["opensource+diskuv-ocaml@support.diskuv.com"]
+authors: ["Diskuv, Inc. <opensource+diskuv-ocaml@support.diskuv.com>"]
+license: "Apache-2.0"
+homepage: "https://github.com/diskuv/dkml-runtime-common"
+bug-reports: "https://github.com/diskuv/dkml-runtime-common/issues"
+dev-repo: "git+https://github.com/diskuv/dkml-runtime-common.git"
+depends: [
+  "dune"
+]
+build: [
+  ["dune" "build" "-p" name]
+]
+url {
+  src: "https://github.com/diskuv/dkml-runtime-common/archive/refs/tags/1.1.0-prerel8.tar.gz"
+  checksum: [
+    "sha256=12b16fb76d2297ea087f030ac3b3d052930994eb72ad5a71193cd08595976bb9"
+  ]
+}

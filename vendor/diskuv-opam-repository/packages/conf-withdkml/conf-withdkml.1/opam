@@ -1,0 +1,92 @@
+opam-version: "2.0"
+maintainer: ["opensource+diskuv-ocaml@support.diskuv.com"]
+homepage: "https://diskuv.gitlab.io/diskuv-ocaml"
+bug-reports: "https://github.com/diskuv/dkml-runtime-apps/issues"
+authors: ["Diskuv, Inc. <opensource+diskuv-ocaml@support.diskuv.com>"]
+license: "Apache-2.0"
+build-env: [
+  [DKML_VER = "0.4.0"]
+]
+build: [
+  # Load crossplatform-functions.sh to get the canonical with-dkml.exe location.
+  # Don't just use whatever is in the PATH since our with-dkml.exe is tied
+  # permanently to a Opam switch usually through Opam build wrappers.
+  [
+    # On native (DKML) Windows use with-dkml.exe in User's PATH to enter a POSIX shell
+    "with-dkml.exe" { os = "win32" & os-distribution = "win32" }
+
+    "sh"
+    "-eufc"
+    """
+
+    # Create a DKMLDIR. Its structure mimics a git submodule setup.
+    #   <dkmldir>/.dkmlroot
+    install -d dkmldir
+    printf 'dkml_root_version=%s\n' $DKML_VER > dkmldir/.dkmlroot
+    #   <dkmldir>/vendor/drc/
+    install -d dkmldir/vendor/drc
+    tar xCfz dkmldir/vendor/drc dkml-runtime-common.tar.gz --strip-components=1
+
+    # Load common functions
+    TOPDIR=topdir-not-present
+    USERMODE=${CONF_WITHDKML_USERMODE:-ON}
+    DKMLDIR="$PWD/dkmldir"
+    . dkmldir/vendor/drc/unix/_common_tool.sh
+
+    # Calculate BUILDHOST_ARCH
+    autodetect_buildhost_arch
+
+    # Find WITHDKMLEXE_BUILDHOST
+    set_opamswitchdir_of_system "$BUILDHOST_ARCH"
+    if [ ! -e "$WITHDKMLEXE_BUILDHOST" ]; then
+      printf 'Could not locate with-dkml.exe at its canonical location: %s\n' "$WITHDKMLEXE_BUILDHOST"
+    fi
+
+    # Translate with-dkml location into different path styles
+    loc="$WITHDKMLEXE_BUILDHOST"
+    if [ -x /usr/bin/cygpath ]; then
+      /usr/bin/cygpath -am "$loc"    > var.with-dkml.location.mixed
+      /usr/bin/cygpath -aw "$loc"    > var.with-dkml.location.native
+    else
+      printf '%s\n' "$loc"  > var.with-dkml.location.mixed
+      printf '%s\n' "$loc"  > var.with-dkml.location.native
+    fi
+
+    # Get sha256 checksum
+    sha256compute $(< var.with-dkml.location.mixed) > with-dkml.sha256
+
+    # Write <pkgname>.config
+    #   confer: https://opam.ocaml.org/doc/Manual.html#lt-pkgname-gt-config
+    backslash='\\'
+    {
+      printf 'opam-version: "2.0"\n'
+      printf 'file-depends: [ [ "%s" "sha256=%s" ] ]\n' "$(< var.with-dkml.location.mixed )" "$(< with-dkml.sha256 )"
+      printf 'variables {\n'
+      printf '  location-native: "%s"\n' "$(< var.with-dkml.location.native)" | sed "s/[$backslash]/$backslash$backslash$backslash$backslash/g"
+      printf '  location-mixed: "%s"\n' "$(< var.with-dkml.location.mixed )"
+      printf '}\n'
+    } > '%{name}%.config'
+    """
+  ]
+]
+synopsis: "Virtual package relying on with-dkml.exe"
+description:
+  """\
+This package can only install if the with-dkml.exe program is installed on the system.
+
+A 'file-depends' trigger will reinstall conf-withdkml when with-dkml.exe changes.
+
+The %{conf-withdkml:location-native}% variable will be the native (Win32, Unix) location
+of with-dkml.exe, while %{conf-withdkml:location-mixed}% will be the
+location of with-dkml.exe using only forward slashes (/).
+"""
+flags: conf
+extra-source "dkml-runtime-common.tar.gz" {
+  # The version is mostly unimportant; dkml-runtime-common just needs to have
+  # an `crossplatform-functions.sh` that can locate with-dkml.exe on recent
+  # installations.
+  src: "https://github.com/diskuv/dkml-runtime-common/archive/refs/tags/v0.4.0-prerel91.tar.gz"
+  checksum: [
+    "sha256=5273593ec2a531d403555a463912fb03537efcd0d2e8accc1db5665524bd51a1"
+  ]
+}

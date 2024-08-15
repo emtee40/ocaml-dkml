@@ -1,0 +1,4 @@
+opam-version: "2.0"
+synopsis: "Set OCaml to be compiled with debugging symbols"
+maintainer: ["opensource+diskuv-ocaml@support.diskuv.com"]
+flags: compiler

@@ -1,0 +1,85 @@
+opam-version: "2.0"
+synopsis: "Fast, portable, and opinionated build system"
+description: """
+
+dune is a build system that was designed to simplify the release of
+Jane Street packages. It reads metadata from "dune" files following a
+very simple s-expression syntax.
+
+dune is fast, has very low-overhead, and supports parallel builds on
+all platforms. It has no system dependencies; all you need to build
+dune or packages using dune is OCaml. You don't need make or bash
+as long as the packages themselves don't use bash explicitly.
+
+dune supports multi-package development by simply dropping multiple
+repositories into the same directory.
+
+It also supports multi-context builds, such as building against
+several opam roots/switches simultaneously. This helps maintaining
+packages across several versions of OCaml and gives cross-compilation
+for free.
+"""
+maintainer: ["Jane Street Group, LLC <opensource@janestreet.com>"]
+authors: ["Jane Street Group, LLC <opensource@janestreet.com>"]
+license: "MIT"
+homepage: "https://github.com/ocaml/dune"
+doc: "https://dune.readthedocs.io/"
+bug-reports: "https://github.com/ocaml/dune/issues"
+conflicts: [
+  "merlin" {< "3.4.0"}
+  "ocaml-lsp-server" {< "1.3.0"}
+  "dune-configurator" {< "2.3.0"}
+  "odoc" {< "2.0.1"}
+  "dune-release" {< "1.3.0"}
+  "js_of_ocaml-compiler" {< "3.6.0"}
+  "jbuilder" {= "transition"}
+]
+dev-repo: "git+https://github.com/ocaml/dune.git"
+build: [
+  # modification:
+  # 1. install dune-real.exe instead of dune.exe
+  # 2. use dune-real.exe instead of dune.exe
+  [
+    "%{conf-withdkml:location-native}%"
+    "sh"
+    "-eufc"
+    """
+    sed -i 's/(dune.exe as dune)/(dune.exe as dune-real)/'  bin/dune
+    sed -i 's/(run dune /(run dune-real /'                  doc/dune.inc
+    sed -i 's/{bin:dune}/{bin:dune-real}/g'                 doc/dune
+    """
+  ]  {conf-withdkml:installed}
+  # original build instructions:
+  ["ocaml" "boot/bootstrap.ml" "-j" jobs]
+  ["./_boot/dune.exe" "build" "dune.install" "--release" "--profile" "dune-bootstrap" "-j" jobs]
+]
+install: [
+  # modification: use with-dkml.exe shim as dune.exe (which will delegate to dune-real.exe)
+  # note: we can't just make a dependency on dkml-apps to get with-dkml.exe because dkml-apps
+  #       requires Dune.
+  [
+    "%{conf-withdkml:location-native}%"
+    "sh"
+    "-c"
+    "install '%{conf-withdkml:location-native}%' '%{bin}%/dune.exe'"
+  ]  {conf-withdkml:installed}
+]
+depends: [
+  # Please keep the lower bound in sync with .github/workflows/workflow.yml,
+  # dune-project and min_ocaml_version in bootstrap.ml
+  ("ocaml" {>= "4.08"} | ("ocaml" {< "4.08~~"} & "ocamlfind-secondary"))
+  "base-unix"
+  "base-threads"
+]
+depopts: [
+  "conf-withdkml"
+]
+url {
+  src:
+    "https://github.com/ocaml/dune/archive/a237caacb63c4e35bdcefc7fea56ba54f1bd80f1.tar.gz"
+  checksum: [
+    "sha256=53c20a42b7a8d3991f8672b0280fb7e745a13b2193f99b7d545e71466bc7e9ca"
+    "sha512=e95b6ec85f24d90b47f89897153cad00b5be8577519fc79f6912d56f94ce545403fb37ac1ec6f15b5fd22737b8f2bf21f1fe3a394493aa892a82bf4fc210784d"
+  ]
+}
+x-commit-hash: "a237caacb63c4e35bdcefc7fea56ba54f1bd80f1"

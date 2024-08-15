@@ -1,0 +1,58 @@
+opam-version: "2.0"
+synopsis: "Add findlib toolchains for all installed DKML cross-compilers"
+authors: ["Diskuv, Inc. <opensource+diskuv-ocaml@support.diskuv.com>"]
+license: "Apache-2.0"
+homepage: "https://github.com/diskuv/dkml-compiler"
+bug-reports: "https://github.com/diskuv/dkml-compiler/issues"
+depends: [
+  "ocamlfind"           {>= "1.9.1"}
+  "ocaml"               {= "4.12.1"}
+  "ocaml-system"        {>= "4.12.1~" & < "4.12.2~"} |
+  "dkml-base-compiler"  {>= "4.12.1~" & < "4.12.2~"}
+]
+build: [
+  [
+    "bash"
+    "toolchain/findlib-configure.sh"
+    "%{_:build}%/dl/findlib-1.9.1.tar.gz"
+    "1.9.1"
+    "%{_:build}%/extra-findlib"
+    "%{ocaml:preinstalled}%"
+    "%{prefix}%"
+    "%{ocaml-system:path}%/../opt/mlcross"  { ocaml-system:installed }
+    "%{dkml-base-compiler:share}%/mlcross"  { dkml-base-compiler:installed }
+  ]
+]
+install: [
+  [ "install" "-d" "%{lib}%/findlib.conf.d" ]
+  [
+    "bash"
+    "toolchain/findlib-install.sh"
+    "%{_:build}%/extra-findlib"
+    "%{ocaml:native}%"
+    "%{ocaml-system:path}%/../opt/mlcross"  { ocaml-system:installed }
+    "%{dkml-base-compiler:share}%/mlcross"  { dkml-base-compiler:installed }
+  ]
+  [
+    "bash"
+    "toolchain/add-findlib-conf.sh"
+    "%{prefix}%"
+    "%{ocaml-system:path}%/../opt/mlcross"  { ocaml-system:installed }
+    "%{dkml-base-compiler:share}%/mlcross"  { dkml-base-compiler:installed }
+  ]
+]
+maintainer: ["opensource+diskuv-ocaml@support.diskuv.com"]
+extra-source "dl/findlib-1.9.1.tar.gz" {
+  src: "http://download.camlcity.org/download/findlib-1.9.1.tar.gz"
+  checksum: [
+    "md5=65e6dc9b305ccbed1267275fe180f538"
+    "sha512=83a05f3e310fa7cabb0475c5525f7a87c1b6bc2dc5e39f094cabfb5d944a826a5581844ba00ec1a48dd96184eb9de3c4d1055cdddee2b83c700a2de5a6dc6f84"
+  ]
+}
+url {
+  src: "https://github.com/diskuv/conf-dkml-cross-toolchain/archive/refs/tags/v4.12.1-prerel2.tar.gz"
+  checksum: [
+    "md5=2f60eb8367ea8d60b8a68b90cccc311e"
+    "sha512=079e7011fd732b825935ea62f071cd776b50490e5e843ac5b0b47a1b56d3067ee689144a7429b8102313aeef1dcc743409f82142a990c9157118855ffe63a260"
+  ]
+}

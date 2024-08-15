@@ -1,0 +1,21 @@
+opam-version: "2.0"
+synopsis: "Scripts to configure DKML compilation in various environments"
+description: "Scripts to configure DKML compilation in various environments"
+maintainer: ["opensource+diskuv-ocaml@support.diskuv.com"]
+authors: ["Diskuv, Inc. <opensource+diskuv-ocaml@support.diskuv.com>"]
+license: "Apache-2.0"
+homepage: "https://github.com/diskuv/dkml-compiler"
+bug-reports: "https://github.com/diskuv/dkml-compiler/issues"
+depends: []
+dev-repo: "git+https://github.com/diskuv/dkml-compiler.git"
+build: []
+install: [
+  [".\\install-env.cmd"  "%{_:lib}%"] {os = "win32"}
+  ["./install-env.sh" "%{_:lib}%"]  {!(os = "win32")}
+]
+url {
+  src: "https://github.com/diskuv/dkml-compiler/archive/refs/tags/1.2.0-prerel5.tar.gz"
+  checksum: [
+    "sha256=b90a0c1dbca36160d2cf6e5097d79acdd70004d550bc5bd74602f96511b986cc"
+  ]
+}

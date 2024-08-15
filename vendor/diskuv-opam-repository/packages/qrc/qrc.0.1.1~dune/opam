@@ -1,0 +1,26 @@
+opam-version: "2.0"
+maintainer: "Daniel Bünzli <daniel.buenzl i@erratique.ch>"
+authors: ["The qrc programmers"]
+homepage: "https://github.com/jonahbeckford/qrc"
+doc: "https://erratique.ch/software/qrc/doc"
+license: "ISC"
+bug-reports: "https://github.com/dbuenzli/qrc/issues"
+tags: [ "qr-code" "codec" "org:erratique" ]
+depends:
+[
+  "ocaml" {>= "4.08.0"}
+  "dune" {>= "1.1"}
+]
+depopts: ["cmdliner"]
+conflicts: [ "cmdliner" {< "1.0.4"} ]
+build: [ "dune" "build" "-p" name "-j" jobs ]
+dev-repo: "git+https://github.com/jonahbeckford/qrc.git"
+url {
+  src:
+    "https://github.com/jonahbeckford/qrc/releases/download/duniverse-v16.0.0/src2.tar.gz"
+  checksum: [
+    "sha256=87d67fb55079aef9a6f40f03b1053f819e080e88bcb501f69b8ec09b3d593c52"
+    "sha512=0fd40e456a7352b2c00126d812370fd83ed693bda0bdef9f0e1c9caf5367a432b203c1a1eb97f93e20d19daa2fa07a1b8a42bcc6a4f455415ad9bb07d0746f1f"
+  ]
+}
+x-commit-hash: "669374aa7b8e77a4d26f8aeb7a648c7db7dee59b"

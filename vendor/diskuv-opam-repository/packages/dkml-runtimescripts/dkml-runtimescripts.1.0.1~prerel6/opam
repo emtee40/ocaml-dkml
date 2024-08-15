@@ -1,0 +1,78 @@
+opam-version: "2.0"
+synopsis:
+  "Runtime scripts used by CLI applications and Opam plugins in a Diskuv OCaml installation"
+maintainer: ["opensource+diskuv-ocaml@support.diskuv.com"]
+authors: ["Diskuv, Inc. <opensource+diskuv-ocaml@support.diskuv.com>"]
+license: "Apache-2.0"
+homepage: "https://diskuv.gitlab.io/diskuv-ocaml"
+bug-reports: "https://github.com/diskuv/dkml-runtime-apps/issues"
+depends: [
+  "dune" {>= "2.9"}
+  "ocaml" {>= "4.12.1"}
+  "bos" {>= "0.2.0"}
+  "fpath" {>= "0.7.0"}
+  "rresult" {>= "0.7.0"}
+  "crunch" {>= "3.2.0" & build}
+  "odoc" {with-doc}
+]
+dev-repo: "git+https://github.com/diskuv/dkml-runtime-apps.git"
+build: [
+  # Create a DKMLDIR. Its structure mimics a git submodule setup.
+
+  #   <dkmldir>/vendor/drc/
+  ["install" "-d" "dkmldir/vendor/drc"]
+  ["tar" "xCfz" "dkmldir/vendor/drc" "dl/dkml-runtime-common.tar.gz" "--strip-components=1"]
+
+  #   <dkmldir>/vendor/drd/
+  ["install" "-d" "dkmldir/vendor/drd"]
+  ["tar" "xCfz" "dkmldir/vendor/drd" "dl/dkml-runtime-distribution.tar.gz" "--strip-components=1"]
+
+  #   <dkmldir>/vendor/dkml-compiler/
+  ["install" "-d" "dkmldir/vendor/dkml-compiler/src"]
+  ["tar" "xCfz" "dkmldir/vendor/dkml-compiler" "dl/dkml-compiler.tar.gz" "--strip-components=1"]
+
+  # Ordinary Dune
+  ["dune" "subst"] {dev}
+  [
+    "dune"
+    "build"
+    "-p"
+    name
+    "-j"
+    jobs
+    "--promote-install-files=false"
+    "@install"
+    "@runtest" {with-test}
+    "@doc" {with-doc}
+  ]
+  ["dune" "install" "-p" name "--create-install-files" name]
+]
+# The particular version of dkml-compiler (4.12.1, etc.) is unimportant. Only
+# the `src/standard-compiler-env-to-ocaml-configure-(env|launcher).sh` files
+# are captured in `src/common/dune`. TODO: May even want those two scripts to be
+# promoted into dkml-runtime-(common|distribution), so we can drop this
+# dependency.
+extra-source "dl/dkml-compiler.tar.gz" {
+  src: "https://github.com/diskuv/dkml-compiler/archive/refs/tags/4.12.1-v0.4.1-prerel6.tar.gz"
+  checksum: [
+    "sha256=dab79ee3d2880995c73899cea8a5873e49a3f67e54fa336ce2e0c937e0f3b8c4"
+  ]
+}
+extra-source "dl/dkml-runtime-common.tar.gz" {
+  src: "https://github.com/diskuv/dkml-runtime-common/archive/refs/tags/v1.0.1-prerel6.tar.gz"
+  checksum: [
+    "sha256=1364b37a475206143ff0737d920b1864e01207fa2d6dd72edf15a50d2ba8ef70"
+  ]
+}
+extra-source "dl/dkml-runtime-distribution.tar.gz" {
+  src: "https://github.com/diskuv/dkml-runtime-distribution/archive/refs/tags/v1.0.1-prerel6.tar.gz"
+  checksum: [
+    "sha256=df6c8cf5ef46b28b6730651d965a4c3d87f6838a0e74cbee5507c56ed781a1a5"
+  ]
+}
+url {
+  src: "https://github.com/diskuv/dkml-runtime-apps/archive/refs/tags/v1.0.1-prerel6.tar.gz"
+  checksum: [
+    "sha256=fd321b55c1d50c376da2501ea06b253031fd704fad291f574f971b54e8bae1ed"
+  ]
+}

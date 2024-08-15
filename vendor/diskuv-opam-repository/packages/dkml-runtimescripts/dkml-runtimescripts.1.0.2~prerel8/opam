@@ -1,0 +1,61 @@
+opam-version: "2.0"
+synopsis:
+  "Runtime scripts used by CLI applications and Opam plugins in a Diskuv OCaml installation"
+maintainer: ["opensource+diskuv-ocaml@support.diskuv.com"]
+authors: ["Diskuv, Inc. <opensource+diskuv-ocaml@support.diskuv.com>"]
+license: "Apache-2.0"
+homepage: "https://diskuv.gitlab.io/diskuv-ocaml"
+bug-reports: "https://github.com/diskuv/dkml-runtime-apps/issues"
+depends: [
+  "dune" {>= "2.9"}
+  "ocaml" {>= "4.12.1"}
+  "bos" {>= "0.2.0"}
+  "fpath" {>= "0.7.0"}
+  "rresult" {>= "0.7.0"}
+  "dkml-compiler-env"
+  "dkml-runtime-common" {>= "1.0.2~prerel7"}
+  "dkml-runtime-distribution"
+  "crunch" {>= "3.2.0"}
+  "odoc" {with-doc}
+]
+build: [
+  ["dune" "subst"] {dev}
+  [
+    "dune"
+    "build"
+    "-p"
+    name
+    "-j"
+    jobs
+    "--promote-install-files=false"
+    "@install"
+    "@runtest" {with-test}
+    "@doc" {with-doc}
+  ]
+  ["dune" "install" "-p" name "--create-install-files" name]
+]
+dev-repo: "git+https://github.com/diskuv/dkml-runtime-apps.git"
+pin-depends: [
+  [
+    "dkml-compiler-env.~dev"
+    "git+https://github.com/diskuv/dkml-compiler.git"
+  ]
+]
+extra-source "dl/dkml-runtime-common.tar.gz" {
+  src: "https://github.com/diskuv/dkml-runtime-common/archive/refs/tags/1.0.2-prerel8.tar.gz"
+  checksum: [
+    "sha256=9cec6ec3bc064644e8979d3f589d0b10e2a71edd13449cd53bb6a1d0e6d00299"
+  ]
+}
+extra-source "dl/dkml-runtime-distribution.tar.gz" {
+  src: "https://github.com/diskuv/dkml-runtime-distribution/archive/refs/tags/1.0.2-prerel8.tar.gz"
+  checksum: [
+    "sha256=547f5cfd31de69326cb86e6a5124066f26e98bc972674be1d34a7d145bdd157d"
+  ]
+}
+url {
+  src: "https://github.com/diskuv/dkml-runtime-apps/archive/refs/tags/1.0.2-prerel8.tar.gz"
+  checksum: [
+    "sha256=581bc69389012e9a6048606b0154b1c44d4386df3e7d30c44b3f3dfef6b60040"
+  ]
+}
