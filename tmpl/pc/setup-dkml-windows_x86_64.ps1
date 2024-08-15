@@ -37,6 +37,9 @@ Input variable. If true no dkml-base-compiler will be installed in the 'dkml' sw
 .PARAMETER CONF_DKML_CROSS_TOOLCHAIN
 Input variable. Unspecified or blank is the latest from the default branch (main) of conf-dkml-cross-toolchain. @repository@ is the latest from Opam.
 
+.PARAMETER OCAML_OPAM_REPOSITORY
+Input variable. Defaults to the value of -DEFAULT_OCAML_OPAM_REPOSITORY_TAG (see below)
+
 .PARAMETER DISKUV_OPAM_REPOSITORY
 Input variable. Defaults to the value of -DEFAULT_DISKUV_OPAM_REPOSITORY_TAG (see below)
 
@@ -70,6 +73,8 @@ param (
   $PRIMARY_SWITCH_SKIP_INSTALL = "false",
   [string]
   $CONF_DKML_CROSS_TOOLCHAIN = "@repository@",
+  [string]
+  $OCAML_OPAM_REPOSITORY = "",
   [string]
   $DISKUV_OPAM_REPOSITORY = "",
   [string]
@@ -107,6 +112,7 @@ $env:SKIP_OPAM_MODIFICATIONS = $SKIP_OPAM_MODIFICATIONS
 $env:SECONDARY_SWITCH = $SECONDARY_SWITCH
 $env:PRIMARY_SWITCH_SKIP_INSTALL = $PRIMARY_SWITCH_SKIP_INSTALL
 $env:CONF_DKML_CROSS_TOOLCHAIN = $CONF_DKML_CROSS_TOOLCHAIN
+$env:OCAML_OPAM_REPOSITORY = $OCAML_OPAM_REPOSITORY
 $env:DISKUV_OPAM_REPOSITORY = $DISKUV_OPAM_REPOSITORY
 $env:DKML_HOME = $DKML_HOME
 
@@ -244,7 +250,7 @@ If ( "${env:VERBOSE}" -eq "true" ) {
     Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\Extension SDKs\WindowsDesktop"
   }
 
-  $env:PSModulePath += "$([System.IO.Path]::PathSeparator).ci\sd4\g\dkml-component-ocamlcompiler\assets\staging-files\win32\SingletonInstall"
+  $env:PSModulePath += "$([System.IO.Path]::PathSeparator).ci\sd4\g\dkml-runtime-distribution\src\windows"
   Import-Module Machine
 
   $allinstances = Get-VSSetupInstance

@@ -13,6 +13,7 @@ let global_env_vars =
     (* Edited by bump-version.cmake *)
     ("DKML_VERSION", "2.1.1");
     ("DEFAULT_DISKUV_OPAM_REPOSITORY_TAG", "2.1.1");
+    ("DEFAULT_OCAML_OPAM_REPOSITORY_TAG", "6c3f73f42890cc19f81eb1dec8023c2cd7b8b5cd");
     ("DEFAULT_DKML_COMPILER", "2.1.1");
     ("BOOTSTRAP_OPAM_VERSION", "v2.2.0-alpha-20221228");
 
@@ -195,6 +196,9 @@ let global_env_vars =
     ("PIN_ZED", "3.2.3");
     (* END pin-env-vars. DO NOT EDIT THE LINES ABOVE *)
   ] [@@ocamlformat "disable"]
+
+let dkml_runtime_compiler_version =
+  List.assoc "PIN_DKML_RUNTIME_DISTRIBUTION" global_env_vars
 
 let required_msys2_packages =
   (*
@@ -683,6 +687,8 @@ let model ~allow_dkml_host_abi ~read_script =
              Jg_types.Tobj
                [ ("name", Jg_types.Tstr name); ("value", Jg_types.Tstr value) ])
            global_env_vars) );
+    ( "dkml_runtime_compiler_version",
+      Jg_types.Tstr dkml_runtime_compiler_version );
     ( "gh_matrix",
       Jg_types.Tlist
         (full_matrix_as_list ~allow_dkml_host_abi ~must_support_gh:()

@@ -18,6 +18,7 @@ export SKIP_OPAM_MODIFICATIONS=false
 export PRIMARY_SWITCH_SKIP_INSTALL=false
 export SECONDARY_SWITCH=false
 export CONF_DKML_CROSS_TOOLCHAIN=@repository@
+export OCAML_OPAM_REPOSITORY=
 export DISKUV_OPAM_REPOSITORY=
 export DKML_HOME=
 # autogen from global_env_vars.{% for var in global_env_vars %}{{ nl }}export {{ var.name }}='{{ var.value }}'{% endfor %}
@@ -44,6 +45,7 @@ usage() {
   echo "  --SECONDARY_SWITCH=true|false. If true then the secondary switch named 'two' is created. Defaults to: ${SECONDARY_SWITCH}" >&2
   echo "  --PRIMARY_SWITCH_SKIP_INSTALL=true|false. If true no dkml-base-compiler will be installed in the 'dkml' switch. Defaults to: ${PRIMARY_SWITCH_SKIP_INSTALL}" >&2
   echo "  --CONF_DKML_CROSS_TOOLCHAIN=<value>. Unspecified or blank is the latest from the default branch (main) of conf-dkml-cross-toolchain. @repository@ is the latest from Opam. Defaults to: ${CONF_DKML_CROSS_TOOLCHAIN}" >&2
+  echo "  --OCAML_OPAM_REPOSITORY=<value>. Defaults to the value of --DEFAULT_OCAML_OPAM_REPOSITORY_TAG (see below)" >&2
   echo "  --DISKUV_OPAM_REPOSITORY=<value>. Defaults to the value of --DEFAULT_DISKUV_OPAM_REPOSITORY_TAG (see below)" >&2
   echo "  --DKML_HOME=<value>. then DiskuvOCamlHome, DiskuvOCamlBinaryPaths and DiskuvOCamlDeploymentId will be set, in addition to the always-present DiskuvOCamlVarsVersion and DiskuvOCamlVersion." >&2
   echo "  --in_docker=true|false. When true, opamrun and cmdrun will launch commands inside a Docker container. Defaults to '${in_docker:-}'" >&2
@@ -82,6 +84,8 @@ while getopts :h-: option; do
     PRIMARY_SWITCH_SKIP_INSTALL=*) PRIMARY_SWITCH_SKIP_INSTALL=${OPTARG#*=} ;;
     CONF_DKML_CROSS_TOOLCHAIN) fail "Option \"$OPTARG\" missing argument" ;;
     CONF_DKML_CROSS_TOOLCHAIN=*) CONF_DKML_CROSS_TOOLCHAIN=${OPTARG#*=} ;;
+    OCAML_OPAM_REPOSITORY) fail "Option \"$OPTARG\" missing argument" ;;
+    OCAML_OPAM_REPOSITORY=*) OCAML_OPAM_REPOSITORY=${OPTARG#*=} ;;
     DISKUV_OPAM_REPOSITORY) fail "Option \"$OPTARG\" missing argument" ;;
     DISKUV_OPAM_REPOSITORY=*) DISKUV_OPAM_REPOSITORY=${OPTARG#*=} ;;
     DKML_HOME) fail "Option \"$OPTARG\" missing argument" ;;

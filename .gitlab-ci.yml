@@ -22,9 +22,7 @@ test-pc-windows:
       - dkml_host_abi: windows_x86_64
 
   tags:
-    - shared-windows
-    - windows
-    - windows-1809
+    - saas-windows-medium-amd64
 
   script:
     - '& test\pc\setup-dkml-${env:dkml_host_abi}.ps1'

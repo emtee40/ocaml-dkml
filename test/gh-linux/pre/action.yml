@@ -6,10 +6,6 @@ author: Diskuv, Inc.
 description: Setup before building OCaml native executables for Linux
 
 inputs:
-  FDOPEN_OPAMEXE_BOOTSTRAP:
-    description: "Use opam.exe from fdopen on Windows. Typically only used when bootstrapping Opam for the first time. May be needed to solve '\"create_process\" failed on sleep: Bad file descriptor' which may need https://github.com/ocaml/opam/commit/417b97d8cfada35682a0f4107eb2e4f9e24fba91"
-    required: false
-    default: 'false'
   CACHE_PREFIX:
     description: The prefix of the cache keys.
     required: false
@@ -25,6 +21,10 @@ inputs:
     description: "Git branch, tag or commit for conf-dkml-cross-toolchain"
     required: false
     default: "@repository@" # "@repository@" = Opam ; "" = latest from default branch of git clone
+  OCAML_OPAM_REPOSITORY:
+    description: "Git branch, tag or commit for ocaml/opam-repository.git"
+    required: false
+    default: "" # DEFAULT_OCAML_OPAM_REPOSITORY_TAG is used as default for empty strings
   DISKUV_OPAM_REPOSITORY:
     description: "Git branch, tag or commit for diskuv-opam-repository"
     required: false
@@ -306,6 +306,9 @@ runs:
 
         section_begin checkout-info "Summary: code checkout"
 
+        PIN_DKML_RUNTIME_DISTRIBUTION=${PIN_DKML_RUNTIME_DISTRIBUTION:-}
+        TAG_DKML_RUNTIME_DISTRIBUTION=${TAG_DKML_RUNTIME_DISTRIBUTION:-$PIN_DKML_RUNTIME_DISTRIBUTION}
+
         # shellcheck disable=SC2154
         echo "
         ================
@@ -328,24 +331,29 @@ runs:
         ------
         dkml_host_abi=$dkml_host_abi
         .
+        ---------
+        Constants
+        ---------
+        PIN_DKML_RUNTIME_DISTRIBUTION=${PIN_DKML_RUNTIME_DISTRIBUTION}
+        TAG_DKML_RUNTIME_DISTRIBUTION=${TAG_DKML_RUNTIME_DISTRIBUTION}
+        .
         "
 
         section_end checkout-info
 
         install -d .ci/sd4/g
 
-        # dkml-component-ocamlcompiler
+        # dkml-runtime-distribution
 
-        #   For 'Diagnose Visual Studio environment variables (Windows)' we need dkml-component-ocamlcompiler
+        #   For 'Diagnose Visual Studio environment variables (Windows)' we need dkml-runtime-distribution
         #   so that 'Import-Module Machine' and 'Get-VSSetupInstance' can be run.
-        #   The version doesn't matter too much, as long as it has a functioning Get-VSSetupInstance
-        #   that supports the Visual Studio versions of the latest GitLab CI and GitHub Actions machines.
-        #   commit 4d6f1bfc3510c55ba4273cb240e43727854b5718 = WinSDK 19041 and VS 14.29
+        #   More importantly, for 'Locate Visual Studio (Windows)' we need dkml-runtime-distribution's
+        #   'Get-CompatibleVisualStudios' and 'Get-VisualStudioProperties'.
         case "$dkml_host_abi" in
         windows_*)
-            section_begin checkout-dkml-component-ocamlcompiler 'Checkout dkml-component-ocamlcompiler'
-            git_checkout dkml-component-ocamlcompiler https://github.com/diskuv/dkml-component-ocamlcompiler.git "b9142380b0b8771a0d02f8b88ea786152a6e3d09"
-            section_end checkout-dkml-component-ocamlcompiler
+            section_begin checkout-dkml-runtime-distribution 'Checkout dkml-runtime-distribution'
+            git_checkout dkml-runtime-distribution https://github.com/diskuv/dkml-runtime-distribution.git "$TAG_DKML_RUNTIME_DISTRIBUTION"
+            section_end checkout-dkml-runtime-distribution
             ;;
         esac
 
@@ -453,6 +461,7 @@ runs:
         Inputs
         ------
         DISKUV_OPAM_REPOSITORY=${DISKUV_OPAM_REPOSITORY:-}
+        OCAML_OPAM_REPOSITORY=${OCAML_OPAM_REPOSITORY:-}
         DKML_COMPILER=${DKML_COMPILER:-}
         OCAML_COMPILER=${OCAML_COMPILER:-}
         CONF_DKML_CROSS_TOOLCHAIN=${CONF_DKML_CROSS_TOOLCHAIN:-}
@@ -468,6 +477,7 @@ runs:
         ----------------------
         DKML_VERSION=$DKML_VERSION
         DEFAULT_DISKUV_OPAM_REPOSITORY_TAG=$DEFAULT_DISKUV_OPAM_REPOSITORY_TAG
+        DEFAULT_OCAML_OPAM_REPOSITORY_TAG=$DEFAULT_OCAML_OPAM_REPOSITORY_TAG
         DEFAULT_DKML_COMPILER=$DEFAULT_DKML_COMPILER
         BOOTSTRAP_OPAM_VERSION=$BOOTSTRAP_OPAM_VERSION
         .
@@ -1153,7 +1163,7 @@ runs:
         do_opam_repositories_update() {
             section_begin "opam-repo-update" "Update opam repositories"
             # The default repository may be the initial 'eor' (empty) repository
-            opamrun repository set-url default git+https://github.com/ocaml/opam-repository.git --yes
+            opamrun repository set-url default "git+https://github.com/ocaml/opam-repository.git#${OCAML_OPAM_REPOSITORY:-$DEFAULT_OCAML_OPAM_REPOSITORY_TAG}" --yes
             # Always set the `diskuv` repository url since it can change
             opamrun repository set-url diskuv "git+https://github.com/diskuv/diskuv-opam-repository.git#${DISKUV_OPAM_REPOSITORY:-$DEFAULT_DISKUV_OPAM_REPOSITORY_TAG}" --yes --dont-select
             # Update both `default` and `diskuv` Opam repositories
@@ -1371,6 +1381,7 @@ runs:
                 case "${OCAML_COMPILER:-}" in
                 4.12.1) true ;;
                 4.14.0) true ;;
+                4.14.2) true ;;
                 *)
                     echo "OCAML_COMPILER version ${OCAML_COMPILER:-} is not supported"
                     exit 109
@@ -1706,7 +1717,7 @@ runs:
       shell: bash
       run: |
         set -x
-        echo '623272-${{ steps.full_matrix_vars.outputs.dkml_host_abi }}-${{ steps.full_matrix_vars.outputs.opam_abi }}' > .ci/sd4/cachekey.opam.binaries
+        echo '330188-${{ steps.full_matrix_vars.outputs.dkml_host_abi }}-${{ steps.full_matrix_vars.outputs.opam_abi }}' > .ci/sd4/cachekey.opam.binaries
         echo '${{ steps.full_matrix_vars.outputs.abi_pattern }}-${{ steps.full_matrix_vars.outputs.vsstudio_arch }}-${{ steps.full_matrix_vars.outputs.vsstudio_hostarch }}-${{ steps.full_matrix_vars.outputs.vsstudio_dir }}-${{ steps.full_matrix_vars.outputs.vsstudio_vcvarsver }}-${{ steps.full_matrix_vars.outputs.vsstudio_winsdkver }}-${{ steps.full_matrix_vars.outputs.vsstudio_msvspreference }}-${{ steps.full_matrix_vars.outputs.vsstudio_cmakegenerator }}' > .ci/sd4/cachekey.vsstudio
         echo '${{ inputs.OCAML_COMPILER }}-${{ inputs.DISKUV_OPAM_REPOSITORY }}-${{ inputs.DKML_COMPILER }}-${{ inputs.CONF_DKML_CROSS_TOOLCHAIN }}' > .ci/sd4/cachekey.ci.inputs
 
@@ -1783,7 +1794,8 @@ runs:
       shell: bash
       env:
         # Push down inputs variables for GitHub/GitLab portable scripts
-        VERBOSE:          "${{ inputs.VERBOSE }}"
+        VERBOSE:                        "${{ inputs.VERBOSE }}"
+        PIN_DKML_RUNTIME_DISTRIBUTION:  "2.1.1"
       run: 'sh .ci/sd4/run-checkout-code.sh GITHUB_WORKSPACE "$GITHUB_WORKSPACE"'
 
     # Setup C compiler
@@ -1807,6 +1819,7 @@ runs:
         # autogen from global_env_vars.
         DKML_VERSION: '2.1.1'
         DEFAULT_DISKUV_OPAM_REPOSITORY_TAG: '2.1.1'
+        DEFAULT_OCAML_OPAM_REPOSITORY_TAG: '6c3f73f42890cc19f81eb1dec8023c2cd7b8b5cd'
         DEFAULT_DKML_COMPILER: '2.1.1'
         BOOTSTRAP_OPAM_VERSION: 'v2.2.0-alpha-20221228'
         PIN_ASTRING: '0.8.5'

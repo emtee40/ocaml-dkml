@@ -1,5 +1,14 @@
 # Changes
 
+## 2.1.2
+
+- Use a fixed commit of [ocaml/opam-repository.git](https://github.com/ocaml/opam-repository.git) by default.
+  Control through `OCAML_OPAM_REPOSITORY` and `DEFAULT_OCAML_OPAM_REPOSITORY_TAG` variables.
+- Remove `FDOPEN_OPAMEXE_BOOTSTRAP` from GitHub and GitLab input variables to make room for `OCAML_OPAM_REPOSITORY` (GitHub only allows 10)
+- Switch from `shared-windows, window, windows-1809` GitLab CI runner to `saas-windows-medium-amd64` (Windows 2022).
+  Confer: <https://about.gitlab.com/blog/2024/01/22/windows-2022-support-for-gitlab-saas-runners/>
+- Use OCaml 4.14.2 from DkML 2.1.1; allow non-DkML 4.14.2 compiler
+
 ## 2.1.1
 
 - `bootstrap_opam_version` and `FDOPEN_OPAMEXE_BOOTSTRAP` are no longer part of CI matrix. The bootstrap opam version is now tied to the DkML release and always comes from dkml-component-opam's release assets.

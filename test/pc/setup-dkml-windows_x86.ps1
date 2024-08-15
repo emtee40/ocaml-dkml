@@ -37,6 +37,9 @@ Input variable. If true no dkml-base-compiler will be installed in the 'dkml' sw
 .PARAMETER CONF_DKML_CROSS_TOOLCHAIN
 Input variable. Unspecified or blank is the latest from the default branch (main) of conf-dkml-cross-toolchain. @repository@ is the latest from Opam.
 
+.PARAMETER OCAML_OPAM_REPOSITORY
+Input variable. Defaults to the value of -DEFAULT_OCAML_OPAM_REPOSITORY_TAG (see below)
+
 .PARAMETER DISKUV_OPAM_REPOSITORY
 Input variable. Defaults to the value of -DEFAULT_DISKUV_OPAM_REPOSITORY_TAG (see below)
 
@@ -49,6 +52,9 @@ and DiskuvOCamlMSYS2Dir.
 Environment variable.
 
 .PARAMETER DEFAULT_DISKUV_OPAM_REPOSITORY_TAG
+Environment variable.
+
+.PARAMETER DEFAULT_OCAML_OPAM_REPOSITORY_TAG
 Environment variable.
 
 .PARAMETER DEFAULT_DKML_COMPILER
@@ -608,6 +614,8 @@ param (
   [string]
   $CONF_DKML_CROSS_TOOLCHAIN = "@repository@",
   [string]
+  $OCAML_OPAM_REPOSITORY = "",
+  [string]
   $DISKUV_OPAM_REPOSITORY = "",
   [string]
   $DKML_HOME = ""
@@ -621,6 +629,7 @@ param (
   # autogen from global_env_vars.
   ,[Parameter()] [string] $DKML_VERSION = "2.1.1"
   ,[Parameter()] [string] $DEFAULT_DISKUV_OPAM_REPOSITORY_TAG = "2.1.1"
+  ,[Parameter()] [string] $DEFAULT_OCAML_OPAM_REPOSITORY_TAG = "6c3f73f42890cc19f81eb1dec8023c2cd7b8b5cd"
   ,[Parameter()] [string] $DEFAULT_DKML_COMPILER = "2.1.1"
   ,[Parameter()] [string] $BOOTSTRAP_OPAM_VERSION = "v2.2.0-alpha-20221228"
   ,[Parameter()] [string] $PIN_ASTRING = "0.8.5"
@@ -823,6 +832,7 @@ $env:SKIP_OPAM_MODIFICATIONS = $SKIP_OPAM_MODIFICATIONS
 $env:SECONDARY_SWITCH = $SECONDARY_SWITCH
 $env:PRIMARY_SWITCH_SKIP_INSTALL = $PRIMARY_SWITCH_SKIP_INSTALL
 $env:CONF_DKML_CROSS_TOOLCHAIN = $CONF_DKML_CROSS_TOOLCHAIN
+$env:OCAML_OPAM_REPOSITORY = $OCAML_OPAM_REPOSITORY
 $env:DISKUV_OPAM_REPOSITORY = $DISKUV_OPAM_REPOSITORY
 $env:DKML_HOME = $DKML_HOME
 
@@ -846,6 +856,7 @@ $env:ocaml_options = "ocaml-option-32bit"
 # autogen from global_env_vars.
 $env:DKML_VERSION = $DKML_VERSION
 $env:DEFAULT_DISKUV_OPAM_REPOSITORY_TAG = $DEFAULT_DISKUV_OPAM_REPOSITORY_TAG
+$env:DEFAULT_OCAML_OPAM_REPOSITORY_TAG = $DEFAULT_OCAML_OPAM_REPOSITORY_TAG
 $env:DEFAULT_DKML_COMPILER = $DEFAULT_DKML_COMPILER
 $env:BOOTSTRAP_OPAM_VERSION = $BOOTSTRAP_OPAM_VERSION
 $env:PIN_ASTRING = $PIN_ASTRING
@@ -1280,6 +1291,9 @@ git_checkout() {
 
 section_begin checkout-info "Summary: code checkout"
 
+PIN_DKML_RUNTIME_DISTRIBUTION=${PIN_DKML_RUNTIME_DISTRIBUTION:-}
+TAG_DKML_RUNTIME_DISTRIBUTION=${TAG_DKML_RUNTIME_DISTRIBUTION:-$PIN_DKML_RUNTIME_DISTRIBUTION}
+
 # shellcheck disable=SC2154
 echo "
 ================
@@ -1302,24 +1316,29 @@ Matrix
 ------
 dkml_host_abi=$dkml_host_abi
 .
+---------
+Constants
+---------
+PIN_DKML_RUNTIME_DISTRIBUTION=${PIN_DKML_RUNTIME_DISTRIBUTION}
+TAG_DKML_RUNTIME_DISTRIBUTION=${TAG_DKML_RUNTIME_DISTRIBUTION}
+.
 "
 
 section_end checkout-info
 
 install -d .ci/sd4/g
 
-# dkml-component-ocamlcompiler
+# dkml-runtime-distribution
 
-#   For 'Diagnose Visual Studio environment variables (Windows)' we need dkml-component-ocamlcompiler
+#   For 'Diagnose Visual Studio environment variables (Windows)' we need dkml-runtime-distribution
 #   so that 'Import-Module Machine' and 'Get-VSSetupInstance' can be run.
-#   The version doesn't matter too much, as long as it has a functioning Get-VSSetupInstance
-#   that supports the Visual Studio versions of the latest GitLab CI and GitHub Actions machines.
-#   commit 4d6f1bfc3510c55ba4273cb240e43727854b5718 = WinSDK 19041 and VS 14.29
+#   More importantly, for 'Locate Visual Studio (Windows)' we need dkml-runtime-distribution's
+#   'Get-CompatibleVisualStudios' and 'Get-VisualStudioProperties'.
 case "$dkml_host_abi" in
 windows_*)
-    section_begin checkout-dkml-component-ocamlcompiler 'Checkout dkml-component-ocamlcompiler'
-    git_checkout dkml-component-ocamlcompiler https://github.com/diskuv/dkml-component-ocamlcompiler.git "b9142380b0b8771a0d02f8b88ea786152a6e3d09"
-    section_end checkout-dkml-component-ocamlcompiler
+    section_begin checkout-dkml-runtime-distribution 'Checkout dkml-runtime-distribution'
+    git_checkout dkml-runtime-distribution https://github.com/diskuv/dkml-runtime-distribution.git "$TAG_DKML_RUNTIME_DISTRIBUTION"
+    section_end checkout-dkml-runtime-distribution
     ;;
 esac
 
@@ -1430,6 +1449,7 @@ WORKSPACE=$setup_WORKSPACE
 Inputs
 ------
 DISKUV_OPAM_REPOSITORY=${DISKUV_OPAM_REPOSITORY:-}
+OCAML_OPAM_REPOSITORY=${OCAML_OPAM_REPOSITORY:-}
 DKML_COMPILER=${DKML_COMPILER:-}
 OCAML_COMPILER=${OCAML_COMPILER:-}
 CONF_DKML_CROSS_TOOLCHAIN=${CONF_DKML_CROSS_TOOLCHAIN:-}
@@ -1445,6 +1465,7 @@ DkML Release Constants
 ----------------------
 DKML_VERSION=$DKML_VERSION
 DEFAULT_DISKUV_OPAM_REPOSITORY_TAG=$DEFAULT_DISKUV_OPAM_REPOSITORY_TAG
+DEFAULT_OCAML_OPAM_REPOSITORY_TAG=$DEFAULT_OCAML_OPAM_REPOSITORY_TAG
 DEFAULT_DKML_COMPILER=$DEFAULT_DKML_COMPILER
 BOOTSTRAP_OPAM_VERSION=$BOOTSTRAP_OPAM_VERSION
 .
@@ -2130,7 +2151,7 @@ fi
 do_opam_repositories_update() {
     section_begin "opam-repo-update" "Update opam repositories"
     # The default repository may be the initial 'eor' (empty) repository
-    opamrun repository set-url default git+https://github.com/ocaml/opam-repository.git --yes
+    opamrun repository set-url default "git+https://github.com/ocaml/opam-repository.git#${OCAML_OPAM_REPOSITORY:-$DEFAULT_OCAML_OPAM_REPOSITORY_TAG}" --yes
     # Always set the `diskuv` repository url since it can change
     opamrun repository set-url diskuv "git+https://github.com/diskuv/diskuv-opam-repository.git#${DISKUV_OPAM_REPOSITORY:-$DEFAULT_DISKUV_OPAM_REPOSITORY_TAG}" --yes --dont-select
     # Update both `default` and `diskuv` Opam repositories
@@ -2348,6 +2369,7 @@ do_pins() {
         case "${OCAML_COMPILER:-}" in
         4.12.1) true ;;
         4.14.0) true ;;
+        4.14.2) true ;;
         *)
             echo "OCAML_COMPILER version ${OCAML_COMPILER:-} is not supported"
             exit 109
@@ -2585,7 +2607,7 @@ if ( "${env:VERBOSE}" -eq "true" ) {
         Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\Extension SDKs\WindowsDesktop"
     }
 
-    $env:PSModulePath += "$([System.IO.Path]::PathSeparator).ci\sd4\g\dkml-component-ocamlcompiler\assets\staging-files\win32\SingletonInstall"
+    $env:PSModulePath += "$([System.IO.Path]::PathSeparator).ci\sd4\g\dkml-runtime-distribution\src\windows"
     Import-Module Machine
 
     $allinstances = Get-VSSetupInstance
@@ -2610,7 +2632,7 @@ if (("${env:GITLAB_CI}" -eq "true") -or ("${env:PC_CI}" -eq "true")) {
 
 # Locate Visual Studio (Windows)
 if ("${env:vsstudio_dir}" -eq "" -and (!(Test-Path -Path .ci/sd4/vsenv${ExportExt}) -or !(Test-Path -Path .ci/sd4/vsenv.ps1))) {
-    $env:PSModulePath += "$([System.IO.Path]::PathSeparator).ci\sd4\g\dkml-component-ocamlcompiler\assets\staging-files\win32\SingletonInstall"
+    $env:PSModulePath += "$([System.IO.Path]::PathSeparator).ci\sd4\g\dkml-runtime-distribution\src\windows"
     Import-Module Machine
 
     $CompatibleVisualStudios = Get-CompatibleVisualStudios -ErrorIfNotFound
@@ -2699,7 +2721,7 @@ If ( "${env:VERBOSE}" -eq "true" ) {
     Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\Extension SDKs\WindowsDesktop"
   }
 
-  $env:PSModulePath += "$([System.IO.Path]::PathSeparator).ci\sd4\g\dkml-component-ocamlcompiler\assets\staging-files\win32\SingletonInstall"
+  $env:PSModulePath += "$([System.IO.Path]::PathSeparator).ci\sd4\g\dkml-runtime-distribution\src\windows"
   Import-Module Machine
 
   $allinstances = Get-VSSetupInstance
