@@ -5,14 +5,7 @@
       "name": "ci-cleared",
       "hidden": true,
       "cacheVariables": {
-        "dkml-runtime-apps_GIT_TAG": "",
-        "dkml-component-desktop_GIT_TAG": "",
-        "dkml-component-ocamlrun_GIT_TAG": "",
-        "dkml-installer-ocaml_GIT_TAG": "",
-        "dkml-installer-ocaml-byte_GIT_TAG": "",
-        "diskuv-opam-repository_GIT_TAG": "",
         "dkml-install-api_GIT_TAG": "",
-        "dkml-component-curl_GIT_TAG": "",
         "dkml-component-opam_GIT_TAG": "",
         "dkml-component-unixutils_GIT_TAG": ""
       }
