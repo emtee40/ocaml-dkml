@@ -1,0 +1,77 @@
+(rule
+ (targets
+  discover.ml
+  entry_assembly_manifest.ml
+  entry-application.manifest)
+ (action
+  (progn
+   (run common-ml-of-installer-generator))))
+
+(rule
+ (alias gen-dkml)
+ (target dune-common.gen.inc)
+ (deps
+  discover.ml
+  entry_assembly_manifest.ml
+  entry-application.manifest)
+ (action
+  (progn
+   (run
+    common-dune-of-installer-generator
+    --project-root
+    %{project_root}
+    %{target}))))
+
+(rule
+  (alias gen-dkml)
+  (action
+    (diff dune-common.inc dune-common.gen.inc)))
+
+(include dune-common.inc)
+
+(rule
+ (deps (universe)) ; package-ml-of-installer-generator queries `findlib` in the installed universe
+ (targets
+  create_installers.ml
+  entry_install.ml
+  entry_uninstall.ml
+  package_setup.ml
+  package_uninstaller.ml
+  runner_admin.ml
+  runner_user.ml)
+ (action
+  (progn
+   (run package-ml-of-installer-generator %{read-strings:components.strings}))))
+
+(rule
+ (alias gen-dkml)
+ (target dune.gen.inc)
+ (deps
+  (universe) ; package-dune-of-installer-generator queries `findlib` in the installed universe
+  create_installers.ml
+  discover.ml
+  entry_assembly_manifest.ml
+  entry_install.ml
+  entry_uninstall.ml
+  entry-application.manifest
+  package_setup.ml
+  package_uninstaller.ml
+  runner_admin.ml
+  runner_user.ml)
+ (action
+  (progn
+   (run
+    package-dune-of-installer-generator
+    --package-name
+    dkml-installer-ocaml-offline
+    --project-root
+    %{project_root}
+    %{target}
+    %{read-strings:components.strings}))))
+
+(rule
+  (alias gen-dkml)
+  (action
+    (diff dune.inc dune.gen.inc)))
+
+(include dune.inc)
