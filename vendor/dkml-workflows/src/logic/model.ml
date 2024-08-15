@@ -11,11 +11,11 @@ open Jingoo
 let global_env_vars =
   [
     (* Edited by bump-version.cmake *)
-    ("DKML_VERSION", "2.1.1");
-    ("DEFAULT_DISKUV_OPAM_REPOSITORY_TAG", "2.1.1");
-    ("DEFAULT_OCAML_OPAM_REPOSITORY_TAG", "6c3f73f42890cc19f81eb1dec8023c2cd7b8b5cd");
-    ("DEFAULT_DKML_COMPILER", "2.1.1");
-    ("BOOTSTRAP_OPAM_VERSION", "v2.2.0-alpha-20221228");
+    ("DKML_VERSION", "2.1.2");
+    ("DEFAULT_DISKUV_OPAM_REPOSITORY_TAG", "2.1.2");
+    ("DEFAULT_OCAML_OPAM_REPOSITORY_TAG", "907d456e7c003c4c7ad1ad4945abf93cdc852874");
+    ("DEFAULT_DKML_COMPILER", "2.1.2");
+    ("BOOTSTRAP_OPAM_VERSION", "2.2.0");
 
     (* BEGIN pin-env-vars. DO NOT EDIT THE LINES IN THIS SECTION *)
     (* Managed by bump-packages.cmake *)
