@@ -1,0 +1,16 @@
+(library
+ (public_name dkml-component-ocamlcompiler-common)
+ (name dkml_component_ocamlcompiler_common)
+ (libraries
+  dkml-install.register
+  dkml-component-ocamlcompiler-common.api
+  dkml-component-staging-ocamlrun.api
+  bos
+  logs))
+
+(rule
+ (target opts.ml)
+ (action
+  (with-stdout-to
+   %{target}
+   (echo "let option_vcpkg_available = %{lib-available:dkml-option-vcpkg}"))))

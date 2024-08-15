@@ -1,0 +1,9 @@
+(library
+ (public_name dkml-component-ocamlcompiler-offline)
+ (name dkml_component_ocamlcompiler_offline)
+ (libraries
+  dkml-install.register
+  dkml-component-staging-ocamlrun.api
+  bos
+  logs
+  dkml-component-ocamlcompiler-common.api))
