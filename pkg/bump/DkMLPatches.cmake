@@ -56,14 +56,16 @@ set(DKML_PATCH_EXCLUDE_PACKAGES
     tiny_httpd_camlzip # 0.16. Needs conf-zlib to be ported to Windows.
 )
 
-# Do GLOBs once
-FetchContent_GetProperties(diskuv-opam-repository)
-file(GLOB diskuv-opam-repository-PACKAGEGLOB
-    LIST_DIRECTORIES false
-    RELATIVE ${diskuv-opam-repository_SOURCE_DIR}
+# Do GLOBs once. The FetchContent_MakeAvailable(diskuv-opam-repository) must have already been done.
+macro(DkMLPatches_Init)
+    FetchContent_GetProperties(diskuv-opam-repository)
+    file(GLOB diskuv-opam-repository-PACKAGEGLOB
+        LIST_DIRECTORIES false
+        RELATIVE ${diskuv-opam-repository_SOURCE_DIR}
 
-    CONFIGURE_DEPENDS
-    ${diskuv-opam-repository_SOURCE_DIR}/packages/*/*/opam)
+        CONFIGURE_DEPENDS
+        ${diskuv-opam-repository_SOURCE_DIR}/packages/*/*/opam)
+endmacro()
 
 # Get the list of the latest package versions compatible with
 # [OCAML_VERSION]. Any packages that are part of [SYNCHRONIZED_PACKAGES]

@@ -1632,6 +1632,10 @@ function(add_all_stage_targets)
     add_dependencies(Package-Stage13-GitPushRemaining Package-Stage10-GitPushForTesting)
 endfunction()
 
+# ------------------ Initialize and add targets -------------------
+
+DkMLPatches_Init()
+
 add_GenerateLaunchers_target()
 if(NOT DKML_GOLDEN_SOURCE_CODE)
     DkMLPublish_AddArchiveTarget(
