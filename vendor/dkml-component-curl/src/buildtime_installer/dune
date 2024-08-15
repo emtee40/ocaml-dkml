@@ -1,0 +1,8 @@
+(library
+ (public_name dkml-component-staging-curl)
+ (name dkml_component_staging_curl)
+ (libraries
+  dkml-install.register
+  dkml-component-staging-ocamlrun.api
+  bos
+  logs))
