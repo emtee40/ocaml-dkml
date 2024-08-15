@@ -14,15 +14,15 @@ set(DKML_PATCH_EXCLUDE_PACKAGES
     # For now we are locally checking out dkml-install-api and
     # several independently versioned components like dkml-component-curl.
     # That means we must exclude the versions from diskuv-opam-repository
-    dkml-component-common-opam          # 2.2.0~alpha0~20221228
+    dkml-component-common-opam          # 2.2.0
     dkml-component-common-unixutils     # 0.2.0
     dkml-component-network-unixutils    # 0.2.0
-    dkml-component-offline-opam         # 2.2.0~alpha0~20221228
-    dkml-component-offline-opamshim     # 2.2.0~alpha0~20221228
+    dkml-component-offline-opam         # 2.2.0
+    dkml-component-offline-opamshim     # 2.2.0
     dkml-component-offline-unixutils    # 0.2.0
     dkml-component-staging-curl         # 0.2.0
-    dkml-component-staging-opam32       # 2.2.0~alpha0~20221228
-    dkml-component-staging-opam64       # 2.2.0~alpha0~20221228
+    dkml-component-staging-opam32       # 2.2.0
+    dkml-component-staging-opam64       # 2.2.0
     dkml-component-staging-unixutils    # 0.2.0
     dkml-install            # 0.5.0
     dkml-install-runner     # 0.5.0
@@ -40,6 +40,7 @@ set(DKML_PATCH_EXCLUDE_PACKAGES
     curly # 0.2.1-windows-env_r2
     digestif # 1.1.2+msvc
     ptime # 0.8.6-msvcsupport
+    sqlite3 # 5.1.0+msvc
     utop # 2.13.0+win32
 
     # -- Jane Street --
