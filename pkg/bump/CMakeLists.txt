@@ -1037,18 +1037,6 @@ function(add_Flavor_targets)
     list(REMOVE_ITEM dkml-runtime-apps_REL_INSTALLABLE_OPAMFILES "${dkml-runtime-apps_REL_SOURCE_DIR}/opam-dkml.opam")
     list(JOIN dkml-runtime-apps_REL_INSTALLABLE_OPAMFILES " " dkml-runtime-apps_SPACED_REL_INSTALLABLE_OPAMFILES)
 
-    # Evaluate the git references at CMake configure time so that
-    # the various add_custom_commands() can be retriggered when
-    # git references change.
-    FetchContent_GetProperties(diskuv-opam-repository)
-    execute_process(
-        WORKING_DIRECTORY ${diskuv-opam-repository_SOURCE_DIR}
-        COMMAND "${GIT_EXECUTABLE}" rev-parse --quiet --verify HEAD
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        OUTPUT_VARIABLE DISKUV_OPAM_REPOSITORY_GITREF
-        COMMAND_ERROR_IS_FATAL ANY
-    )
-
     # Checksum to retrigger introspection
     FetchContent_GetProperties(dkml-runtime-distribution)
     file(GLOB pkgs_txt_lst LIST_DIRECTORIES false

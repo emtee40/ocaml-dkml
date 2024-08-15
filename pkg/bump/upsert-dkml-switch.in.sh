@@ -14,9 +14,8 @@ unset OPAMSWITCH # Interferes with init-opam-root.sh and create-opam-switch.sh
 # The Opam 2.2 prereleases have finicky behavior with git pins. We really
 # need to use a commit id not just a branch. Without a commit id, often
 # Opam does not know there is an update.
-dor_COMMIT='@DISKUV_OPAM_REPOSITORY_GITREF@'
 
-# The ocaml/opam-repository repository is fixed
+#   The ocaml/opam-repository repository is fixed
 oor_COMMIT='@OCAML_OPAM_REPOSITORY_GITREF@'
 
 # init-opam-root
@@ -44,7 +43,7 @@ oor_COMMIT='@OCAML_OPAM_REPOSITORY_GITREF@'
 -p "@DKML_HOST_ABI@" \
 -r "$OPAMROOT" \
 -o "$OPAM_EXE" \
--e "git+file://@diskuv-opam-repository_SOURCE_DIR@/.git#${dor_COMMIT}" \
+-e "file://@diskuv-opam-repository_SOURCE_DIR@" \
 -c "git+https://github.com/ocaml/opam-repository.git#${oor_COMMIT}" \
 -g '@GIT_EXECUTABLE@' \
 -x
