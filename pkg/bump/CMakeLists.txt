@@ -837,12 +837,14 @@ function(add_GenerateLaunchers_target)
             set(runSetupScript "${POWERSHELL_EXECUTABLE}" "${dkml-workflows_SOURCE_DIR}/test/pc/setup-dkml-${DKML_TARGET_ABI}.ps1"
                 -PC_PROJECT_DIR "${CMAKE_CURRENT_BINARY_DIR}"
                 -SECONDARY_SWITCH true
-                -SKIP_OPAM_MODIFICATIONS true)
+                -SKIP_OPAM_MODIFICATIONS true
+                -BOOTSTRAP_OPAM_VERSION ${BOOTSTRAP_OPAM_VERSION})
         else()
             set(runSetupScript sh "${dkml-workflows_SOURCE_DIR}/test/pc/setup-dkml-${DKML_TARGET_ABI}.sh"
                 "--PC_PROJECT_DIR=${CMAKE_CURRENT_BINARY_DIR}"
                 --SECONDARY_SWITCH=true
-                --SKIP_OPAM_MODIFICATIONS=true)
+                --SKIP_OPAM_MODIFICATIONS=true
+                --BOOTSTRAP_OPAM_VERSION=${BOOTSTRAP_OPAM_VERSION})
             if(DKML_HOST_LINUX_DOCKER)
                 list(APPEND runSetupScript --in_docker=true)
             else()
