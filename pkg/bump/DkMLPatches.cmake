@@ -29,32 +29,21 @@ set(DKML_PATCH_EXCLUDE_PACKAGES
     dkml-install-installer  # 0.5.0
     dkml-package-console    # 0.5.0
 
-    # Already fixed upstream. Eligible to be removed
-    # from diskuv-opam-repository! Only reason to keep it around is for
-    # packages that require older versions
-    alcotest # 1.6.0
-    bigstringaf # 0.9.0+msvc
-    checkseum # 0.3.4+android
-    cmdliner # 1.0.4
-    crunch # 3.3.1
-    curly # 0.2.1-windows-env_r2
-    digestif # 1.1.2+msvc
-    ptime # 0.8.6-msvcsupport
-    sqlite3 # 5.1.0+msvc
-    utop # 2.13.0+win32
-
-    # -- Jane Street --
-    base # v0.15.1
-    base_bigstring # v0.15.0
-    core # v0.15.1
-    core_kernel # v0.15.0
-    ppx_expect # v0.15.1
-    spawn # 0.15.1+android
-    time_now # v0.15.0
-
     # Haven't/won't spend the time to make work on Windows.
     # So pin (through dkml-runtime-distribution pins) but do not build during DkML distribution.
     tiny_httpd_camlzip # 0.16. Needs conf-zlib to be ported to Windows.
+
+    # Already fixed upstream
+    # ----------------------
+
+    # Eligible to be removed
+    # from diskuv-opam-repository! Only reason to keep it around is for
+    # packages that require older versions
+    #
+    #<none>
+
+    #   -- Jane Street --
+    #<none>
 )
 
 # Do GLOBs once. The FetchContent_MakeAvailable(diskuv-opam-repository) must have already been done.
