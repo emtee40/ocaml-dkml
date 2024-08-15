@@ -1,0 +1,4 @@
+; don't waste time traversing down intermediate directories
+
+(dirs
+ (:standard \ dist msys64 _opam _release .ci))

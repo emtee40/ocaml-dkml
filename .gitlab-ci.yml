@@ -1,0 +1,393 @@
+include:
+  - local: 'ci/setup-dkml/gl/setup-dkml.gitlab-ci.yml'
+
+stages:
+  - prepare
+  - build
+  - test
+  - deploy
+
+variables:
+  CACHE_PREFIX: 'test-1.1.0r4'
+  # We need the secondary switch ('two') to install dkml-build-desktop.opam
+  SECONDARY_SWITCH: 'true'
+  # Set to 'true' when you only want do the DKML setup but not the build-test
+  # and not the release. Good for populating the cache.
+  SETUP_ONLY: 'false'
+  SKIP_CHANNEL_RELEASE_HOST_WIN32: 'false'
+  # TODO: Set this to 'false' after the next prerelease (anything after prerel7 which uses with-dkml.exe instead of with-dkml)
+  SKIP_HOST_WIN32: 'false'
+  # TODO: Set this to 'false' after the next prerelease (anything after prerel7 which uses with-dkml.exe instead of with-dkml)
+  SKIP_HOST_LINUX: 'true'
+  # TODO: Set this to 'false' after the next prerelease (anything after prerel7 which uses with-dkml.exe instead of with-dkml)
+  SKIP_HOST_MACOS: 'true'
+  # TODO: Set this to 'false' after the first release.
+  SKIP_CHANNEL_RELEASE: 'true'
+  SKIP_FLAVOR_FULL: 'false'
+  DKML_HOME: '.ci/dkml-home'
+
+.release:
+  variables:
+    DKML_CHANNEL: release
+    # 2023-07-23: Disabled check_gitlab_ci.exe. The PIN_ of both .release
+    #   and .next should instead be updated every release by dkml's pkg/bump
+    #   release process (bump-version.cmake), and _all_ the 200(?) pins
+    #   should be set. But redundant / low priority since pkg/bump allows
+    #   local edits to dkml-runtime-distribution (edit its build/_deps folders)
+    #   and local rebuilds of the desktop component and ultimately the entire
+    #   installer locally.
+    # 2023-07-22 and earlier:
+    #   All the following are checked by test/gitlab/check_gitlab_ci.exe so that
+    #   they match the RELEASED VERSION of dkml-runtime-distribution set in
+    #   `dkml-build-desktop.opam`, except on Windows which
+    #   does not have reasonable OCaml YAML library (depends on ctypes)
+    PIN_DUNE: '3.8.3+shim'
+    PIN_OCAMLFIND: '1.9.5'
+    PIN_DKML_APPS: '2.0.1'
+    PIN_WITH_DKML: '2.0.1'
+    PIN_DKML_EXE: '2.0.1'
+    PIN_CONF_WITHDKML: '2'
+
+.next:
+  variables:
+    DKML_CHANNEL: next
+    # Use the latest diskuv opam repository
+    DISKUV_OPAM_REPOSITORY: main
+    # 2023-07-23: Disabled check_gitlab_ci.exe. The PIN_ of both .release
+    #   and .next should instead be updated every release by dkml's pkg/bump
+    #   release process (bump-version.cmake), and _all_ the 200(?) pins
+    #   should be set. But redundant / low priority since pkg/bump allows
+    #   local edits to dkml-runtime-distribution (edit its build/_deps folders)
+    #   and local rebuilds of the desktop component and ultimately the entire
+    #   installer locally.
+    # 2023-07-22 and earlier:
+    #   All the following are checked by test/gitlab/check_gitlab_ci.exe so that
+    #   they match the TRUNK of dkml-runtime-distribution, except on Windows which
+    #   does not have reasonable OCaml YAML library (depends on ctypes)
+    PIN_DUNE: '3.8.3+shim'
+    PIN_OCAMLFIND: '1.9.5'
+    PIN_DKML_APPS: '2.0.1'
+    PIN_WITH_DKML: '2.0.1'
+    PIN_DKML_EXE: '2.0.1'
+    PIN_CONF_WITHDKML: '2'
+
+# -------------------- linux --------------------
+
+linux:ci:release:build:
+  extends:
+    - .linux:setup-dkml
+    - .release
+  stage: build
+  needs: [] # see comments in win32:ci:release:build
+  timeout: 2h
+  rules:
+    - if: $SKIP_CHANNEL_RELEASE != "true" && $SKIP_HOST_LINUX != "true" && $SETUP_ONLY != "true"
+  script:
+    - sh ci/build-test.sh ci release
+
+linux:ci:next:build:
+  extends:
+    - .linux:setup-dkml
+    - .next
+  stage: build
+  needs: [] # see comments in win32:ci:release:build
+  timeout: 2h
+  rules:
+    - if: $SKIP_HOST_LINUX != "true" && $SETUP_ONLY != "true"
+  script:
+    - sh ci/build-test.sh ci next
+
+linux:full:release:build:
+  extends:
+    - .linux:setup-dkml
+    - .release
+  stage: build
+  needs: [] # see comments in win32:ci:release:build
+  timeout: 2h
+  rules:
+    - if: $SKIP_CHANNEL_RELEASE != "true" && $SKIP_FLAVOR_FULL != "true" && $SKIP_HOST_LINUX != "true" && $SETUP_ONLY != "true"
+  script:
+    - sh ci/build-test.sh full release
+
+linux:full:next:build:
+  extends:
+    - .linux:setup-dkml
+    - .next
+  stage: build
+  needs: [] # see comments in win32:ci:release:build
+  timeout: 2h
+  rules:
+    - if: $SKIP_FLAVOR_FULL != "true" && $SKIP_HOST_LINUX != "true" && $SETUP_ONLY != "true"
+  script:
+    - sh ci/build-test.sh full next
+
+# -------------------- win32-windows_x86 --------------------
+
+# We use staging (three jobs) for Windows because without a cache and artifacts
+# the job will exceed 2 hours (the GitLab shared SaaS runner limit).
+# Using SECONDARY_SWITCH=true is very expensive!
+
+win32-windows_x86:prepare:
+  extends:
+    - .win32-windows_x86:setup-dkml-allplusmincache
+    - .common:setup-dkml-cache
+    - .next
+  artifacts:
+      paths:
+        - .ci/sd4/bs
+        - ${opam_root_cacheable}/config
+        - ${opam_root_cacheable}/dkml
+        - ${opam_root_cacheable}/two
+        - ${opam_root_cacheable}/repo
+        - ${opam_root_cacheable}/.ci.root-init
+        - ${opam_root_cacheable}/.ci.dkml.repo-init
+        - ${opam_root_cacheable}/.ci.two.repo-init
+        - .ci/sd4/g
+        - .ci/sd4/vsenv.sh
+        - .ci/sd4/vsenv.ps1
+        - msys64
+        - dist
+      exclude:
+        - ${opam_root_cacheable}/dkml/.opam-switch/backup/**/*
+        - ${opam_root_cacheable}/dkml/.opam-switch/build/**/*
+        - ${opam_root_cacheable}/dkml/.opam-switch/lock
+        - ${opam_root_cacheable}/dkml/.opam-switch/sources/**/*
+        - ${opam_root_cacheable}/two/.opam-switch/backup/**/*
+        - ${opam_root_cacheable}/two/.opam-switch/build/**/*
+        - ${opam_root_cacheable}/two/.opam-switch/lock
+        - ${opam_root_cacheable}/two/.opam-switch/sources/**/*
+      expire_in: "1 days"
+  stage: prepare
+  rules:
+    - if: $SKIP_HOST_WIN32 != "true"
+  timeout: 2h
+  script:
+    - Write-Host "OCaml compiler caching complete."
+
+win32-windows_x86:ci:release:build:
+  extends:
+    - .win32-windows_x86:setup-dkml-allplusmincache
+    - .common:setup-dkml-cache
+    - .release
+  dependencies:
+    - win32-windows_x86:prepare
+  artifacts:
+      paths:
+        - dist
+      expire_in: "1 days"
+  rules:
+    - if: $SKIP_CHANNEL_RELEASE != "true" && $SKIP_CHANNEL_RELEASE_HOST_WIN32 != "true" && $SETUP_ONLY != "true" && $SKIP_HOST_WIN32 != "true"
+  stage: build
+  timeout: 2h
+  script:
+    - msys64\usr\bin\bash -lc "ci/build-test.sh ci release"
+
+win32-windows_x86:ci:next:build:
+  extends:
+    - .win32-windows_x86:setup-dkml-allplusmincache
+    - .common:setup-dkml-cache
+    - .next
+  dependencies:
+    - win32-windows_x86:prepare
+  artifacts:
+      paths:
+        - dist
+      expire_in: "1 days"
+  stage: build
+  timeout: 2h
+  rules:
+    - if: $SETUP_ONLY != "true" && $SKIP_HOST_WIN32 != "true"
+  script:
+    - msys64\usr\bin\bash -lc "ci/build-test.sh ci next"
+
+win32-windows_x86:full:release:build:
+  extends:
+    - .win32-windows_x86:setup-dkml-allplusmincache
+    - .common:setup-dkml-cache
+    - .release
+  dependencies:
+    - win32-windows_x86:prepare
+  artifacts:
+      paths:
+        - dist
+      expire_in: "1 days"
+  rules:
+    - if: $SKIP_CHANNEL_RELEASE != "true" && $SKIP_FLAVOR_FULL != "true" && $SKIP_CHANNEL_RELEASE_HOST_WIN32 != "true" && $SETUP_ONLY != "true" && $SKIP_HOST_WIN32 != "true"
+  stage: build
+  timeout: 2.5h
+  script:
+    - msys64\usr\bin\bash -lc "ci/build-test.sh full release"
+
+win32-windows_x86:full:next:build:
+  extends:
+    - .win32-windows_x86:setup-dkml-allplusmincache
+    - .common:setup-dkml-cache
+    - .next
+  dependencies:
+    - win32-windows_x86:prepare
+  artifacts:
+      paths:
+        - dist
+      expire_in: "1 days"
+  stage: build
+  timeout: 2.5h
+  rules:
+    - if: $SKIP_FLAVOR_FULL != "true" && $SETUP_ONLY != "true" && $SKIP_HOST_WIN32 != "true"
+  script:
+    - msys64\usr\bin\bash -lc "ci/build-test.sh full next"
+
+# -------------------- win32-windows_x86 --------------------
+
+# We use staging (three jobs) for Windows because without a cache and artifacts
+# the job will exceed 2 hours (the GitLab shared SaaS runner limit).
+# Using SECONDARY_SWITCH=true is very expensive!
+
+win32-windows_x86_64:prepare:
+  extends:
+    - .win32-windows_x86_64:setup-dkml-allplusmincache
+    - .common:setup-dkml-cache
+    - .next
+  artifacts:
+      paths:
+        - .ci/sd4/bs
+        - ${opam_root_cacheable}/config
+        - ${opam_root_cacheable}/dkml
+        - ${opam_root_cacheable}/two
+        - ${opam_root_cacheable}/repo
+        - ${opam_root_cacheable}/.ci.root-init
+        - ${opam_root_cacheable}/.ci.dkml.repo-init
+        - ${opam_root_cacheable}/.ci.two.repo-init
+        - .ci/sd4/g
+        - .ci/sd4/vsenv.sh
+        - .ci/sd4/vsenv.ps1
+        - msys64
+        - dist
+      expire_in: "1 days"
+  stage: prepare
+  rules:
+    - if: $SKIP_HOST_WIN32 != "true"
+  timeout: 2h
+  script:
+    - Write-Host "OCaml compiler caching complete."
+
+win32-windows_x86_64:ci:release:build:
+  extends:
+    - .win32-windows_x86_64:setup-dkml-allplusmincache
+    - .common:setup-dkml-cache
+    - .release
+  dependencies:
+    - win32-windows_x86_64:prepare
+  artifacts:
+      paths:
+        - dist
+      expire_in: "1 days"
+  rules:
+    - if: $SKIP_CHANNEL_RELEASE != "true" && $SKIP_CHANNEL_RELEASE_HOST_WIN32 != "true" && $SETUP_ONLY != "true" && $SKIP_HOST_WIN32 != "true"
+  stage: build
+  timeout: 2h
+  script:
+    - msys64\usr\bin\bash -lc "ci/build-test.sh ci release"
+
+win32-windows_x86_64:ci:next:build:
+  extends:
+    - .win32-windows_x86_64:setup-dkml-allplusmincache
+    - .common:setup-dkml-cache
+    - .next
+  dependencies:
+    - win32-windows_x86_64:prepare
+  artifacts:
+      paths:
+        - dist
+      expire_in: "1 days"
+  stage: build
+  timeout: 2h
+  rules:
+    - if: $SETUP_ONLY != "true" && $SKIP_HOST_WIN32 != "true"
+  script:
+    - msys64\usr\bin\bash -lc "ci/build-test.sh ci next"
+
+win32-windows_x86_64:full:release:build:
+  extends:
+    - .win32-windows_x86_64:setup-dkml-allplusmincache
+    - .common:setup-dkml-cache
+    - .release
+  dependencies:
+    - win32-windows_x86_64:prepare
+  artifacts:
+      paths:
+        - dist
+      expire_in: "1 days"
+  rules:
+    - if: $SKIP_CHANNEL_RELEASE != "true" && $SKIP_FLAVOR_FULL != "true" && $SKIP_CHANNEL_RELEASE_HOST_WIN32 != "true" && $SETUP_ONLY != "true" && $SKIP_HOST_WIN32 != "true"
+  stage: build
+  timeout: 2.5h
+  script:
+    - msys64\usr\bin\bash -lc "ci/build-test.sh full release"
+
+win32-windows_x86_64:full:next:build:
+  extends:
+    - .win32-windows_x86_64:setup-dkml-allplusmincache
+    - .common:setup-dkml-cache
+    - .next
+  dependencies:
+    - win32-windows_x86_64:prepare
+  artifacts:
+      paths:
+        - dist
+      expire_in: "1 days"
+  stage: build
+  timeout: 2.5h
+  rules:
+    - if: $SKIP_FLAVOR_FULL != "true" && $SETUP_ONLY != "true" && $SKIP_HOST_WIN32 != "true"
+  script:
+    - msys64\usr\bin\bash -lc "ci/build-test.sh full next"
+
+# -------------------- macos --------------------
+
+macos:ci:release:build:
+  extends:
+    - .macos:setup-dkml
+    - .release
+  stage: build
+  needs: [] # see comments in win32:ci:release:build
+  timeout: 2h
+  rules:
+    - if: $SKIP_CHANNEL_RELEASE != "true" && $SETUP_ONLY != "true" && $SKIP_HOST_MACOS != "true"
+  script:
+    - sh ci/build-test.sh ci release
+
+macos:ci:next:build:
+  extends:
+    - .macos:setup-dkml
+    - .next
+  stage: build
+  needs: [] # see comments in win32:ci:release:build
+  timeout: 2h
+  rules:
+    - if: $SETUP_ONLY != "true" && $SKIP_HOST_MACOS != "true"
+  script:
+    - sh ci/build-test.sh ci next
+
+macos:full:release:build:
+  extends:
+    - .macos:setup-dkml
+    - .release
+  stage: build
+  needs: [] # see comments in win32:ci:release:build
+  timeout: 2h
+  rules:
+    - if: $SKIP_CHANNEL_RELEASE != "true" && $SKIP_FLAVOR_FULL != "true" && $SETUP_ONLY != "true" && $SKIP_HOST_MACOS != "true"
+  script:
+    - sh ci/build-test.sh full release
+
+macos:full:next:build:
+  extends:
+    - .macos:setup-dkml
+    - .next
+  stage: build
+  needs: [] # see comments in win32:ci:release:build
+  timeout: 2h
+  rules:
+    - if: $SKIP_FLAVOR_FULL != "true" && $SETUP_ONLY != "true" && $SKIP_HOST_MACOS != "true"
+  script:
+    - sh ci/build-test.sh full next

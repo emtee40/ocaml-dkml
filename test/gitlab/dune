@@ -1,0 +1,15 @@
+(executable
+ (package dkml-build-desktop)
+ (optional)
+ (name check_gitlab_ci)
+ (public_name check-gitlab-ci)
+ (libraries yaml.unix dkml-runtime-distribution))
+
+(rule
+ (alias runtest-manual) ; disabled. no auto testing with [alias runtest]
+ (package dkml-build-desktop)
+ (action
+  (run
+   ./check_gitlab_ci.exe
+   %{dep:../../.gitlab-ci.yml}
+   %{env:DKML_CHANNEL=next})))

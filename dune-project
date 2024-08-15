@@ -1,0 +1,203 @@
+(lang dune 3.6)
+
+(name dkml-component-common-desktop)
+(version 2.1.1)
+
+(generate_opam_files true)
+
+(source
+ (uri "git+https://gitlab.com/dkml/components/dkml-component-desktop.git"))
+(homepage "https://gitlab.com/dkml/components/dkml-component-desktop")
+(documentation "https://gitlab.com/dkml/components/dkml-component-desktop/-/blob/main/README.md")
+(bug_reports "https://gitlab.com/dkml/components/dkml-component-desktop/-/issues")
+(license Apache-2.0)
+(authors "Diskuv, Inc. <opensource+diskuv-ocaml@support.diskuv.com>")
+(maintainers "opensource+diskuv-ocaml@support.diskuv.com")
+
+(package
+ (name dkml-component-common-desktop)
+ (synopsis "Common code for installers of desktop executables for all DKML installable platforms")
+ (description
+  "`desktop` provides desktop executables for all DKML installable platforms")
+ (depends
+  (dkml-install (>= 0.2.0))))
+
+(package
+ (name dkml-component-desktop-maintain)
+ (synopsis "Maintenance for source code: CI workflows, etc.")
+ (allow_empty)
+ (depends
+  ; dkml-runtime-distribution has a ~dev dependency within this package. Keep it this way.
+  dkml-runtime-distribution
+  (dkml-workflows (and (>= 1.1.0) :build))
+  (yaml (>= 3.0.0))))
+
+(package
+ (name dkml-component-staging-dkmlconfdir)
+ (synopsis "Places conf-dkmldir binary into the DKML staging-files")
+ (description "Places conf-dkmldir binary into the DKML staging-files")
+ (depends
+  conf-dkml-sys-opam
+  (dkml-build-desktop (= :version)) ; dkml-desktop-copy-installed
+  (dkml-install (>= 0.2.0))
+  ; BEGIN dkml-apps-only. DO NOT EDIT THE LINES IN THIS SECTION
+  ; Managed by bump-packages.cmake
+  (dune (= 3.15.0))
+  (dkml-apps (= 2.1.1))
+  ; END dkml-apps-only. DO NOT EDIT THE LINES ABOVE
+  (diskuvbox (>= 0.1.0))
+  (sexplib (>= v0.14.0))
+  (bos (>= 0.2.1))
+  (ppx_sexp_conv (>= v0.14.3))
+  (alcotest (and (>= 1.4.0) :with-test))))
+
+(package
+ (name dkml-component-staging-withdkml)
+ (synopsis "Places with-dkml binary into the DKML staging-files")
+ (description "Places with-dkml binary into the DKML staging-files")
+ (depends
+  conf-dkml-sys-opam
+  (dkml-build-desktop (= :version)) ; dkml-desktop-copy-installed
+  (dkml-install (>= 0.2.0))
+  (diskuvbox (>= 0.1.0))))
+
+(package
+ (name dkml-component-staging-desktop-ci)
+ (synopsis "Collection of end-user installers of the CI flavor of desktop executables")
+ (description
+  "`desktop` provides desktop executables for all DKML installable platforms")
+ (depopts
+  ; The [install:] instructions can mimic the desired [dune] + [dune-real]
+  ; executables in special switches like [dkml] that do not have
+  ; [conf-withdkml], as long as [install:] knows whether [conf-withdkml] was
+  ; installed.
+  conf-withdkml
+ )
+ (depends
+  conf-dkml-sys-opam
+  (dkml-build-desktop (= :version)) ; dkml-desktop-copy-installed
+  (dkml-install (>= 0.2.0))
+  (diskuvbox (>= 0.1.0))
+  ; BEGIN flavor-ci. DO NOT EDIT THE LINES IN THIS SECTION
+  ; Managed by bump-packages.cmake
+  (dune (= 3.15.0))
+  (dkml-apps (= 2.1.1))
+  (dkml-exe (= 2.1.1))
+  (metapp (= 0.4.4+win))
+  (ocaml-compiler-libs (= v0.12.4))
+  (ocamlfind (= 1.9.5))
+  (ppx_derivers (= 1.2.1))
+  (ppxlib (= 0.30.0))
+  (refl (= 0.4.1))
+  (stdcompat (= 19+optautoconf))
+  (stdlib-shims (= 0.3.0))
+  (traverse (= 0.3.0))
+  (with-dkml (= 2.1.1))
+  ; END flavor-ci. DO NOT EDIT THE LINES ABOVE
+ ))
+
+(package
+ (name dkml-component-staging-desktop-full)
+ (synopsis "Collection of end-user installers of the Full flavor of desktop executables")
+ (description
+  "`desktop` provides desktop executables for all DKML installable platforms")
+ (depopts
+  ; The [install:] instructions can mimic the desired [dune] + [dune-real]
+  ; executables in special switches like [dkml] that do not have
+  ; [conf-withdkml], as long as [install:] knows whether [conf-withdkml] was
+  ; installed.
+  conf-withdkml
+ )
+ (depends
+  conf-dkml-sys-opam
+  (dkml-build-desktop (= :version)) ; dkml-desktop-copy-installed
+  (dkml-install (>= 0.2.0))
+  (diskuvbox (>= 0.1.0))
+  ; BEGIN flavor-full. DO NOT EDIT THE LINES IN THIS SECTION
+  ; Managed by bump-packages.cmake
+  (dune (= 3.15.0))
+  (base (= v0.16.1))
+  (conf-sqlite3 (= 3.1+cpkgs))
+  (csexp (= 1.5.2))
+  (dkml-apps (= 2.1.1))
+  (dkml-exe (= 2.1.1))
+  (graphics (= 5.1.2))
+  (hmap (= 0.8.1))
+  (iostream (= 0.2.2))
+  (lambda-term (= 3.3.2))
+  (logs (= 0.7.0))
+  (lwt (= 5.7.0))
+  (lwt_react (= 1.2.0))
+  (metapp (= 0.4.4+win))
+  (mew (= 0.1.0))
+  (mew_vi (= 0.5.0))
+  (ocaml-compiler-libs (= v0.12.4))
+  (ocaml-lsp-server (= 1.17.0))
+  (ocamlfind (= 1.9.5))
+  (ocamlformat (= 0.26.1))
+  (ocp-indent (= 1.8.2-windowssupport))
+  (ocplib-endian (= 1.2))
+  (odoc (= 2.4.1))
+  (ppx_derivers (= 1.2.1))
+  (ppxlib (= 0.30.0))
+  (react (= 1.2.2))
+  (refl (= 0.4.1))
+  (result (= 1.5))
+  (sexplib0 (= v0.16.0))
+  (sqlite3 (= 5.1.0+msvc))
+  (stdcompat (= 19+optautoconf))
+  (stdlib-shims (= 0.3.0))
+  (tiny_httpd (= 0.16))
+  (traverse (= 0.3.0))
+  (trie (= 1.0.0))
+  (uchar (= 0.0.2))
+  (utop (= 2.13.1))
+  (uucp (= 15.0.0))
+  (uuseg (= 15.0.0))
+  (uutf (= 1.0.3))
+  (with-dkml (= 2.1.1))
+  (xdg (= 3.15.0))
+  (zed (= 3.2.3))
+  ; END flavor-full. DO NOT EDIT THE LINES ABOVE
+  ))
+
+(package
+ (name dkml-component-offline-desktop-ci)
+ (synopsis "Offline install of the CI flavor of desktop executables")
+ (description
+  "`desktop` provides desktop executables for all DKML installable platforms")
+ (depends
+  (dkml-component-staging-withdkml (= :version))
+  (dkml-component-staging-desktop-ci (= :version))
+  (dkml-component-common-desktop (= :version))
+  (dkml-component-staging-ocamlrun (>= 4.12.1~))
+  (dkml-install (>= 0.2.0))
+  (diskuvbox (>= 0.1.0))
+  (ezjsonm (>= 1.3.0))))
+
+(package
+ (name dkml-component-offline-desktop-full)
+ (synopsis "Offline install of the Full flavor of desktop executables")
+ (description
+  "`desktop` provides desktop executables for all DKML installable platforms")
+ (depends
+  (dkml-component-staging-withdkml (= :version))
+  (dkml-component-staging-desktop-full (= :version))
+  (dkml-component-common-desktop (= :version))
+  (dkml-component-staging-ocamlrun (>= 4.12.1~))
+  (dkml-install (>= 0.2.0))
+  (diskuvbox (>= 0.1.0))
+  (ezjsonm (>= 1.3.0))))
+
+(package
+ (name dkml-build-desktop)
+ (synopsis "Tools for building desktop executables")
+ (description
+  "Tools for building desktop executables")
+ (depends
+  (re (>= 1.10.0))
+  (diskuvbox (>= 0.1.0))
+  (yaml (and (>= 3.0.0) :with-test))
+  (with-dkml (>= :version))
+  (dkml-runtime-common (>= :version))
+  (dkml-runtime-distribution (>= :version))))

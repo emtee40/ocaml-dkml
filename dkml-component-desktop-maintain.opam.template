@@ -1,0 +1,30 @@
+pin-depends: [
+  [
+    "dkml-install-installer.0.4.0"
+    "git+https://github.com/diskuv/dkml-install-api.git#0.4"
+  ]
+  [
+    "dkml-install-runner.0.4.0"
+    "git+https://github.com/diskuv/dkml-install-api.git#0.4"
+  ]
+  [
+    "dkml-install.0.4.0"
+    "git+https://github.com/diskuv/dkml-install-api.git#0.4"
+  ]
+  [
+    "dkml-package-console.0.4.0"
+    "git+https://github.com/diskuv/dkml-install-api.git#0.4"
+  ]
+
+  # These are really ~dev dependencies, but other packages
+  # place real constraints (ex. >= 1.0.2) so we need a real
+  # version number.
+  [
+    "dkml-runtime-common.1.2.0"
+    "git+https://github.com/diskuv/dkml-runtime-common.git"
+  ]
+  [
+    "dkml-runtime-distribution.1.2.0"
+    "git+https://github.com/diskuv/dkml-runtime-distribution.git"
+  ]
+]
