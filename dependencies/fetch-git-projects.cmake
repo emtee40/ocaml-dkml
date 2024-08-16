@@ -80,7 +80,3 @@ FetchGit(dkml-component-opam
     GIT_REPOSITORY https://github.com/diskuv/dkml-component-opam.git
     GIT_TAG 2.2.0 # opam 2.2.0
 )
-FetchGit(dkml-c-probe
-    GIT_REPOSITORY https://github.com/diskuv/dkml-c-probe.git
-    GIT_TAG 3.1.0
-)
