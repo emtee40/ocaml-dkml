@@ -111,21 +111,32 @@ run_create_opam_switch() {
     '@dkml-runtime-distribution_SOURCE_DIR@/src/unix/create-opam-switch.sh' "$@"
 }
 #       shellcheck disable=SC2050
-if [ "@CMAKE_HOST_WIN32@" = 1 ] && [ -x /usr/bin/cygpath ] && [ -d /clang64 ]; then
+if [ "@CMAKE_HOST_WIN32@" = 1 ] && [ -x /usr/bin/cygpath ] && { [ -d /clang64 ] || [ -d /mingw32 ]; }; then
+    #  Replicated (and need to change if these change):
+    #  [dkml-runtime-apps/src/runtimelib/dkml_environment.ml]
+    #  [dkml/packaging/version-bump/upsert-dkml-switch.in.sh]
+    #       shellcheck disable=SC2194
+    case "@CMAKE_SIZEOF_VOID_P@" in
+        4) run_create_opam_switch_msys2_package=msys2-mingw32
+           run_create_opam_switch_host_arch=host-arch-x86_32 ;;
+        *) run_create_opam_switch_msys2_package=msys2-clang64
+           run_create_opam_switch_host_arch=host-arch-x86_64 ;;
+    esac
     run_create_opam_switch() {
         '@dkml-runtime-distribution_SOURCE_DIR@/src/unix/create-opam-switch.sh' \
-            -m msys2-clang64 \
+            -m "$run_create_opam_switch_msys2_package" \
+            -m "$run_create_opam_switch_host_arch" \
             "$@"
     }
 fi
 run_create_opam_switch \
--p '@DKML_HOST_ABI@' \
--b Release \
--n '@SWITCH_NAME@' \
--r "$OPAMROOT" \
--a \
--w \
--F \
--o "$OPAM_EXE" \
--z \
--y
+    -p '@DKML_HOST_ABI@' \
+    -b Release \
+    -n '@SWITCH_NAME@' \
+    -r "$OPAMROOT" \
+    -a \
+    -w \
+    -F \
+    -o "$OPAM_EXE" \
+    -z \
+    -y
