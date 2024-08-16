@@ -113,6 +113,7 @@ run_create_opam_switch() {
 if [ "@CMAKE_HOST_WIN32@" = 1 ] && [ -x /usr/bin/cygpath ] && [ -d /clang64 ]; then
     run_create_opam_switch() {
         '@dkml-runtime-distribution_SOURCE_DIR@/src/unix/create-opam-switch.sh' \
+            -m msys2-clang64 \
             -e "PKG_CONFIG_PATH=$(/usr/bin/cygpath -aw /clang64/lib/pkgconfig)" \
             -e "PKG_CONFIG_SYSTEM_INCLUDE_PATH=" \
             -e "PKG_CONFIG_SYSTEM_LIBRARY_PATH=" \
