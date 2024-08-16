@@ -818,6 +818,56 @@ file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/depends/FULL_NOT_DUNE_FLAVOR_NO
     CONTENT "${FULL_NOT_DUNE_FLAVOR_NO_WITHDKML_SPACED_PKGVERS}")
 
 # -----------------------------------
+# Scan diskuv-opam-repository
+# -----------------------------------
+
+# For [upstream-dkml-pkgs-flavor-full-not-dune.in.sh] we want all the
+# _latest_ package versions from diskuv-opam-repository, except those from:
+# 1. dkml-runtime-apps (we have special logic to install dkml-runtime-apps
+# in [upsert-dkml-pkgs-flavor-full-not-dune.in.sh])
+# 2. dune. done in [upstream-dkml-pkgs-flavor-dune.in.sh]
+# 3. dkml-runtime-common and dkml-runtime-distribution and
+# dkml-compiler_PACKAGES [upstream-dkml-pkgs-compiler.in.sh]
+# 4. ocaml-option-32bit (can't install this but we can ignore it because
+# ocaml-option-32bit.1 is in central opam repository, and ocaml-option-32bit.2
+# is just a new version in diskuv-opam-repository. WOULD BE NICE TO UPSTREAM
+# IT!)
+# 5. dkml-option-debuginfo and dkml-option-minsize. Only makes sense in
+# diskuv-opam-repository, and definitely not pinned.
+# 6. conf-withdkml. Can't assume that withdkml is installed on the machine,
+# and [dkml init] will install it anyways.
+#
+# AND inside add_GenerateLaunchers_target() we need to know the versions for
+# packages like conf-pkg-config since `dkml-workflows/test/pc/setup-dkml-*`
+# will be out of date.
+get_dune_PACKAGES(
+    DUNE_VERSION ${DKML_RELEASE_DUNE_VERSION}
+    OUTPUT_VARIABLE dune_PACKAGES)
+DkMLPatches_Init()
+DkMLPatches_GetPackageVersions(
+    DUNE_VERSION ${DKML_RELEASE_DUNE_VERSION}
+    OCAML_VERSION ${DKML_RELEASE_OCAML_VERSION}
+    SYNCHRONIZED_PACKAGES ${DKML_PROJECTS_SYNCED}
+    EXCLUDE_PACKAGES
+    ${dkml-runtime-apps_PACKAGES}
+    ${dune_PACKAGES}
+    ${dkml-component_PACKAGES}
+    ${dkml-installer_PACKAGES}
+    ${dkml-runtime_PACKAGES}
+    ${dkml-compiler_PACKAGES}
+    ${dkml-workflows_PACKAGES}
+    ocaml-option-32bit
+    ocaml-system
+    dkml-option-debuginfo
+    dkml-option-minsize
+    conf-withdkml
+
+    OUTPUT_PKGS_VARIABLE DKML_UNMANAGED_PATCHED_PACKAGES_PKGS
+    OUTPUT_PKGVERS_VARIABLE DKML_UNMANAGED_PATCHED_PACKAGES_PKGVERS)
+list(JOIN DKML_UNMANAGED_PATCHED_PACKAGES_PKGVERS " " DKML_UNMANAGED_PATCHED_PACKAGES_SPACED_PKGVERS)
+string(MD5 DKML_UNMANAGED_PATCHED_PACKAGES_PKGVERS_CKSUM "${DKML_UNMANAGED_PATCHED_PACKAGES_PKGVERS}")
+
+# -----------------------------------
 # GenerateLaunchers
 # -----------------------------------
 set(WITH_COMPILER_SH ${CMAKE_CURRENT_BINARY_DIR}/with-compiler.sh) # Used by generate-compiler-launcher.sh and upsert-*.sh
@@ -833,18 +883,54 @@ function(add_GenerateLaunchers_target)
     # CMake so we can set the FetchContent based local pins.
 
     if(NOT SETUP_DKML_OVERRIDE)
+        # We need the intersection of:
+        # 1. the latest patch versions from diskuv-opam-repository.
+        # 2. the pins that exist in dkml-workflows/test/pc/setup-dkml-*
+        #
+        # Mostly (1) and (2) are equivalent, but you may add a new patch
+        # version in (1) that hasn't made it to (2). Or you may remove
+        # a patch in (1) that is still in (2).
+        #
+        # With the intersection, we can set the PIN_ package versions
+        # correctly when we call setup-dkml-* since dkml-workflows/test/pc/setup-dkml-*
+        # is likely out-of-date.
+        set(pins_WIN32)
+        set(pins_UNIX)
+        set(pins_DESCR)
+        file(READ "${dkml-workflows_SOURCE_DIR}/test/pc/setup-dkml-linux_x86_64.sh" setup_CONTENTS)
+        foreach(pkg IN LISTS DKML_UNMANAGED_PATCHED_PACKAGES_PKGS)
+            # ex. if(conf-pkg-config_PATCH_PKGVER)
+            if(${pkg}_PATCH_PKGVER)
+                # ex. PIN_CONF_PKG_CONFIG
+                string(TOUPPER "PIN_${pkg}" pkg_PIN)
+                string(REPLACE "-" "_" pkg_PIN ${pkg_PIN})
+                # ex. export PIN_CONF_PKG_CONFIG=
+                if(setup_CONTENTS MATCHES "export ${pkg_PIN}=")                
+                    # ex. -PIN_CONF_PKG_CONFIG ${conf-pkg-config_PATCH_PKGVER}
+                    list(APPEND pins_WIN32  "-${pkg_PIN}" "${${pkg}_PATCH_PKGVER}")
+                    # ex. --PIN_CONF_PKG_CONFIG=${conf-pkg-config_PATCH_PKGVER}
+                    list(APPEND pins_UNIX  "--${pkg_PIN}=${${pkg}_PATCH_PKGVER}")
+                    # ex. PIN_CONF_PKG_CONFIG=${conf-pkg-config_PATCH_PKGVER}
+                    list(APPEND pins_DESCR  "${pkg_PIN}=${${pkg}_PATCH_PKGVER}")
+                endif()
+            endif()
+        endforeach()
+        string(JOIN " " pins_DESCR ${pins_DESCR})
+
         if(CMAKE_HOST_WIN32)
             set(runSetupScript "${POWERSHELL_EXECUTABLE}" "${dkml-workflows_SOURCE_DIR}/test/pc/setup-dkml-${DKML_TARGET_ABI}.ps1"
                 -PC_PROJECT_DIR "${CMAKE_CURRENT_BINARY_DIR}"
                 -SECONDARY_SWITCH true
                 -SKIP_OPAM_MODIFICATIONS true
-                -BOOTSTRAP_OPAM_VERSION ${BOOTSTRAP_OPAM_VERSION})
+                -BOOTSTRAP_OPAM_VERSION ${BOOTSTRAP_OPAM_VERSION}
+                ${pins_WIN32})
         else()
             set(runSetupScript sh "${dkml-workflows_SOURCE_DIR}/test/pc/setup-dkml-${DKML_TARGET_ABI}.sh"
                 "--PC_PROJECT_DIR=${CMAKE_CURRENT_BINARY_DIR}"
                 --SECONDARY_SWITCH=true
                 --SKIP_OPAM_MODIFICATIONS=true
-                --BOOTSTRAP_OPAM_VERSION=${BOOTSTRAP_OPAM_VERSION})
+                --BOOTSTRAP_OPAM_VERSION=${BOOTSTRAP_OPAM_VERSION}
+                ${pins_UNIX})
             if(DKML_HOST_LINUX_DOCKER)
                 list(APPEND runSetupScript --in_docker=true)
             else()
@@ -853,7 +939,7 @@ function(add_GenerateLaunchers_target)
         endif()
         add_custom_command(
             OUTPUT ${anyrun_OUTPUTS}
-            COMMENT "Creating [cmdrun] and [opamrun] scripts"
+            COMMENT "Creating [cmdrun] and [opamrun] scripts with ${pins_DESCR}"
             COMMAND ${runSetupScript}
             VERBATIM
             USES_TERMINAL
@@ -989,45 +1075,6 @@ function(add_Flavor_targets)
         OUTPUT_SWITCH_PATH switchPath
     )
 
-    # For [upstream-dkml-pkgs-flavor-full-not-dune.in.sh] we want all the
-    # _latest_ package versions from diskuv-opam-repository, except those from:
-    # 1. dkml-runtime-apps (we have special logic to install dkml-runtime-apps
-    # in [upsert-dkml-pkgs-flavor-full-not-dune.in.sh])
-    # 2. dune. done in [upstream-dkml-pkgs-flavor-dune.in.sh]
-    # 3. dkml-runtime-common and dkml-runtime-distribution and
-    # dkml-compiler_PACKAGES [upstream-dkml-pkgs-compiler.in.sh]
-    # 4. ocaml-option-32bit (can't install this but we can ignore it because
-    # ocaml-option-32bit.1 is in central opam repository, and ocaml-option-32bit.2
-    # is just a new version in diskuv-opam-repository. WOULD BE NICE TO UPSTREAM
-    # IT!)
-    # 5. dkml-option-debuginfo and dkml-option-minsize. Only makes sense in
-    # diskuv-opam-repository, and definitely not pinned.
-    # 6. conf-withdkml. Can't assume that withdkml is installed on the machine,
-    # and [dkml init] will install it anyways.
-    get_dune_PACKAGES(
-        DUNE_VERSION ${DKML_RELEASE_DUNE_VERSION}
-        OUTPUT_VARIABLE dune_PACKAGES)
-    DkMLPatches_GetPackageVersions(
-        DUNE_VERSION ${DKML_RELEASE_DUNE_VERSION}
-        OCAML_VERSION ${DKML_RELEASE_OCAML_VERSION}
-        SYNCHRONIZED_PACKAGES ${DKML_PROJECTS_SYNCED}
-        EXCLUDE_PACKAGES
-        ${dkml-runtime-apps_PACKAGES}
-        ${dune_PACKAGES}
-        ${dkml-component_PACKAGES}
-        ${dkml-installer_PACKAGES}
-        ${dkml-runtime_PACKAGES}
-        ${dkml-compiler_PACKAGES}
-        ${dkml-workflows_PACKAGES}
-        ocaml-option-32bit
-        ocaml-system
-        dkml-option-debuginfo
-        dkml-option-minsize
-        conf-withdkml
-
-        OUTPUT_VARIABLE DKML_UNMANAGED_PATCHED_PACKAGES_PKGVERS)
-    list(JOIN DKML_UNMANAGED_PATCHED_PACKAGES_PKGVERS " " DKML_UNMANAGED_PATCHED_PACKAGES_SPACED_PKGVERS)
-    string(MD5 DKML_UNMANAGED_PATCHED_PACKAGES_PKGVERS_CKSUM "${DKML_UNMANAGED_PATCHED_PACKAGES_PKGVERS}")
     set(dkml-runtime-apps_REL_OPAMFILES ${dkml-runtime-apps_PACKAGES})
     list(TRANSFORM dkml-runtime-apps_REL_OPAMFILES PREPEND "${dkml-runtime-apps_REL_SOURCE_DIR}/")
     list(TRANSFORM dkml-runtime-apps_REL_OPAMFILES APPEND ".opam")
@@ -1632,9 +1679,7 @@ function(add_all_stage_targets)
     add_dependencies(Package-Stage13-GitPushRemaining Package-Stage10-GitPushForTesting)
 endfunction()
 
-# ------------------ Initialize and add targets -------------------
-
-DkMLPatches_Init()
+# ------------------ Add targets -------------------
 
 add_GenerateLaunchers_target()
 if(NOT DKML_GOLDEN_SOURCE_CODE)

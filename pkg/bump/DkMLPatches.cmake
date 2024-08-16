@@ -58,13 +58,19 @@ macro(DkMLPatches_Init)
 endmacro()
 
 # Get the list of the latest package versions compatible with
-# [OCAML_VERSION]. Any packages that are part of [SYNCHRONIZED_PACKAGES]
+# [OCAML_VERSION]. The diskuv-opam-repository will be scanned.
+# Any packages that are part of [SYNCHRONIZED_PACKAGES]
 # will be reported as version [DKML_VERSION_OPAMVER]
 # because the expectation is that those will be pinned during
 # the CMake bump/ targets.
+#
+# Additionally variables <pkg>_PATCH_PKGVER=<ver> will be set.
+# For example, if the latest conf-pkg-config is 3+cpkgs in
+# diskuv-opam-repository then conf-pkg-config_PATCH_PKGVER will be
+# set to 3+cpkgs.
 function(DkMLPatches_GetPackageVersions)
     set(noValues)
-    set(singleValues DUNE_VERSION OCAML_VERSION OUTPUT_VARIABLE)
+    set(singleValues DUNE_VERSION OCAML_VERSION OUTPUT_PKGS_VARIABLE OUTPUT_PKGVERS_VARIABLE)
     set(multiValues SYNCHRONIZED_PACKAGES EXCLUDE_PACKAGES)
     cmake_parse_arguments(PARSE_ARGV 0 ARG "${noValues}" "${singleValues}" "${multiValues}")
 
@@ -128,5 +134,19 @@ function(DkMLPatches_GetPackageVersions)
         endif()
     endforeach()
 
-    set(${ARG_OUTPUT_VARIABLE} ${pkgvers} PARENT_SCOPE)
+    set(pkgs)
+    foreach(pkgver IN LISTS pkgvers)
+        # conf-pkg-config.3+cpkgs -> conf-pkg-config;3+cpkgs
+        string(REGEX REPLACE "[.](.*)" ";\\1" pkg_and_ver "${pkgver}")
+        list(GET pkg_and_ver 0 pkg)
+        list(GET pkg_and_ver 1 ver)
+        if("${pkg}" STREQUAL "" OR "${ver}" STREQUAL "")
+            message(FATAL_ERROR "Parse error: pkgver=${pkgver} | pkg_and_ver=${pkg_and_ver} | pkg=${pkg} | ver=${ver}")
+        endif()
+        set(${pkg}_PATCH_PKGVER "${ver}" PARENT_SCOPE)
+        list(APPEND pkgs ${pkg})
+    endforeach()
+
+    set(${ARG_OUTPUT_PKGS_VARIABLE} ${pkgs} PARENT_SCOPE)
+    set(${ARG_OUTPUT_PKGVERS_VARIABLE} ${pkgvers} PARENT_SCOPE)
 endfunction()
