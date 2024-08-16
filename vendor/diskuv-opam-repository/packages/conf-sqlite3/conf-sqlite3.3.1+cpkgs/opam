@@ -8,30 +8,33 @@ authors: [
 homepage: "http://www.sqlite3.org"
 dev-repo: "git+https://github.com/mmottl/sqlite3-ocaml.git"
 license: "PD"
-depends: ["conf-pkg-config" {build & !(os-distribution = "msys2")}]
+depends: [
+  "conf-pkg-config" {build & !(os-distribution = "msys2")}
+  ("host-arch-x86_32" {os-distribution = "msys2"} | "host-arch-x86_64" {os-distribution = "msys2"})
+]
 bug-reports: "https://github.com/ocaml/opam-repository/issues"
 
 build: [
   ["pkg-config" "sqlite3"] {!(os-distribution = "msys2")}
-  ["tar" "xvf" "sqlite3-x64.tar.gz"] {os-distribution = "msys2" & msystem-carch = "x86_64"}
-  ["tar" "xvf" "sqlite3-x86.tar.gz"] {os-distribution = "msys2" & msystem-carch = "i686"}
+  ["tar" "xvf" "sqlite3-x64.tar.gz"] {os-distribution = "msys2" & host-arch-x86_64:installed}
+  ["tar" "xvf" "sqlite3-x86.tar.gz"] {os-distribution = "msys2" & host-arch-x86_32:installed}
 ]
 install: [
   ["install" "-d" "%{bin}%"]                          {os-distribution = "msys2"}
-  ["install" "windows_x64/bin/sqlite3.dll" "%{bin}%"] {os-distribution = "msys2" & msystem-carch = "x86_64"}
-  ["install" "windows_x86/bin/sqlite3.dll" "%{bin}%"] {os-distribution = "msys2" & msystem-carch = "i686"}
+  ["install" "windows_x64/bin/sqlite3.dll" "%{bin}%"] {os-distribution = "msys2" & host-arch-x86_64:installed}
+  ["install" "windows_x86/bin/sqlite3.dll" "%{bin}%"] {os-distribution = "msys2" & host-arch-x86_32:installed}
   ["install" "-d" "%{prefix}%/include"]                                                               {os-distribution = "msys2"}
-  ["install" "windows_x64/include/sqlite3.h" "windows_x64/include/sqlite3ext.h" "%{prefix}%/include"] {os-distribution = "msys2" & msystem-carch = "x86_64"}
-  ["install" "windows_x86/include/sqlite3.h" "windows_x86/include/sqlite3ext.h" "%{prefix}%/include"] {os-distribution = "msys2" & msystem-carch = "i686"}
+  ["install" "windows_x64/include/sqlite3.h" "windows_x64/include/sqlite3ext.h" "%{prefix}%/include"] {os-distribution = "msys2" & host-arch-x86_64:installed}
+  ["install" "windows_x86/include/sqlite3.h" "windows_x86/include/sqlite3ext.h" "%{prefix}%/include"] {os-distribution = "msys2" & host-arch-x86_32:installed}
   ["install" "-d" "%{lib}%/pkgconfig"]                                    {os-distribution = "msys2"}
-  ["install" "windows_x64/lib/sqlite3.lib" "%{lib}%/"]                    {os-distribution = "msys2" & msystem-carch = "x86_64"}
-  ["install" "windows_x86/lib/sqlite3.lib" "%{lib}%/"]                    {os-distribution = "msys2" & msystem-carch = "i686"}
-  ["install" "windows_x64/lib/pkgconfig/sqlite3.pc" "%{lib}%/pkgconfig/"] {os-distribution = "msys2" & msystem-carch = "x86_64"}
-  ["install" "windows_x86/lib/pkgconfig/sqlite3.pc" "%{lib}%/pkgconfig/"] {os-distribution = "msys2" & msystem-carch = "i686"}
+  ["install" "windows_x64/lib/sqlite3.lib" "%{lib}%/"]                    {os-distribution = "msys2" & host-arch-x86_64:installed}
+  ["install" "windows_x86/lib/sqlite3.lib" "%{lib}%/"]                    {os-distribution = "msys2" & host-arch-x86_32:installed}
+  ["install" "windows_x64/lib/pkgconfig/sqlite3.pc" "%{lib}%/pkgconfig/"] {os-distribution = "msys2" & host-arch-x86_64:installed}
+  ["install" "windows_x86/lib/pkgconfig/sqlite3.pc" "%{lib}%/pkgconfig/"] {os-distribution = "msys2" & host-arch-x86_32:installed}
 ]
 post-messages: [
-  "conf-sqlite3: 64-bit sqlite3.lib has been installed in the OPAM lib directory (%{lib}%)." {os-distribution = "msys2" & msystem-carch = "x86_64"}
-  "conf-sqlite3: 32-bit sqlite3.lib has been installed in the OPAM lib directory (%{lib}%)." {os-distribution = "msys2" & msystem-carch = "i686"}
+  "conf-sqlite3: 64-bit sqlite3.lib has been installed in the OPAM lib directory (%{lib}%)." {os-distribution = "msys2" & host-arch-x86_64:installed}
+  "conf-sqlite3: 32-bit sqlite3.lib has been installed in the OPAM lib directory (%{lib}%)." {os-distribution = "msys2" & host-arch-x86_32:installed}
 ]
 
 depexts: [

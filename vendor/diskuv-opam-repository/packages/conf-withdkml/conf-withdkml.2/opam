@@ -1,7 +1,7 @@
 opam-version: "2.0"
 maintainer: ["opensource+diskuv-ocaml@support.diskuv.com"]
 homepage: "https://diskuv.gitlab.io/diskuv-ocaml"
-bug-reports: "https://github.com/diskuv/dkml-runtime-apps/issues"
+bug-reports: "https://gitlab.com/dkml/distributions/dkml/-/issues"
 authors: ["Diskuv, Inc. <opensource+diskuv-ocaml@support.diskuv.com>"]
 license: "Apache-2.0"
 depends: [
@@ -75,8 +75,8 @@ of with-dkml.exe, while %{conf-withdkml:location-mixed}% will be the
 location of with-dkml.exe using only forward slashes (/).
 """
 flags: conf
-# DkML 2.0.3: checking for MSYS2 CLANG64 is the best way to detect DkML
+# As of DkML 2.1.2, checking for MSYS2 is the best way to detect DkML
 # using opam variables. Would really prefer that [conf-withdkml] could
 # be surrounded by an opam try-catch construct, but that sounds like a
 # big change (introduce a new, early prepare phase?) to the opam solver.
-available: msystem = "CLANG64"
+available: os-distribution = "msys2"
