@@ -148,7 +148,7 @@ function(DkMLBumpPackagesParticipant_SetupDkmlUpgrade REL_FILENAME)
     set(pkgs ${pkgs2})
 
     # Convert to list of commands
-    list(TRANSFORM pkgs PREPEND [[    opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version ]])
+    list(TRANSFORM pkgs PREPEND [[    do_pin_add ]])
     list(JOIN pkgs "\n" pkgs)
 
     # Set the command
