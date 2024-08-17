@@ -69,6 +69,9 @@ Environment variable.
 .PARAMETER BOOTSTRAP_OPAM_VERSION
 Environment variable.
 
+.PARAMETER PIN_ANGSTROM
+Environment variable.
+
 .PARAMETER PIN_ASTRING
 Environment variable.
 
@@ -79,6 +82,9 @@ Environment variable.
 Environment variable.
 
 .PARAMETER PIN_BIGARRAY_COMPAT
+Environment variable.
+
+.PARAMETER PIN_BIGSTRINGAF
 Environment variable.
 
 .PARAMETER PIN_BOS
@@ -214,6 +220,12 @@ Environment variable.
 Environment variable.
 
 .PARAMETER PIN_DKML_INSTALLER_OCAML_COMMON
+Environment variable.
+
+.PARAMETER PIN_DKML_INSTALLER_OCAML_NETWORK
+Environment variable.
+
+.PARAMETER PIN_DKML_INSTALLER_OCAML_OFFLINE
 Environment variable.
 
 .PARAMETER PIN_DKML_PACKAGE_CONSOLE
@@ -390,6 +402,9 @@ Environment variable.
 .PARAMETER PIN_OCAML_LSP_SERVER
 Environment variable.
 
+.PARAMETER PIN_OCAML_SYNTAX_SHIMS
+Environment variable.
+
 .PARAMETER PIN_OCAML_VERSION
 Environment variable.
 
@@ -546,6 +561,9 @@ Environment variable.
 .PARAMETER PIN_STDUNE
 Environment variable.
 
+.PARAMETER PIN_STRINGEXT
+Environment variable.
+
 .PARAMETER PIN_TIME_NOW
 Environment variable.
 
@@ -568,6 +586,9 @@ Environment variable.
 Environment variable.
 
 .PARAMETER PIN_UCHAR
+Environment variable.
+
+.PARAMETER PIN_URI
 Environment variable.
 
 .PARAMETER PIN_UTOP
@@ -647,10 +668,12 @@ param (
   ,[Parameter()] [string] $DEFAULT_OCAML_OPAM_REPOSITORY_TAG = "907d456e7c003c4c7ad1ad4945abf93cdc852874"
   ,[Parameter()] [string] $DEFAULT_DKML_COMPILER = "2.1.2"
   ,[Parameter()] [string] $BOOTSTRAP_OPAM_VERSION = "2.2.0"
+  ,[Parameter()] [string] $PIN_ANGSTROM = "0.16.0"
   ,[Parameter()] [string] $PIN_ASTRING = "0.8.5"
   ,[Parameter()] [string] $PIN_BASE = "v0.16.1"
   ,[Parameter()] [string] $PIN_BASE64 = "3.5.1"
   ,[Parameter()] [string] $PIN_BIGARRAY_COMPAT = "1.1.0"
+  ,[Parameter()] [string] $PIN_BIGSTRINGAF = "0.10.0"
   ,[Parameter()] [string] $PIN_BOS = "0.2.1"
   ,[Parameter()] [string] $PIN_CAMLP_STREAMS = "5.0.1"
   ,[Parameter()] [string] $PIN_CHROME_TRACE = "3.15.0"
@@ -696,6 +719,8 @@ param (
   ,[Parameter()] [string] $PIN_DKML_INSTALL_RUNNER = "0.5.2"
   ,[Parameter()] [string] $PIN_DKML_INSTALL = "0.5.2"
   ,[Parameter()] [string] $PIN_DKML_INSTALLER_OCAML_COMMON = "2.1.2"
+  ,[Parameter()] [string] $PIN_DKML_INSTALLER_OCAML_NETWORK = "2.1.2"
+  ,[Parameter()] [string] $PIN_DKML_INSTALLER_OCAML_OFFLINE = "2.1.2"
   ,[Parameter()] [string] $PIN_DKML_PACKAGE_CONSOLE = "0.5.2"
   ,[Parameter()] [string] $PIN_DKML_RUNTIME_COMMON_NATIVE = "2.1.2"
   ,[Parameter()] [string] $PIN_DKML_RUNTIME_COMMON = "2.1.2"
@@ -754,6 +779,7 @@ param (
   ,[Parameter()] [string] $PIN_NUM = "1.5"
   ,[Parameter()] [string] $PIN_OCAML_COMPILER_LIBS = "v0.12.4"
   ,[Parameter()] [string] $PIN_OCAML_LSP_SERVER = "1.17.0"
+  ,[Parameter()] [string] $PIN_OCAML_SYNTAX_SHIMS = "1.0.0"
   ,[Parameter()] [string] $PIN_OCAML_VERSION = "3.6.5"
   ,[Parameter()] [string] $PIN_OCAML = "4.14.2"
   ,[Parameter()] [string] $PIN_OCAMLBUILD = "0.14.2+win+unix"
@@ -806,6 +832,7 @@ param (
   ,[Parameter()] [string] $PIN_STDIO = "v0.16.0"
   ,[Parameter()] [string] $PIN_STDLIB_SHIMS = "0.3.0"
   ,[Parameter()] [string] $PIN_STDUNE = "3.15.0"
+  ,[Parameter()] [string] $PIN_STRINGEXT = "1.6.0"
   ,[Parameter()] [string] $PIN_TIME_NOW = "v0.16.0"
   ,[Parameter()] [string] $PIN_TINY_HTTPD = "0.16"
   ,[Parameter()] [string] $PIN_TOPKG = "1.0.7"
@@ -814,6 +841,7 @@ param (
   ,[Parameter()] [string] $PIN_TSORT = "2.1.0"
   ,[Parameter()] [string] $PIN_TYXML = "4.6.0"
   ,[Parameter()] [string] $PIN_UCHAR = "0.0.2"
+  ,[Parameter()] [string] $PIN_URI = "4.4.0"
   ,[Parameter()] [string] $PIN_UTOP = "2.13.1"
   ,[Parameter()] [string] $PIN_UUCP = "15.0.0"
   ,[Parameter()] [string] $PIN_UUIDM = "0.9.8"
@@ -877,10 +905,12 @@ $env:DEFAULT_DISKUV_OPAM_REPOSITORY_TAG = $DEFAULT_DISKUV_OPAM_REPOSITORY_TAG
 $env:DEFAULT_OCAML_OPAM_REPOSITORY_TAG = $DEFAULT_OCAML_OPAM_REPOSITORY_TAG
 $env:DEFAULT_DKML_COMPILER = $DEFAULT_DKML_COMPILER
 $env:BOOTSTRAP_OPAM_VERSION = $BOOTSTRAP_OPAM_VERSION
+$env:PIN_ANGSTROM = $PIN_ANGSTROM
 $env:PIN_ASTRING = $PIN_ASTRING
 $env:PIN_BASE = $PIN_BASE
 $env:PIN_BASE64 = $PIN_BASE64
 $env:PIN_BIGARRAY_COMPAT = $PIN_BIGARRAY_COMPAT
+$env:PIN_BIGSTRINGAF = $PIN_BIGSTRINGAF
 $env:PIN_BOS = $PIN_BOS
 $env:PIN_CAMLP_STREAMS = $PIN_CAMLP_STREAMS
 $env:PIN_CHROME_TRACE = $PIN_CHROME_TRACE
@@ -926,6 +956,8 @@ $env:PIN_DKML_INSTALL_INSTALLER = $PIN_DKML_INSTALL_INSTALLER
 $env:PIN_DKML_INSTALL_RUNNER = $PIN_DKML_INSTALL_RUNNER
 $env:PIN_DKML_INSTALL = $PIN_DKML_INSTALL
 $env:PIN_DKML_INSTALLER_OCAML_COMMON = $PIN_DKML_INSTALLER_OCAML_COMMON
+$env:PIN_DKML_INSTALLER_OCAML_NETWORK = $PIN_DKML_INSTALLER_OCAML_NETWORK
+$env:PIN_DKML_INSTALLER_OCAML_OFFLINE = $PIN_DKML_INSTALLER_OCAML_OFFLINE
 $env:PIN_DKML_PACKAGE_CONSOLE = $PIN_DKML_PACKAGE_CONSOLE
 $env:PIN_DKML_RUNTIME_COMMON_NATIVE = $PIN_DKML_RUNTIME_COMMON_NATIVE
 $env:PIN_DKML_RUNTIME_COMMON = $PIN_DKML_RUNTIME_COMMON
@@ -984,6 +1016,7 @@ $env:PIN_MSYS2 = $PIN_MSYS2
 $env:PIN_NUM = $PIN_NUM
 $env:PIN_OCAML_COMPILER_LIBS = $PIN_OCAML_COMPILER_LIBS
 $env:PIN_OCAML_LSP_SERVER = $PIN_OCAML_LSP_SERVER
+$env:PIN_OCAML_SYNTAX_SHIMS = $PIN_OCAML_SYNTAX_SHIMS
 $env:PIN_OCAML_VERSION = $PIN_OCAML_VERSION
 $env:PIN_OCAML = $PIN_OCAML
 $env:PIN_OCAMLBUILD = $PIN_OCAMLBUILD
@@ -1036,6 +1069,7 @@ $env:PIN_STDCOMPAT = $PIN_STDCOMPAT
 $env:PIN_STDIO = $PIN_STDIO
 $env:PIN_STDLIB_SHIMS = $PIN_STDLIB_SHIMS
 $env:PIN_STDUNE = $PIN_STDUNE
+$env:PIN_STRINGEXT = $PIN_STRINGEXT
 $env:PIN_TIME_NOW = $PIN_TIME_NOW
 $env:PIN_TINY_HTTPD = $PIN_TINY_HTTPD
 $env:PIN_TOPKG = $PIN_TOPKG
@@ -1044,6 +1078,7 @@ $env:PIN_TRIE = $PIN_TRIE
 $env:PIN_TSORT = $PIN_TSORT
 $env:PIN_TYXML = $PIN_TYXML
 $env:PIN_UCHAR = $PIN_UCHAR
+$env:PIN_URI = $PIN_URI
 $env:PIN_UTOP = $PIN_UTOP
 $env:PIN_UUCP = $PIN_UUCP
 $env:PIN_UUIDM = $PIN_UUIDM
@@ -2263,10 +2298,12 @@ do_pins() {
     }
     ### BEGIN pin-adds. DO NOT EDIT THE LINES IN THIS SECTION
     # Managed by bump-packages.cmake
+    do_pin_add angstrom "${PIN_ANGSTROM}"
     do_pin_add astring "${PIN_ASTRING}"
     do_pin_add base "${PIN_BASE}"
     do_pin_add base64 "${PIN_BASE64}"
     do_pin_add bigarray-compat "${PIN_BIGARRAY_COMPAT}"
+    do_pin_add bigstringaf "${PIN_BIGSTRINGAF}"
     do_pin_add bos "${PIN_BOS}"
     do_pin_add camlp-streams "${PIN_CAMLP_STREAMS}"
     do_pin_add chrome-trace "${PIN_CHROME_TRACE}"
@@ -2312,6 +2349,8 @@ do_pins() {
     do_pin_add dkml-install-installer "${PIN_DKML_INSTALL_INSTALLER}"
     do_pin_add dkml-install-runner "${PIN_DKML_INSTALL_RUNNER}"
     do_pin_add dkml-installer-ocaml-common "${PIN_DKML_INSTALLER_OCAML_COMMON}"
+    do_pin_add dkml-installer-ocaml-network "${PIN_DKML_INSTALLER_OCAML_NETWORK}"
+    do_pin_add dkml-installer-ocaml-offline "${PIN_DKML_INSTALLER_OCAML_OFFLINE}"
     do_pin_add dkml-package-console "${PIN_DKML_PACKAGE_CONSOLE}"
     do_pin_add dkml-runtime-common "${PIN_DKML_RUNTIME_COMMON}"
     do_pin_add dkml-runtime-common-native "${PIN_DKML_RUNTIME_COMMON_NATIVE}"
@@ -2371,6 +2410,7 @@ do_pins() {
     do_pin_add ocaml "${PIN_OCAML}"
     do_pin_add ocaml-compiler-libs "${PIN_OCAML_COMPILER_LIBS}"
     do_pin_add ocaml-lsp-server "${PIN_OCAML_LSP_SERVER}"
+    do_pin_add ocaml-syntax-shims "${PIN_OCAML_SYNTAX_SHIMS}"
     do_pin_add ocaml-version "${PIN_OCAML_VERSION}"
     do_pin_add ocamlbuild "${PIN_OCAMLBUILD}"
     do_pin_add ocamlc-loc "${PIN_OCAMLC_LOC}"
@@ -2422,6 +2462,7 @@ do_pins() {
     do_pin_add stdio "${PIN_STDIO}"
     do_pin_add stdlib-shims "${PIN_STDLIB_SHIMS}"
     do_pin_add stdune "${PIN_STDUNE}"
+    do_pin_add stringext "${PIN_STRINGEXT}"
     do_pin_add time_now "${PIN_TIME_NOW}"
     do_pin_add tiny_httpd "${PIN_TINY_HTTPD}"
     do_pin_add topkg "${PIN_TOPKG}"
@@ -2430,6 +2471,7 @@ do_pins() {
     do_pin_add tsort "${PIN_TSORT}"
     do_pin_add tyxml "${PIN_TYXML}"
     do_pin_add uchar "${PIN_UCHAR}"
+    do_pin_add uri "${PIN_URI}"
     do_pin_add utop "${PIN_UTOP}"
     do_pin_add uucp "${PIN_UUCP}"
     do_pin_add uuidm "${PIN_UUIDM}"

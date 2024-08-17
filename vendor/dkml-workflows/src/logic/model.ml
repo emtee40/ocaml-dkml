@@ -19,10 +19,12 @@ let global_env_vars =
 
     (* BEGIN pin-env-vars. DO NOT EDIT THE LINES IN THIS SECTION *)
     (* Managed by bump-packages.cmake *)
+    ("PIN_ANGSTROM", "0.16.0");
     ("PIN_ASTRING", "0.8.5");
     ("PIN_BASE", "v0.16.1");
     ("PIN_BASE64", "3.5.1");
     ("PIN_BIGARRAY_COMPAT", "1.1.0");
+    ("PIN_BIGSTRINGAF", "0.10.0");
     ("PIN_BOS", "0.2.1");
     ("PIN_CAMLP_STREAMS", "5.0.1");
     ("PIN_CHROME_TRACE", "3.15.0");
@@ -68,6 +70,8 @@ let global_env_vars =
     ("PIN_DKML_INSTALL_RUNNER", "0.5.2");
     ("PIN_DKML_INSTALL", "0.5.2");
     ("PIN_DKML_INSTALLER_OCAML_COMMON", "2.1.2");
+    ("PIN_DKML_INSTALLER_OCAML_NETWORK", "2.1.2");
+    ("PIN_DKML_INSTALLER_OCAML_OFFLINE", "2.1.2");
     ("PIN_DKML_PACKAGE_CONSOLE", "0.5.2");
     ("PIN_DKML_RUNTIME_COMMON_NATIVE", "2.1.2");
     ("PIN_DKML_RUNTIME_COMMON", "2.1.2");
@@ -126,6 +130,7 @@ let global_env_vars =
     ("PIN_NUM", "1.5");
     ("PIN_OCAML_COMPILER_LIBS", "v0.12.4");
     ("PIN_OCAML_LSP_SERVER", "1.17.0");
+    ("PIN_OCAML_SYNTAX_SHIMS", "1.0.0");
     ("PIN_OCAML_VERSION", "3.6.5");
     ("PIN_OCAML", "4.14.2");
     ("PIN_OCAMLBUILD", "0.14.2+win+unix");
@@ -178,6 +183,7 @@ let global_env_vars =
     ("PIN_STDIO", "v0.16.0");
     ("PIN_STDLIB_SHIMS", "0.3.0");
     ("PIN_STDUNE", "3.15.0");
+    ("PIN_STRINGEXT", "1.6.0");
     ("PIN_TIME_NOW", "v0.16.0");
     ("PIN_TINY_HTTPD", "0.16");
     ("PIN_TOPKG", "1.0.7");
@@ -186,6 +192,7 @@ let global_env_vars =
     ("PIN_TSORT", "2.1.0");
     ("PIN_TYXML", "4.6.0");
     ("PIN_UCHAR", "0.0.2");
+    ("PIN_URI", "4.4.0");
     ("PIN_UTOP", "2.13.1");
     ("PIN_UUCP", "15.0.0");
     ("PIN_UUIDM", "0.9.8");

@@ -1292,10 +1292,12 @@ runs:
             }
             ### BEGIN pin-adds. DO NOT EDIT THE LINES IN THIS SECTION
             # Managed by bump-packages.cmake
+            do_pin_add angstrom "${PIN_ANGSTROM}"
             do_pin_add astring "${PIN_ASTRING}"
             do_pin_add base "${PIN_BASE}"
             do_pin_add base64 "${PIN_BASE64}"
             do_pin_add bigarray-compat "${PIN_BIGARRAY_COMPAT}"
+            do_pin_add bigstringaf "${PIN_BIGSTRINGAF}"
             do_pin_add bos "${PIN_BOS}"
             do_pin_add camlp-streams "${PIN_CAMLP_STREAMS}"
             do_pin_add chrome-trace "${PIN_CHROME_TRACE}"
@@ -1341,6 +1343,8 @@ runs:
             do_pin_add dkml-install-installer "${PIN_DKML_INSTALL_INSTALLER}"
             do_pin_add dkml-install-runner "${PIN_DKML_INSTALL_RUNNER}"
             do_pin_add dkml-installer-ocaml-common "${PIN_DKML_INSTALLER_OCAML_COMMON}"
+            do_pin_add dkml-installer-ocaml-network "${PIN_DKML_INSTALLER_OCAML_NETWORK}"
+            do_pin_add dkml-installer-ocaml-offline "${PIN_DKML_INSTALLER_OCAML_OFFLINE}"
             do_pin_add dkml-package-console "${PIN_DKML_PACKAGE_CONSOLE}"
             do_pin_add dkml-runtime-common "${PIN_DKML_RUNTIME_COMMON}"
             do_pin_add dkml-runtime-common-native "${PIN_DKML_RUNTIME_COMMON_NATIVE}"
@@ -1400,6 +1404,7 @@ runs:
             do_pin_add ocaml "${PIN_OCAML}"
             do_pin_add ocaml-compiler-libs "${PIN_OCAML_COMPILER_LIBS}"
             do_pin_add ocaml-lsp-server "${PIN_OCAML_LSP_SERVER}"
+            do_pin_add ocaml-syntax-shims "${PIN_OCAML_SYNTAX_SHIMS}"
             do_pin_add ocaml-version "${PIN_OCAML_VERSION}"
             do_pin_add ocamlbuild "${PIN_OCAMLBUILD}"
             do_pin_add ocamlc-loc "${PIN_OCAMLC_LOC}"
@@ -1451,6 +1456,7 @@ runs:
             do_pin_add stdio "${PIN_STDIO}"
             do_pin_add stdlib-shims "${PIN_STDLIB_SHIMS}"
             do_pin_add stdune "${PIN_STDUNE}"
+            do_pin_add stringext "${PIN_STRINGEXT}"
             do_pin_add time_now "${PIN_TIME_NOW}"
             do_pin_add tiny_httpd "${PIN_TINY_HTTPD}"
             do_pin_add topkg "${PIN_TOPKG}"
@@ -1459,6 +1465,7 @@ runs:
             do_pin_add tsort "${PIN_TSORT}"
             do_pin_add tyxml "${PIN_TYXML}"
             do_pin_add uchar "${PIN_UCHAR}"
+            do_pin_add uri "${PIN_URI}"
             do_pin_add utop "${PIN_UTOP}"
             do_pin_add uucp "${PIN_UUCP}"
             do_pin_add uuidm "${PIN_UUIDM}"
@@ -1970,7 +1977,7 @@ runs:
       shell: bash
       run: |
         set -x
-        echo '8635ec-${{ steps.full_matrix_vars.outputs.dkml_host_abi }}-${{ steps.full_matrix_vars.outputs.opam_abi }}' > .ci/sd4/cachekey.opam.binaries
+        echo '497991-${{ steps.full_matrix_vars.outputs.dkml_host_abi }}-${{ steps.full_matrix_vars.outputs.opam_abi }}' > .ci/sd4/cachekey.opam.binaries
         echo '${{ steps.full_matrix_vars.outputs.abi_pattern }}-${{ steps.full_matrix_vars.outputs.vsstudio_arch }}-${{ steps.full_matrix_vars.outputs.vsstudio_hostarch }}-${{ steps.full_matrix_vars.outputs.vsstudio_dir }}-${{ steps.full_matrix_vars.outputs.vsstudio_vcvarsver }}-${{ steps.full_matrix_vars.outputs.vsstudio_winsdkver }}-${{ steps.full_matrix_vars.outputs.vsstudio_msvspreference }}-${{ steps.full_matrix_vars.outputs.vsstudio_cmakegenerator }}' > .ci/sd4/cachekey.vsstudio
         echo '${{ inputs.OCAML_COMPILER }}-${{ inputs.DISKUV_OPAM_REPOSITORY }}-${{ inputs.DKML_COMPILER }}-${{ inputs.CONF_DKML_CROSS_TOOLCHAIN }}' > .ci/sd4/cachekey.ci.inputs
 
@@ -2076,10 +2083,12 @@ runs:
         DEFAULT_OCAML_OPAM_REPOSITORY_TAG: '907d456e7c003c4c7ad1ad4945abf93cdc852874'
         DEFAULT_DKML_COMPILER: '2.1.2'
         BOOTSTRAP_OPAM_VERSION: '2.2.0'
+        PIN_ANGSTROM: '0.16.0'
         PIN_ASTRING: '0.8.5'
         PIN_BASE: 'v0.16.1'
         PIN_BASE64: '3.5.1'
         PIN_BIGARRAY_COMPAT: '1.1.0'
+        PIN_BIGSTRINGAF: '0.10.0'
         PIN_BOS: '0.2.1'
         PIN_CAMLP_STREAMS: '5.0.1'
         PIN_CHROME_TRACE: '3.15.0'
@@ -2125,6 +2134,8 @@ runs:
         PIN_DKML_INSTALL_RUNNER: '0.5.2'
         PIN_DKML_INSTALL: '0.5.2'
         PIN_DKML_INSTALLER_OCAML_COMMON: '2.1.2'
+        PIN_DKML_INSTALLER_OCAML_NETWORK: '2.1.2'
+        PIN_DKML_INSTALLER_OCAML_OFFLINE: '2.1.2'
         PIN_DKML_PACKAGE_CONSOLE: '0.5.2'
         PIN_DKML_RUNTIME_COMMON_NATIVE: '2.1.2'
         PIN_DKML_RUNTIME_COMMON: '2.1.2'
@@ -2183,6 +2194,7 @@ runs:
         PIN_NUM: '1.5'
         PIN_OCAML_COMPILER_LIBS: 'v0.12.4'
         PIN_OCAML_LSP_SERVER: '1.17.0'
+        PIN_OCAML_SYNTAX_SHIMS: '1.0.0'
         PIN_OCAML_VERSION: '3.6.5'
         PIN_OCAML: '4.14.2'
         PIN_OCAMLBUILD: '0.14.2+win+unix'
@@ -2235,6 +2247,7 @@ runs:
         PIN_STDIO: 'v0.16.0'
         PIN_STDLIB_SHIMS: '0.3.0'
         PIN_STDUNE: '3.15.0'
+        PIN_STRINGEXT: '1.6.0'
         PIN_TIME_NOW: 'v0.16.0'
         PIN_TINY_HTTPD: '0.16'
         PIN_TOPKG: '1.0.7'
@@ -2243,6 +2256,7 @@ runs:
         PIN_TSORT: '2.1.0'
         PIN_TYXML: '4.6.0'
         PIN_UCHAR: '0.0.2'
+        PIN_URI: '4.4.0'
         PIN_UTOP: '2.13.1'
         PIN_UUCP: '15.0.0'
         PIN_UUIDM: '0.9.8'

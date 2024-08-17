@@ -29,10 +29,12 @@ export DEFAULT_DISKUV_OPAM_REPOSITORY_TAG='2.1.2'
 export DEFAULT_OCAML_OPAM_REPOSITORY_TAG='907d456e7c003c4c7ad1ad4945abf93cdc852874'
 export DEFAULT_DKML_COMPILER='2.1.2'
 export BOOTSTRAP_OPAM_VERSION='2.2.0'
+export PIN_ANGSTROM='0.16.0'
 export PIN_ASTRING='0.8.5'
 export PIN_BASE='v0.16.1'
 export PIN_BASE64='3.5.1'
 export PIN_BIGARRAY_COMPAT='1.1.0'
+export PIN_BIGSTRINGAF='0.10.0'
 export PIN_BOS='0.2.1'
 export PIN_CAMLP_STREAMS='5.0.1'
 export PIN_CHROME_TRACE='3.15.0'
@@ -78,6 +80,8 @@ export PIN_DKML_INSTALL_INSTALLER='0.5.2'
 export PIN_DKML_INSTALL_RUNNER='0.5.2'
 export PIN_DKML_INSTALL='0.5.2'
 export PIN_DKML_INSTALLER_OCAML_COMMON='2.1.2'
+export PIN_DKML_INSTALLER_OCAML_NETWORK='2.1.2'
+export PIN_DKML_INSTALLER_OCAML_OFFLINE='2.1.2'
 export PIN_DKML_PACKAGE_CONSOLE='0.5.2'
 export PIN_DKML_RUNTIME_COMMON_NATIVE='2.1.2'
 export PIN_DKML_RUNTIME_COMMON='2.1.2'
@@ -136,6 +140,7 @@ export PIN_MSYS2='0.1.0+dkml'
 export PIN_NUM='1.5'
 export PIN_OCAML_COMPILER_LIBS='v0.12.4'
 export PIN_OCAML_LSP_SERVER='1.17.0'
+export PIN_OCAML_SYNTAX_SHIMS='1.0.0'
 export PIN_OCAML_VERSION='3.6.5'
 export PIN_OCAML='4.14.2'
 export PIN_OCAMLBUILD='0.14.2+win+unix'
@@ -188,6 +193,7 @@ export PIN_STDCOMPAT='19+optautoconf'
 export PIN_STDIO='v0.16.0'
 export PIN_STDLIB_SHIMS='0.3.0'
 export PIN_STDUNE='3.15.0'
+export PIN_STRINGEXT='1.6.0'
 export PIN_TIME_NOW='v0.16.0'
 export PIN_TINY_HTTPD='0.16'
 export PIN_TOPKG='1.0.7'
@@ -196,6 +202,7 @@ export PIN_TRIE='1.0.0'
 export PIN_TSORT='2.1.0'
 export PIN_TYXML='4.6.0'
 export PIN_UCHAR='0.0.2'
+export PIN_URI='4.4.0'
 export PIN_UTOP='2.13.1'
 export PIN_UUCP='15.0.0'
 export PIN_UUIDM='0.9.8'
@@ -250,10 +257,12 @@ usage() {
   echo "  --DEFAULT_OCAML_OPAM_REPOSITORY_TAG=<value>. Defaults to: ${DEFAULT_OCAML_OPAM_REPOSITORY_TAG}" >&2
   echo "  --DEFAULT_DKML_COMPILER=<value>. Defaults to: ${DEFAULT_DKML_COMPILER}" >&2
   echo "  --BOOTSTRAP_OPAM_VERSION=<value>. Defaults to: ${BOOTSTRAP_OPAM_VERSION}" >&2
+  echo "  --PIN_ANGSTROM=<value>. Defaults to: ${PIN_ANGSTROM}" >&2
   echo "  --PIN_ASTRING=<value>. Defaults to: ${PIN_ASTRING}" >&2
   echo "  --PIN_BASE=<value>. Defaults to: ${PIN_BASE}" >&2
   echo "  --PIN_BASE64=<value>. Defaults to: ${PIN_BASE64}" >&2
   echo "  --PIN_BIGARRAY_COMPAT=<value>. Defaults to: ${PIN_BIGARRAY_COMPAT}" >&2
+  echo "  --PIN_BIGSTRINGAF=<value>. Defaults to: ${PIN_BIGSTRINGAF}" >&2
   echo "  --PIN_BOS=<value>. Defaults to: ${PIN_BOS}" >&2
   echo "  --PIN_CAMLP_STREAMS=<value>. Defaults to: ${PIN_CAMLP_STREAMS}" >&2
   echo "  --PIN_CHROME_TRACE=<value>. Defaults to: ${PIN_CHROME_TRACE}" >&2
@@ -299,6 +308,8 @@ usage() {
   echo "  --PIN_DKML_INSTALL_RUNNER=<value>. Defaults to: ${PIN_DKML_INSTALL_RUNNER}" >&2
   echo "  --PIN_DKML_INSTALL=<value>. Defaults to: ${PIN_DKML_INSTALL}" >&2
   echo "  --PIN_DKML_INSTALLER_OCAML_COMMON=<value>. Defaults to: ${PIN_DKML_INSTALLER_OCAML_COMMON}" >&2
+  echo "  --PIN_DKML_INSTALLER_OCAML_NETWORK=<value>. Defaults to: ${PIN_DKML_INSTALLER_OCAML_NETWORK}" >&2
+  echo "  --PIN_DKML_INSTALLER_OCAML_OFFLINE=<value>. Defaults to: ${PIN_DKML_INSTALLER_OCAML_OFFLINE}" >&2
   echo "  --PIN_DKML_PACKAGE_CONSOLE=<value>. Defaults to: ${PIN_DKML_PACKAGE_CONSOLE}" >&2
   echo "  --PIN_DKML_RUNTIME_COMMON_NATIVE=<value>. Defaults to: ${PIN_DKML_RUNTIME_COMMON_NATIVE}" >&2
   echo "  --PIN_DKML_RUNTIME_COMMON=<value>. Defaults to: ${PIN_DKML_RUNTIME_COMMON}" >&2
@@ -357,6 +368,7 @@ usage() {
   echo "  --PIN_NUM=<value>. Defaults to: ${PIN_NUM}" >&2
   echo "  --PIN_OCAML_COMPILER_LIBS=<value>. Defaults to: ${PIN_OCAML_COMPILER_LIBS}" >&2
   echo "  --PIN_OCAML_LSP_SERVER=<value>. Defaults to: ${PIN_OCAML_LSP_SERVER}" >&2
+  echo "  --PIN_OCAML_SYNTAX_SHIMS=<value>. Defaults to: ${PIN_OCAML_SYNTAX_SHIMS}" >&2
   echo "  --PIN_OCAML_VERSION=<value>. Defaults to: ${PIN_OCAML_VERSION}" >&2
   echo "  --PIN_OCAML=<value>. Defaults to: ${PIN_OCAML}" >&2
   echo "  --PIN_OCAMLBUILD=<value>. Defaults to: ${PIN_OCAMLBUILD}" >&2
@@ -409,6 +421,7 @@ usage() {
   echo "  --PIN_STDIO=<value>. Defaults to: ${PIN_STDIO}" >&2
   echo "  --PIN_STDLIB_SHIMS=<value>. Defaults to: ${PIN_STDLIB_SHIMS}" >&2
   echo "  --PIN_STDUNE=<value>. Defaults to: ${PIN_STDUNE}" >&2
+  echo "  --PIN_STRINGEXT=<value>. Defaults to: ${PIN_STRINGEXT}" >&2
   echo "  --PIN_TIME_NOW=<value>. Defaults to: ${PIN_TIME_NOW}" >&2
   echo "  --PIN_TINY_HTTPD=<value>. Defaults to: ${PIN_TINY_HTTPD}" >&2
   echo "  --PIN_TOPKG=<value>. Defaults to: ${PIN_TOPKG}" >&2
@@ -417,6 +430,7 @@ usage() {
   echo "  --PIN_TSORT=<value>. Defaults to: ${PIN_TSORT}" >&2
   echo "  --PIN_TYXML=<value>. Defaults to: ${PIN_TYXML}" >&2
   echo "  --PIN_UCHAR=<value>. Defaults to: ${PIN_UCHAR}" >&2
+  echo "  --PIN_URI=<value>. Defaults to: ${PIN_URI}" >&2
   echo "  --PIN_UTOP=<value>. Defaults to: ${PIN_UTOP}" >&2
   echo "  --PIN_UUCP=<value>. Defaults to: ${PIN_UUCP}" >&2
   echo "  --PIN_UUIDM=<value>. Defaults to: ${PIN_UUIDM}" >&2
@@ -484,6 +498,8 @@ while getopts :h-: option; do
     DEFAULT_DKML_COMPILER=*) DEFAULT_DKML_COMPILER=${OPTARG#*=} ;;
     BOOTSTRAP_OPAM_VERSION) fail "Option \"$OPTARG\" missing argument" ;;
     BOOTSTRAP_OPAM_VERSION=*) BOOTSTRAP_OPAM_VERSION=${OPTARG#*=} ;;
+    PIN_ANGSTROM) fail "Option \"$OPTARG\" missing argument" ;;
+    PIN_ANGSTROM=*) PIN_ANGSTROM=${OPTARG#*=} ;;
     PIN_ASTRING) fail "Option \"$OPTARG\" missing argument" ;;
     PIN_ASTRING=*) PIN_ASTRING=${OPTARG#*=} ;;
     PIN_BASE) fail "Option \"$OPTARG\" missing argument" ;;
@@ -492,6 +508,8 @@ while getopts :h-: option; do
     PIN_BASE64=*) PIN_BASE64=${OPTARG#*=} ;;
     PIN_BIGARRAY_COMPAT) fail "Option \"$OPTARG\" missing argument" ;;
     PIN_BIGARRAY_COMPAT=*) PIN_BIGARRAY_COMPAT=${OPTARG#*=} ;;
+    PIN_BIGSTRINGAF) fail "Option \"$OPTARG\" missing argument" ;;
+    PIN_BIGSTRINGAF=*) PIN_BIGSTRINGAF=${OPTARG#*=} ;;
     PIN_BOS) fail "Option \"$OPTARG\" missing argument" ;;
     PIN_BOS=*) PIN_BOS=${OPTARG#*=} ;;
     PIN_CAMLP_STREAMS) fail "Option \"$OPTARG\" missing argument" ;;
@@ -582,6 +600,10 @@ while getopts :h-: option; do
     PIN_DKML_INSTALL=*) PIN_DKML_INSTALL=${OPTARG#*=} ;;
     PIN_DKML_INSTALLER_OCAML_COMMON) fail "Option \"$OPTARG\" missing argument" ;;
     PIN_DKML_INSTALLER_OCAML_COMMON=*) PIN_DKML_INSTALLER_OCAML_COMMON=${OPTARG#*=} ;;
+    PIN_DKML_INSTALLER_OCAML_NETWORK) fail "Option \"$OPTARG\" missing argument" ;;
+    PIN_DKML_INSTALLER_OCAML_NETWORK=*) PIN_DKML_INSTALLER_OCAML_NETWORK=${OPTARG#*=} ;;
+    PIN_DKML_INSTALLER_OCAML_OFFLINE) fail "Option \"$OPTARG\" missing argument" ;;
+    PIN_DKML_INSTALLER_OCAML_OFFLINE=*) PIN_DKML_INSTALLER_OCAML_OFFLINE=${OPTARG#*=} ;;
     PIN_DKML_PACKAGE_CONSOLE) fail "Option \"$OPTARG\" missing argument" ;;
     PIN_DKML_PACKAGE_CONSOLE=*) PIN_DKML_PACKAGE_CONSOLE=${OPTARG#*=} ;;
     PIN_DKML_RUNTIME_COMMON_NATIVE) fail "Option \"$OPTARG\" missing argument" ;;
@@ -698,6 +720,8 @@ while getopts :h-: option; do
     PIN_OCAML_COMPILER_LIBS=*) PIN_OCAML_COMPILER_LIBS=${OPTARG#*=} ;;
     PIN_OCAML_LSP_SERVER) fail "Option \"$OPTARG\" missing argument" ;;
     PIN_OCAML_LSP_SERVER=*) PIN_OCAML_LSP_SERVER=${OPTARG#*=} ;;
+    PIN_OCAML_SYNTAX_SHIMS) fail "Option \"$OPTARG\" missing argument" ;;
+    PIN_OCAML_SYNTAX_SHIMS=*) PIN_OCAML_SYNTAX_SHIMS=${OPTARG#*=} ;;
     PIN_OCAML_VERSION) fail "Option \"$OPTARG\" missing argument" ;;
     PIN_OCAML_VERSION=*) PIN_OCAML_VERSION=${OPTARG#*=} ;;
     PIN_OCAML) fail "Option \"$OPTARG\" missing argument" ;;
@@ -802,6 +826,8 @@ while getopts :h-: option; do
     PIN_STDLIB_SHIMS=*) PIN_STDLIB_SHIMS=${OPTARG#*=} ;;
     PIN_STDUNE) fail "Option \"$OPTARG\" missing argument" ;;
     PIN_STDUNE=*) PIN_STDUNE=${OPTARG#*=} ;;
+    PIN_STRINGEXT) fail "Option \"$OPTARG\" missing argument" ;;
+    PIN_STRINGEXT=*) PIN_STRINGEXT=${OPTARG#*=} ;;
     PIN_TIME_NOW) fail "Option \"$OPTARG\" missing argument" ;;
     PIN_TIME_NOW=*) PIN_TIME_NOW=${OPTARG#*=} ;;
     PIN_TINY_HTTPD) fail "Option \"$OPTARG\" missing argument" ;;
@@ -818,6 +844,8 @@ while getopts :h-: option; do
     PIN_TYXML=*) PIN_TYXML=${OPTARG#*=} ;;
     PIN_UCHAR) fail "Option \"$OPTARG\" missing argument" ;;
     PIN_UCHAR=*) PIN_UCHAR=${OPTARG#*=} ;;
+    PIN_URI) fail "Option \"$OPTARG\" missing argument" ;;
+    PIN_URI=*) PIN_URI=${OPTARG#*=} ;;
     PIN_UTOP) fail "Option \"$OPTARG\" missing argument" ;;
     PIN_UTOP=*) PIN_UTOP=${OPTARG#*=} ;;
     PIN_UUCP) fail "Option \"$OPTARG\" missing argument" ;;
@@ -1995,10 +2023,12 @@ do_pins() {
     }
     ### BEGIN pin-adds. DO NOT EDIT THE LINES IN THIS SECTION
     # Managed by bump-packages.cmake
+    do_pin_add angstrom "${PIN_ANGSTROM}"
     do_pin_add astring "${PIN_ASTRING}"
     do_pin_add base "${PIN_BASE}"
     do_pin_add base64 "${PIN_BASE64}"
     do_pin_add bigarray-compat "${PIN_BIGARRAY_COMPAT}"
+    do_pin_add bigstringaf "${PIN_BIGSTRINGAF}"
     do_pin_add bos "${PIN_BOS}"
     do_pin_add camlp-streams "${PIN_CAMLP_STREAMS}"
     do_pin_add chrome-trace "${PIN_CHROME_TRACE}"
@@ -2044,6 +2074,8 @@ do_pins() {
     do_pin_add dkml-install-installer "${PIN_DKML_INSTALL_INSTALLER}"
     do_pin_add dkml-install-runner "${PIN_DKML_INSTALL_RUNNER}"
     do_pin_add dkml-installer-ocaml-common "${PIN_DKML_INSTALLER_OCAML_COMMON}"
+    do_pin_add dkml-installer-ocaml-network "${PIN_DKML_INSTALLER_OCAML_NETWORK}"
+    do_pin_add dkml-installer-ocaml-offline "${PIN_DKML_INSTALLER_OCAML_OFFLINE}"
     do_pin_add dkml-package-console "${PIN_DKML_PACKAGE_CONSOLE}"
     do_pin_add dkml-runtime-common "${PIN_DKML_RUNTIME_COMMON}"
     do_pin_add dkml-runtime-common-native "${PIN_DKML_RUNTIME_COMMON_NATIVE}"
@@ -2103,6 +2135,7 @@ do_pins() {
     do_pin_add ocaml "${PIN_OCAML}"
     do_pin_add ocaml-compiler-libs "${PIN_OCAML_COMPILER_LIBS}"
     do_pin_add ocaml-lsp-server "${PIN_OCAML_LSP_SERVER}"
+    do_pin_add ocaml-syntax-shims "${PIN_OCAML_SYNTAX_SHIMS}"
     do_pin_add ocaml-version "${PIN_OCAML_VERSION}"
     do_pin_add ocamlbuild "${PIN_OCAMLBUILD}"
     do_pin_add ocamlc-loc "${PIN_OCAMLC_LOC}"
@@ -2154,6 +2187,7 @@ do_pins() {
     do_pin_add stdio "${PIN_STDIO}"
     do_pin_add stdlib-shims "${PIN_STDLIB_SHIMS}"
     do_pin_add stdune "${PIN_STDUNE}"
+    do_pin_add stringext "${PIN_STRINGEXT}"
     do_pin_add time_now "${PIN_TIME_NOW}"
     do_pin_add tiny_httpd "${PIN_TINY_HTTPD}"
     do_pin_add topkg "${PIN_TOPKG}"
@@ -2162,6 +2196,7 @@ do_pins() {
     do_pin_add tsort "${PIN_TSORT}"
     do_pin_add tyxml "${PIN_TYXML}"
     do_pin_add uchar "${PIN_UCHAR}"
+    do_pin_add uri "${PIN_URI}"
     do_pin_add utop "${PIN_UTOP}"
     do_pin_add uucp "${PIN_UUCP}"
     do_pin_add uuidm "${PIN_UUIDM}"
