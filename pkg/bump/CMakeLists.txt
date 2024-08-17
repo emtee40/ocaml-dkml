@@ -926,6 +926,7 @@ function(add_GenerateLaunchers_target)
                 -DISKUV_OPAM_REPOSITORY "file://${diskuv-opam-repository_SOURCE_DIR}"
                 -GIT_EXE "${GIT_EXECUTABLE}"
                 -OCAML_OPAM_REPOSITORY "${OCAML_OPAM_REPOSITORY_GITREF}"
+                -DKML_COMPILER "file://${dkml-compiler_SOURCE_DIR}"
                 ${pins_WIN32})
         else()
             set(runSetupScript sh "${dkml-workflows_SOURCE_DIR}/test/pc/setup-dkml-${DKML_TARGET_ABI}.sh"
@@ -936,6 +937,7 @@ function(add_GenerateLaunchers_target)
                 "--DISKUV_OPAM_REPOSITORY=file://${diskuv-opam-repository_SOURCE_DIR}"
                 "--GIT_EXE=${GIT_EXECUTABLE}"
                 "--OCAML_OPAM_REPOSITORY=${OCAML_OPAM_REPOSITORY_GITREF}"
+                "--DKML_COMPILER=file://${dkml-compiler_SOURCE_DIR}"
                 ${pins_UNIX})
             if(DKML_HOST_LINUX_DOCKER)
                 list(APPEND runSetupScript --in_docker=true)
