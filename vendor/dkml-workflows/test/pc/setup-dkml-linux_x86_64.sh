@@ -1786,7 +1786,7 @@ if [ "${SKIP_OPAM_MODIFICATIONS:-}" = "false" ] && [ ! -s "$opam_root/.ci.root-i
     # Clear any partial previous attempt
     rm -rf "$opam_root"
 
-    case "${GIT_EXE:-}" in
+    case "${GIT_EXE:-git}" in
      git) GIT_EXE=$(command -v git) ;;
     esac
     case "$dkml_host_abi,${in_docker:-}" in
