@@ -923,7 +923,7 @@ function(add_GenerateLaunchers_target)
                 -PRIMARY_SWITCH_SKIP_INSTALL true
                 -BOOTSTRAP_OPAM_VERSION ${BOOTSTRAP_OPAM_VERSION}
                 -DISKUV_OPAM_REPOSITORY "file://${diskuv-opam-repository_SOURCE_DIR}"
-                -GIT_EXE "${GIT_EXECUTABLE}"
+                -GIT_LOCATION "${GIT_EXECUTABLE_DIR}"
                 -OCAML_OPAM_REPOSITORY "${OCAML_OPAM_REPOSITORY_GITREF}"
                 -DKML_COMPILER "file://${dkml-compiler_SOURCE_DIR}"
                 ${pins_WIN32})
@@ -933,7 +933,7 @@ function(add_GenerateLaunchers_target)
                 --PRIMARY_SWITCH_SKIP_INSTALL=true
                 --BOOTSTRAP_OPAM_VERSION=${BOOTSTRAP_OPAM_VERSION}
                 "--DISKUV_OPAM_REPOSITORY=file://${diskuv-opam-repository_SOURCE_DIR}"
-                "--GIT_EXE=${GIT_EXECUTABLE}"
+                "--GIT_LOCATION=${GIT_EXECUTABLE_DIR}"
                 "--OCAML_OPAM_REPOSITORY=${OCAML_OPAM_REPOSITORY_GITREF}"
                 "--DKML_COMPILER=file://${dkml-compiler_SOURCE_DIR}"
                 ${pins_UNIX})
