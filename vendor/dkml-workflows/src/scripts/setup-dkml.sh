@@ -857,10 +857,8 @@ do_pins() {
 
     section_begin "opam-pins-$do_pins_NAME" "Opam pins for $do_pins_NAME switch"
     #   adapted from dkml-runtime-common's _common_tool.sh:get_opam_switch_state_toplevelsection
-    get_opam_switch_state_toplevelsection "$opam_root/$do_pins_NAME" pinned > "$opam_root/.ci.$do_pins_NAME.pinned"
     #       shellcheck disable=SC2016
-    opamrun exec --switch "$do_pins_NAME" \
-        awk -v section="pinned" \
+    awk -v section="pinned" \
         '$1 ~ ":" {state=0} $1==(section ":") {state=1} state==1{print}' \
         "$opam_root/$do_pins_NAME/.opam-switch/switch-state" \
         > "$opam_root/.ci.$do_pins_NAME.pinned"
@@ -868,7 +866,7 @@ do_pins() {
         do_pin_add_NAME=$1; shift
         do_pin_add_VER=$1; shift
         # ex. "astring.1.0.2" - The double-quotes are necessary.
-        if ! grep "\"$do_pin_add_NAME.$do_pin_add_VER\"" "$opam_root/.ci.$do_pins_NAME.pinned"; then
+        if ! grep -q "\"$do_pin_add_NAME.$do_pin_add_VER\"" "$opam_root/.ci.$do_pins_NAME.pinned"; then
             opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version "$do_pin_add_NAME" "$do_pin_add_VER"
         fi
     }
