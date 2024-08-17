@@ -2152,10 +2152,17 @@ if [ "${SKIP_OPAM_MODIFICATIONS:-}" = "false" ]; then
     do_switch_active
 fi
 
+case "${DISKUV_OPAM_REPOSITORY:-}" in
+  file://*) 
+    DISKUV_OPAM_REPOSITORY_URI="${DISKUV_OPAM_REPOSITORY}" ;;
+  *)
+    DISKUV_OPAM_REPOSITORY_URI="git+https://github.com/diskuv/diskuv-opam-repository.git#${DISKUV_OPAM_REPOSITORY:-$DEFAULT_DISKUV_OPAM_REPOSITORY_TAG}" ;;
+esac
+
 do_opam_repositories_add() {
     section_begin "opam-repo-add" "Add 'diskuv' opam repository"
     if ! opamrun --no-troubleshooting repository list -s | grep '^diskuv'; then
-        opamrun repository add diskuv "git+https://github.com/diskuv/diskuv-opam-repository.git#${DISKUV_OPAM_REPOSITORY:-$DEFAULT_DISKUV_OPAM_REPOSITORY_TAG}" --yes --dont-select
+        opamrun repository add diskuv "${DISKUV_OPAM_REPOSITORY_URI}" --yes --dont-select
     fi
     section_end "opam-repo-add"
 }
@@ -2191,10 +2198,7 @@ do_opam_repositories_update() {
     # The default repository may be the initial 'eor' (empty) repository
     opamrun repository set-url default "git+https://github.com/ocaml/opam-repository.git#${OCAML_OPAM_REPOSITORY:-$DEFAULT_OCAML_OPAM_REPOSITORY_TAG}" --yes
     # Always set the `diskuv` repository url since it can change
-    case "${DISKUV_OPAM_REPOSITORY:-}" in
-     file://*) opamrun repository set-url diskuv "${DISKUV_OPAM_REPOSITORY}" --yes --dont-select ;;
-     *) opamrun repository set-url diskuv "git+https://github.com/diskuv/diskuv-opam-repository.git#${DISKUV_OPAM_REPOSITORY:-$DEFAULT_DISKUV_OPAM_REPOSITORY_TAG}" --yes --dont-select ;;
-    esac
+    opamrun repository set-url diskuv "${DISKUV_OPAM_REPOSITORY_URI}" --yes --dont-select
     # Update both `default` and `diskuv` Opam repositories
     opamrun update default diskuv
     section_end "opam-repo-update"
