@@ -22,11 +22,11 @@ export OCAML_OPAM_REPOSITORY=
 export DISKUV_OPAM_REPOSITORY=
 export DKML_HOME=
 # autogen from global_env_vars.
-export DKML_VERSION='2.1.1'
-export DEFAULT_DISKUV_OPAM_REPOSITORY_TAG='2.1.1'
-export DEFAULT_OCAML_OPAM_REPOSITORY_TAG='6c3f73f42890cc19f81eb1dec8023c2cd7b8b5cd'
-export DEFAULT_DKML_COMPILER='2.1.1'
-export BOOTSTRAP_OPAM_VERSION='v2.2.0-alpha-20221228'
+export DKML_VERSION='2.1.2'
+export DEFAULT_DISKUV_OPAM_REPOSITORY_TAG='2.1.2'
+export DEFAULT_OCAML_OPAM_REPOSITORY_TAG='907d456e7c003c4c7ad1ad4945abf93cdc852874'
+export DEFAULT_DKML_COMPILER='2.1.2'
+export BOOTSTRAP_OPAM_VERSION='2.2.0'
 export PIN_ASTRING='0.8.5'
 export PIN_BASE='v0.16.1'
 export PIN_BASE64='3.5.1'
@@ -1892,7 +1892,10 @@ do_opam_repositories_update() {
     # The default repository may be the initial 'eor' (empty) repository
     opamrun repository set-url default "git+https://github.com/ocaml/opam-repository.git#${OCAML_OPAM_REPOSITORY:-$DEFAULT_OCAML_OPAM_REPOSITORY_TAG}" --yes
     # Always set the `diskuv` repository url since it can change
-    opamrun repository set-url diskuv "git+https://github.com/diskuv/diskuv-opam-repository.git#${DISKUV_OPAM_REPOSITORY:-$DEFAULT_DISKUV_OPAM_REPOSITORY_TAG}" --yes --dont-select
+    case "${DISKUV_OPAM_REPOSITORY:-}" in
+     file://*) opamrun repository set-url diskuv "${DISKUV_OPAM_REPOSITORY}" --yes --dont-select ;;
+     *) opamrun repository set-url diskuv "git+https://github.com/diskuv/diskuv-opam-repository.git#${DISKUV_OPAM_REPOSITORY:-$DEFAULT_DISKUV_OPAM_REPOSITORY_TAG}" --yes --dont-select ;;
+    esac
     # Update both `default` and `diskuv` Opam repositories
     opamrun update default diskuv
     section_end "opam-repo-update"
