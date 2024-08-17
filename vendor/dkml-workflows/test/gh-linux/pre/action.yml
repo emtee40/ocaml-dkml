@@ -1236,7 +1236,6 @@ runs:
             # Managed by bump-packages.cmake
             do_pin_add astring "${PIN_ASTRING}"
             do_pin_add base "${PIN_BASE}"
-            do_pin_add base64 "${PIN_BASE64}"
             do_pin_add bigarray-compat "${PIN_BIGARRAY_COMPAT}"
             do_pin_add bos "${PIN_BOS}"
             do_pin_add camlp-streams "${PIN_CAMLP_STREAMS}"
@@ -1249,33 +1248,15 @@ runs:
             do_pin_add cppo "${PIN_CPPO}"
             do_pin_add crunch "${PIN_CRUNCH}"
             do_pin_add csexp "${PIN_CSEXP}"
-            do_pin_add cstruct "${PIN_CSTRUCT}"
             do_pin_add ctypes "${PIN_CTYPES}"
             do_pin_add ctypes-foreign "${PIN_CTYPES_FOREIGN}"
             do_pin_add cudf "${PIN_CUDF}"
-            do_pin_add digestif "${PIN_DIGESTIF}"
             do_pin_add diskuvbox "${PIN_DISKUVBOX}"
             do_pin_add dkml-apps "${PIN_DKML_APPS}"
             do_pin_add dkml-base-compiler "${PIN_DKML_BASE_COMPILER}"
             do_pin_add dkml-build-desktop "${PIN_DKML_BUILD_DESKTOP}"
             do_pin_add dkml-c-probe "${PIN_DKML_C_PROBE}"
             do_pin_add dkml-compiler-src "${PIN_DKML_COMPILER_SRC}"
-            do_pin_add dkml-component-common-desktop "${PIN_DKML_COMPONENT_COMMON_DESKTOP}"
-            do_pin_add dkml-component-common-opam "${PIN_DKML_COMPONENT_COMMON_OPAM}"
-            do_pin_add dkml-component-common-unixutils "${PIN_DKML_COMPONENT_COMMON_UNIXUTILS}"
-            do_pin_add dkml-component-ocamlcompiler-common "${PIN_DKML_COMPONENT_OCAMLCOMPILER_COMMON}"
-            do_pin_add dkml-component-ocamlcompiler-network "${PIN_DKML_COMPONENT_OCAMLCOMPILER_NETWORK}"
-            do_pin_add dkml-component-ocamlcompiler-offline "${PIN_DKML_COMPONENT_OCAMLCOMPILER_OFFLINE}"
-            do_pin_add dkml-component-offline-desktop-full "${PIN_DKML_COMPONENT_OFFLINE_DESKTOP_FULL}"
-            do_pin_add dkml-component-offline-opamshim "${PIN_DKML_COMPONENT_OFFLINE_OPAMSHIM}"
-            do_pin_add dkml-component-offline-unixutils "${PIN_DKML_COMPONENT_OFFLINE_UNIXUTILS}"
-            do_pin_add dkml-component-staging-desktop-full "${PIN_DKML_COMPONENT_STAGING_DESKTOP_FULL}"
-            do_pin_add dkml-component-staging-dkmlconfdir "${PIN_DKML_COMPONENT_STAGING_DKMLCONFDIR}"
-            do_pin_add dkml-component-staging-ocamlrun "${PIN_DKML_COMPONENT_STAGING_OCAMLRUN}"
-            do_pin_add dkml-component-staging-opam32 "${PIN_DKML_COMPONENT_STAGING_OPAM32}"
-            do_pin_add dkml-component-staging-opam64 "${PIN_DKML_COMPONENT_STAGING_OPAM64}"
-            do_pin_add dkml-component-staging-unixutils "${PIN_DKML_COMPONENT_STAGING_UNIXUTILS}"
-            do_pin_add dkml-component-staging-withdkml "${PIN_DKML_COMPONENT_STAGING_WITHDKML}"
             do_pin_add dkml-component-xx-console "${PIN_DKML_COMPONENT_XX_CONSOLE}"
             do_pin_add dkml-exe "${PIN_DKML_EXE}"
             do_pin_add dkml-exe-lib "${PIN_DKML_EXE_LIB}"
@@ -1283,8 +1264,6 @@ runs:
             do_pin_add dkml-install-installer "${PIN_DKML_INSTALL_INSTALLER}"
             do_pin_add dkml-install-runner "${PIN_DKML_INSTALL_RUNNER}"
             do_pin_add dkml-installer-ocaml-common "${PIN_DKML_INSTALLER_OCAML_COMMON}"
-            do_pin_add dkml-installer-ocaml-network "${PIN_DKML_INSTALLER_OCAML_NETWORK}"
-            do_pin_add dkml-installer-ocaml-offline "${PIN_DKML_INSTALLER_OCAML_OFFLINE}"
             do_pin_add dkml-package-console "${PIN_DKML_PACKAGE_CONSOLE}"
             do_pin_add dkml-runtime-common "${PIN_DKML_RUNTIME_COMMON}"
             do_pin_add dkml-runtime-common-native "${PIN_DKML_RUNTIME_COMMON_NATIVE}"
@@ -1303,22 +1282,19 @@ runs:
             do_pin_add dune-site "${PIN_DUNE_SITE}"
             do_pin_add dyn "${PIN_DYN}"
             do_pin_add either "${PIN_EITHER}"
-            do_pin_add eqaf "${PIN_EQAF}"
             do_pin_add extlib "${PIN_EXTLIB}"
-            do_pin_add ezjsonm "${PIN_EZJSONM}"
             do_pin_add feather "${PIN_FEATHER}"
             do_pin_add fiber "${PIN_FIBER}"
             do_pin_add fix "${PIN_FIX}"
             do_pin_add fmt "${PIN_FMT}"
             do_pin_add fpath "${PIN_FPATH}"
             do_pin_add graphics "${PIN_GRAPHICS}"
-            do_pin_add hex "${PIN_HEX}"
             do_pin_add hmap "${PIN_HMAP}"
+            do_pin_add host-arch-x86_64 "${PIN_HOST_ARCH_X86_64}"
             do_pin_add integers "${PIN_INTEGERS}"
             do_pin_add iostream "${PIN_IOSTREAM}"
             do_pin_add jane-street-headers "${PIN_JANE_STREET_HEADERS}"
             do_pin_add jingoo "${PIN_JINGOO}"
-            do_pin_add jsonm "${PIN_JSONM}"
             do_pin_add jsonrpc "${PIN_JSONRPC}"
             do_pin_add jst-config "${PIN_JST_CONFIG}"
             do_pin_add lambda-term "${PIN_LAMBDA_TERM}"
@@ -1337,6 +1313,8 @@ runs:
             do_pin_add metaquot "${PIN_METAQUOT}"
             do_pin_add mew "${PIN_MEW}"
             do_pin_add mew_vi "${PIN_MEW_VI}"
+            do_pin_add msys2 "${PIN_MSYS2}"
+            do_pin_add msys2-clang64 "${PIN_MSYS2_CLANG64}"
             do_pin_add num "${PIN_NUM}"
             do_pin_add ocaml "${PIN_OCAML}"
             do_pin_add ocaml-compiler-libs "${PIN_OCAML_COMPILER_LIBS}"
@@ -1773,7 +1751,7 @@ runs:
       shell: bash
       run: |
         set -x
-        echo 'a85880-${{ steps.full_matrix_vars.outputs.dkml_host_abi }}-${{ steps.full_matrix_vars.outputs.opam_abi }}' > .ci/sd4/cachekey.opam.binaries
+        echo 'c2de9b-${{ steps.full_matrix_vars.outputs.dkml_host_abi }}-${{ steps.full_matrix_vars.outputs.opam_abi }}' > .ci/sd4/cachekey.opam.binaries
         echo '${{ steps.full_matrix_vars.outputs.abi_pattern }}-${{ steps.full_matrix_vars.outputs.vsstudio_arch }}-${{ steps.full_matrix_vars.outputs.vsstudio_hostarch }}-${{ steps.full_matrix_vars.outputs.vsstudio_dir }}-${{ steps.full_matrix_vars.outputs.vsstudio_vcvarsver }}-${{ steps.full_matrix_vars.outputs.vsstudio_winsdkver }}-${{ steps.full_matrix_vars.outputs.vsstudio_msvspreference }}-${{ steps.full_matrix_vars.outputs.vsstudio_cmakegenerator }}' > .ci/sd4/cachekey.vsstudio
         echo '${{ inputs.OCAML_COMPILER }}-${{ inputs.DISKUV_OPAM_REPOSITORY }}-${{ inputs.DKML_COMPILER }}-${{ inputs.CONF_DKML_CROSS_TOOLCHAIN }}' > .ci/sd4/cachekey.ci.inputs
 
@@ -1851,7 +1829,7 @@ runs:
       env:
         # Push down inputs variables for GitHub/GitLab portable scripts
         VERBOSE:                        "${{ inputs.VERBOSE }}"
-        PIN_DKML_RUNTIME_DISTRIBUTION:  "2.1.1"
+        PIN_DKML_RUNTIME_DISTRIBUTION:  "2.1.2"
       run: 'sh .ci/sd4/run-checkout-code.sh GITHUB_WORKSPACE "$GITHUB_WORKSPACE"'
 
     # Setup C compiler
@@ -1880,7 +1858,6 @@ runs:
         BOOTSTRAP_OPAM_VERSION: '2.2.0'
         PIN_ASTRING: '0.8.5'
         PIN_BASE: 'v0.16.1'
-        PIN_BASE64: '3.5.1'
         PIN_BIGARRAY_COMPAT: '1.1.0'
         PIN_BOS: '0.2.1'
         PIN_CAMLP_STREAMS: '5.0.1'
@@ -1888,54 +1865,34 @@ runs:
         PIN_CMDLINER: '1.2.0'
         PIN_CONF_BASH: '1'
         PIN_CONF_DKML_SYS_OPAM: '1'
-        PIN_CONF_PKG_CONFIG: '2+cpkgs'
+        PIN_CONF_PKG_CONFIG: '3+cpkgs'
         PIN_CONF_SQLITE3: '3.1+cpkgs'
         PIN_CPPO: '1.6.9'
         PIN_CRUNCH: '3.3.1'
         PIN_CSEXP: '1.5.2'
-        PIN_CSTRUCT: '6.2.0'
         PIN_CTYPES_FOREIGN: '0.19.2-windowssupport-r8'
         PIN_CTYPES: '0.19.2-windowssupport-r8'
         PIN_CUDF: '0.10'
-        PIN_DIGESTIF: '1.2.0'
         PIN_DISKUVBOX: '0.2.0'
-        PIN_DKML_APPS: '2.1.1'
-        PIN_DKML_BASE_COMPILER: '4.14.2~v2.1.1'
-        PIN_DKML_BUILD_DESKTOP: '2.1.1'
+        PIN_DKML_APPS: '2.1.2'
+        PIN_DKML_BASE_COMPILER: '4.14.2~v2.1.2'
+        PIN_DKML_BUILD_DESKTOP: '2.1.2'
         PIN_DKML_C_PROBE: '3.0.0'
-        PIN_DKML_COMPILER_SRC: '2.1.1'
-        PIN_DKML_COMPONENT_COMMON_DESKTOP: '2.1.1'
-        PIN_DKML_COMPONENT_COMMON_OPAM: '2.2.0~alpha0~20221228-r3'
-        PIN_DKML_COMPONENT_COMMON_UNIXUTILS: '0.2.0'
-        PIN_DKML_COMPONENT_OCAMLCOMPILER_COMMON: '4.14.2~v2.1.1'
-        PIN_DKML_COMPONENT_OCAMLCOMPILER_NETWORK: '4.14.2~v2.1.1'
-        PIN_DKML_COMPONENT_OCAMLCOMPILER_OFFLINE: '4.14.2~v2.1.1'
-        PIN_DKML_COMPONENT_OFFLINE_DESKTOP_FULL: '2.1.1'
-        PIN_DKML_COMPONENT_OFFLINE_OPAMSHIM: '2.2.0~alpha0~20221228-r3'
-        PIN_DKML_COMPONENT_OFFLINE_UNIXUTILS: '0.2.0'
-        PIN_DKML_COMPONENT_STAGING_DESKTOP_FULL: '2.1.1'
-        PIN_DKML_COMPONENT_STAGING_DKMLCONFDIR: '2.1.1'
-        PIN_DKML_COMPONENT_STAGING_OCAMLRUN: '4.14.2~v2.1.1'
-        PIN_DKML_COMPONENT_STAGING_OPAM32: '2.2.0~alpha0~20221228-r3'
-        PIN_DKML_COMPONENT_STAGING_OPAM64: '2.2.0~alpha0~20221228-r3'
-        PIN_DKML_COMPONENT_STAGING_UNIXUTILS: '0.2.0'
-        PIN_DKML_COMPONENT_STAGING_WITHDKML: '2.1.1'
+        PIN_DKML_COMPILER_SRC: '2.1.2'
         PIN_DKML_COMPONENT_XX_CONSOLE: '0.1.1'
-        PIN_DKML_EXE_LIB: '2.1.1'
-        PIN_DKML_EXE: '2.1.1'
+        PIN_DKML_EXE_LIB: '2.1.2'
+        PIN_DKML_EXE: '2.1.2'
         PIN_DKML_INSTALL_INSTALLER: '0.5.2'
         PIN_DKML_INSTALL_RUNNER: '0.5.2'
         PIN_DKML_INSTALL: '0.5.2'
         PIN_DKML_INSTALLER_OCAML_COMMON: '2.1.1'
-        PIN_DKML_INSTALLER_OCAML_NETWORK: '2.1.1'
-        PIN_DKML_INSTALLER_OCAML_OFFLINE: '2.1.1'
         PIN_DKML_PACKAGE_CONSOLE: '0.5.2'
-        PIN_DKML_RUNTIME_COMMON_NATIVE: '2.1.1'
-        PIN_DKML_RUNTIME_COMMON: '2.1.1'
-        PIN_DKML_RUNTIME_DISTRIBUTION: '2.1.1'
-        PIN_DKML_RUNTIMELIB: '2.1.1'
-        PIN_DKML_RUNTIMESCRIPTS: '2.1.1'
-        PIN_DKML_WORKFLOWS: '2.1.1'
+        PIN_DKML_RUNTIME_COMMON_NATIVE: '2.1.2'
+        PIN_DKML_RUNTIME_COMMON: '2.1.2'
+        PIN_DKML_RUNTIME_DISTRIBUTION: '2.1.2'
+        PIN_DKML_RUNTIMELIB: '2.1.2'
+        PIN_DKML_RUNTIMESCRIPTS: '2.1.2'
+        PIN_DKML_WORKFLOWS: '2.1.2'
         PIN_DUNE_ACTION_PLUGIN: '3.15.0'
         PIN_DUNE_BUILD_INFO: '3.15.0'
         PIN_DUNE_CONFIGURATOR: '3.15.0'
@@ -1947,22 +1904,19 @@ runs:
         PIN_DUNE: '3.15.0'
         PIN_DYN: '3.15.0'
         PIN_EITHER: '1.0.0'
-        PIN_EQAF: '0.9'
         PIN_EXTLIB: '1.7.9'
-        PIN_EZJSONM: '1.3.0'
         PIN_FEATHER: '0.3.0'
         PIN_FIBER: '3.7.0'
         PIN_FIX: '20230505'
         PIN_FMT: '0.9.0'
         PIN_FPATH: '0.7.3'
         PIN_GRAPHICS: '5.1.2'
-        PIN_HEX: '1.5.0'
         PIN_HMAP: '0.8.1'
+        PIN_HOST_ARCH_X86_64: '1'
         PIN_INTEGERS: '0.7.0'
         PIN_IOSTREAM: '0.2.2'
         PIN_JANE_STREET_HEADERS: 'v0.16.0'
         PIN_JINGOO: '1.5.0'
-        PIN_JSONM: '1.0.2'
         PIN_JSONRPC: '1.17.0'
         PIN_JST_CONFIG: 'v0.16.0'
         PIN_LAMBDA_TERM: '3.3.2'
@@ -1981,6 +1935,8 @@ runs:
         PIN_METAQUOT: '0.5.2'
         PIN_MEW: '0.1.0'
         PIN_MEW_VI: '0.5.0'
+        PIN_MSYS2_CLANG64: '1'
+        PIN_MSYS2: '0.1.0+dkml'
         PIN_NUM: '1.5'
         PIN_OCAML_COMPILER_LIBS: 'v0.12.4'
         PIN_OCAML_LSP_SERVER: '1.17.0'
@@ -2031,7 +1987,7 @@ runs:
         PIN_SHA: '1.15.4'
         PIN_SHEXP: 'v0.16.0'
         PIN_SPAWN: 'v0.15.1'
-        PIN_SQLITE3: '5.1.0+msvc'
+        PIN_SQLITE3: '5.2.0'
         PIN_STDCOMPAT: '19+optautoconf'
         PIN_STDIO: 'v0.16.0'
         PIN_STDLIB_SHIMS: '0.3.0'
@@ -2049,7 +2005,7 @@ runs:
         PIN_UUIDM: '0.9.8'
         PIN_UUSEG: '15.0.0'
         PIN_UUTF: '1.0.3'
-        PIN_WITH_DKML: '2.1.1'
+        PIN_WITH_DKML: '2.1.2'
         PIN_XDG: '3.15.0'
         PIN_YOJSON: '2.1.2'
         PIN_ZED: '3.2.3'
