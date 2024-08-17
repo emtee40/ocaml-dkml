@@ -920,8 +920,7 @@ function(add_GenerateLaunchers_target)
         if(CMAKE_HOST_WIN32)
             set(runSetupScript "${POWERSHELL_EXECUTABLE}" "${dkml-workflows_SOURCE_DIR}/test/pc/setup-dkml-${DKML_TARGET_ABI}.ps1"
                 -PC_PROJECT_DIR "${CMAKE_CURRENT_BINARY_DIR}"
-                -SECONDARY_SWITCH true
-                -SKIP_OPAM_MODIFICATIONS true
+                -PRIMARY_SWITCH_SKIP_INSTALL true
                 -BOOTSTRAP_OPAM_VERSION ${BOOTSTRAP_OPAM_VERSION}
                 -DISKUV_OPAM_REPOSITORY "file://${diskuv-opam-repository_SOURCE_DIR}"
                 -GIT_EXE "${GIT_EXECUTABLE}"
@@ -931,8 +930,7 @@ function(add_GenerateLaunchers_target)
         else()
             set(runSetupScript sh "${dkml-workflows_SOURCE_DIR}/test/pc/setup-dkml-${DKML_TARGET_ABI}.sh"
                 "--PC_PROJECT_DIR=${CMAKE_CURRENT_BINARY_DIR}"
-                --SECONDARY_SWITCH=true
-                --SKIP_OPAM_MODIFICATIONS=true
+                --PRIMARY_SWITCH_SKIP_INSTALL=true
                 --BOOTSTRAP_OPAM_VERSION=${BOOTSTRAP_OPAM_VERSION}
                 "--DISKUV_OPAM_REPOSITORY=file://${diskuv-opam-repository_SOURCE_DIR}"
                 "--GIT_EXE=${GIT_EXECUTABLE}"
@@ -1083,11 +1081,29 @@ function(add_Flavor_targets)
         OUTPUT_SWITCH_PATH switchPath
     )
 
+    # AUTHORITATIVE OPTIONS = dkml-runtime-apps's [cmd_init.ml] and
+    # [opam_context.ml:get_msys2_create_opam_switch_options ()]. Aka: [dkml init].
+    # But not using [-m conf-withdkml]
+    set(compiler_ADJUNCT_PACKAGES)
+    if(CMAKE_HOST_WIN32)
+        #  Replicated (and need to change if these change):
+        #  [dkml-runtime-apps/src/runtimelib/dkml_environment.ml]
+        #  [dkml/pkg/bump/CMakeLists.txt]
+        if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+            list(APPEND compiler_ADJUNCT_PACKAGES msys2-mingw32 host-arch-x86_32)
+        elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
+            list(APPEND compiler_ADJUNCT_PACKAGES msys2-clang64 host-arch-x86_64)
+        endif()
+    endif()
+    string(JOIN " " compiler_ADJUNCT_PACKAGES_SPACES ${compiler_ADJUNCT_PACKAGES})
+
+    # dkml-runtime-apps_REL_OPAMFILES
     set(dkml-runtime-apps_REL_OPAMFILES ${dkml-runtime-apps_PACKAGES})
     list(TRANSFORM dkml-runtime-apps_REL_OPAMFILES PREPEND "${dkml-runtime-apps_REL_SOURCE_DIR}/")
     list(TRANSFORM dkml-runtime-apps_REL_OPAMFILES APPEND ".opam")
 
-    # dkml-runtime-apps: [opam-dkml] is deprecated; we don't install it
+    # dkml-runtime-apps_REL_INSTALLABLE_OPAMFILES
+    #   dkml-runtime-apps: [opam-dkml] is deprecated; we don't install it
     set(dkml-runtime-apps_REL_INSTALLABLE_OPAMFILES ${dkml-runtime-apps_REL_OPAMFILES})
     list(REMOVE_ITEM dkml-runtime-apps_REL_INSTALLABLE_OPAMFILES "${dkml-runtime-apps_REL_SOURCE_DIR}/opam-dkml.opam")
     list(JOIN dkml-runtime-apps_REL_INSTALLABLE_OPAMFILES " " dkml-runtime-apps_SPACED_REL_INSTALLABLE_OPAMFILES)

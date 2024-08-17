@@ -24,8 +24,8 @@ idempotent_opam_local_install dkml-compiler-TRANSITIVE \
     '@dkml-compiler_SHORTREF@,@dkml-runtime-common_SHORTREF@' \
     '@PROJECT_SOURCE_DIR@' \
     '@dkml-compiler_REL_SOURCE_DIR@/dkml-base-compiler.opam' \
-    '@dkml-runtime-common_REL_SOURCE_DIR@/dkml-runtime-common-native.opam'
+    '@dkml-runtime-common_REL_SOURCE_DIR@/dkml-runtime-common-native.opam' @compiler_ADJUNCT_PACKAGES_SPACES@
 
 # ensure from here on that [ocaml-system] is not installed through
 # an inadvertent re-compile of [ocaml].
-"$OPAM_EXE" switch set-invariant dkml-base-compiler --yes
+"$OPAM_EXE" switch set-invariant dkml-base-compiler @compiler_ADJUNCT_PACKAGES_SPACES@ --yes
