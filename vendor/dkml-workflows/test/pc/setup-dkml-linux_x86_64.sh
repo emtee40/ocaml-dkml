@@ -2132,7 +2132,10 @@ do_pins() {
         section_end checkout-dkml-base-compiler
     elif [ "${DKML_COMPILER:-}" != '@repository@' ] && [ -n "${DKML_COMPILER:-}" ] && [ -z "${OCAML_COMPILER:-}" ]; then
         section_begin checkout-dkml-base-compiler "Pin dkml-base-compiler to $DKML_COMPILER (dkml-base-compiler specified; no OCAML_COMPILER specified) for $do_pins_NAME switch"
-        opamrun pin add --switch "$do_pins_NAME" --yes --no-action dkml-base-compiler "https://github.com/diskuv/dkml-compiler.git#${DKML_COMPILER}"
+        case "$DKML_COMPILER" in
+         file://*) opamrun pin add --switch "$do_pins_NAME" --yes --no-action dkml-base-compiler "${DKML_COMPILER}" ;;
+         *) opamrun pin add --switch "$do_pins_NAME" --yes --no-action dkml-base-compiler "https://github.com/diskuv/dkml-compiler.git#${DKML_COMPILER}" ;;
+        esac
         section_end checkout-dkml-base-compiler
     elif [ -n "${OCAML_COMPILER:-}" ]; then
         # Validate OCAML_COMPILER (OCAML_COMPILER specified)
