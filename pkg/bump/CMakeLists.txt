@@ -467,7 +467,7 @@ function(add_PackageUpgrade_target)
             ${srcDir}
             ${CMAKE_COMMAND} -E env
             OPAMROOT=${OPAMROOT_NATIVE}
-            OPAMSWITCH=${DKML_VERSION_CMAKEVER}
+            OPAMSWITCH=dkml
             ${CMAKE_COMMAND}
             --log-context
             -D CMAKE_MESSAGE_CONTEXT=${proj}

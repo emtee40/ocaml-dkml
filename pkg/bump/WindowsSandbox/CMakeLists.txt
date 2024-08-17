@@ -18,7 +18,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/../DkMLBumpLevels.cmake)
 #       ./opam option --yes --global download-command=wget
 
 
-set(OPAMSWITCH ${PACKAGING_OPAMROOT}/${DKML_VERSION_CMAKEVER})
+set(OPAMSWITCH ${PACKAGING_OPAMROOT}/dkml)
 set(TOOLSDIR ${CMAKE_CURRENT_BINARY_DIR}/tools)
 cmake_path(NATIVE_PATH OPAMSWITCH OPAMSWITCH_NATIVE)
 cmake_path(NATIVE_PATH TOOLSDIR TOOLSDIR_NATIVE)
