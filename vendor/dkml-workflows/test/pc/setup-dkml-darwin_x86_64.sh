@@ -10,7 +10,7 @@ unset OCAMLLIB
 unset OCAML_TOPLEVEL_PATH
 
 export PC_PROJECT_DIR="$PWD"
-export GIT_EXE=git
+export GIT_LOCATION=
 export FDOPEN_OPAMEXE_BOOTSTRAP=false
 export CACHE_PREFIX=v1
 export OCAML_COMPILER=
@@ -223,7 +223,7 @@ usage() {
 
   # Context variables
   echo "  --PC_PROJECT_DIR=<value>. Defaults to the current directory (${PC_PROJECT_DIR})" >&2
-  echo "  --GIT_EXE=<value>. Defaults to ${GIT_EXE}" >&2
+  echo "  --GIT_LOCATION=<value>. Defaults to ${GIT_LOCATION}" >&2
 
   # Input variables
   echo "  --FDOPEN_OPAMEXE_BOOTSTRAP=true|false. Defaults to: ${FDOPEN_OPAMEXE_BOOTSTRAP}" >&2
@@ -437,8 +437,8 @@ while getopts :h-: option; do
   -) case $OPTARG in
     PC_PROJECT_DIR) fail "Option \"$OPTARG\" missing argument" ;;
     PC_PROJECT_DIR=*) PC_PROJECT_DIR=${OPTARG#*=} ;;
-    GIT_EXE) fail "Option \"$OPTARG\" missing argument" ;;
-    GIT_EXE=*) GIT_EXE=${OPTARG#*=} ;;
+    GIT_LOCATION) fail "Option \"$OPTARG\" missing argument" ;;
+    GIT_LOCATION=*) GIT_LOCATION=${OPTARG#*=} ;;
     CACHE_PREFIX) fail "Option \"$OPTARG\" missing argument" ;;
     CACHE_PREFIX=*) CACHE_PREFIX=${OPTARG#*=} ;;
     FDOPEN_OPAMEXE_BOOTSTRAP) fail "Option \"$OPTARG\" missing argument" ;;
@@ -1216,7 +1216,7 @@ BOOTSTRAP_OPAM_VERSION=$BOOTSTRAP_OPAM_VERSION
 Context
 -------
 PC_PROJECT_DIR=${PC_PROJECT_DIR:-}
-GIT_EXE=${GIT_EXE:-}
+GIT_LOCATION=${GIT_LOCATION:-}
 .
 ------
 Matrix
@@ -1782,14 +1782,14 @@ if [ "${SKIP_OPAM_MODIFICATIONS:-}" = "false" ] && [ ! -s "$opam_root/.ci.root-i
     # Clear any partial previous attempt
     rm -rf "$opam_root"
 
-    case "${GIT_EXE:-git}" in
-     git) GIT_EXE=$(command -v git) ;;
+    case "${GIT_LOCATION:-git}" in
+     git) GIT_LOCATION=$(command -v git) ;;
     esac
     case "$dkml_host_abi,${in_docker:-}" in
     windows_*,*)
         eor=$(/usr/bin/cygpath -am "$setup_WORKSPACE"/.ci/sd4/eor)
         cygloc=$(/usr/bin/cygpath -am /)
-        GIT_EXE_MIXED=$(/usr/bin/cygpath -am "$GIT_EXE")
+        GIT_EXE_MIXED=$(/usr/bin/cygpath -am "$GIT_LOCATION")
         case "$(opamrun --version)" in
          2.1.*|2.0.*|1.*) opamrun init --disable-sandboxing --no-setup --kind local --bare "$eor" ;;
          *) opamrun init --disable-sandboxing --no-setup --kind local "--cygwin-location=$cygloc" "--git-location=$GIT_EXE_MIXED" --bare "$eor" ;;
@@ -1802,13 +1802,13 @@ if [ "${SKIP_OPAM_MODIFICATIONS:-}" = "false" ] && [ ! -s "$opam_root/.ci.root-i
     *,true)
         case "$(opamrun --version)" in
          2.1.*|2.0.*|1.*) opamrun init --disable-sandboxing --no-setup --kind local --bare "/work/.ci/sd4/eor" ;;
-         *) opamrun init --disable-sandboxing --no-setup --kind local --bare "/work/.ci/sd4/eor" "--git-location=$GIT_EXE" ;;
+         *) opamrun init --disable-sandboxing --no-setup --kind local --bare "/work/.ci/sd4/eor" "--git-location=$GIT_LOCATION" ;;
         esac
         ;;
     *)
         case "$(opamrun --version)" in
          2.1.*|2.0.*|1.*) opamrun init --disable-sandboxing --no-setup --kind local --bare "$setup_WORKSPACE/.ci/sd4/eor" ;;
-         *) opamrun init --disable-sandboxing --no-setup --kind local --bare "$setup_WORKSPACE/.ci/sd4/eor" "--git-location=$GIT_EXE" ;;
+         *) opamrun init --disable-sandboxing --no-setup --kind local --bare "$setup_WORKSPACE/.ci/sd4/eor" "--git-location=$GIT_LOCATION" ;;
         esac
         ;;
     esac

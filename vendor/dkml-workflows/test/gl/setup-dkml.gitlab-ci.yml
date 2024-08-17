@@ -762,7 +762,7 @@ variables:
       Context
       -------
       PC_PROJECT_DIR=${PC_PROJECT_DIR:-}
-      GIT_EXE=${GIT_EXE:-}
+      GIT_LOCATION=${GIT_LOCATION:-}
       .
       ------
       Matrix
@@ -1328,14 +1328,14 @@ variables:
           # Clear any partial previous attempt
           rm -rf "$opam_root"
 
-          case "${GIT_EXE:-git}" in
-           git) GIT_EXE=$(command -v git) ;;
+          case "${GIT_LOCATION:-git}" in
+           git) GIT_LOCATION=$(command -v git) ;;
           esac
           case "$dkml_host_abi,${in_docker:-}" in
           windows_*,*)
               eor=$(/usr/bin/cygpath -am "$setup_WORKSPACE"/.ci/sd4/eor)
               cygloc=$(/usr/bin/cygpath -am /)
-              GIT_EXE_MIXED=$(/usr/bin/cygpath -am "$GIT_EXE")
+              GIT_EXE_MIXED=$(/usr/bin/cygpath -am "$GIT_LOCATION")
               case "$(opamrun --version)" in
                2.1.*|2.0.*|1.*) opamrun init --disable-sandboxing --no-setup --kind local --bare "$eor" ;;
                *) opamrun init --disable-sandboxing --no-setup --kind local "--cygwin-location=$cygloc" "--git-location=$GIT_EXE_MIXED" --bare "$eor" ;;
@@ -1348,13 +1348,13 @@ variables:
           *,true)
               case "$(opamrun --version)" in
                2.1.*|2.0.*|1.*) opamrun init --disable-sandboxing --no-setup --kind local --bare "/work/.ci/sd4/eor" ;;
-               *) opamrun init --disable-sandboxing --no-setup --kind local --bare "/work/.ci/sd4/eor" "--git-location=$GIT_EXE" ;;
+               *) opamrun init --disable-sandboxing --no-setup --kind local --bare "/work/.ci/sd4/eor" "--git-location=$GIT_LOCATION" ;;
               esac
               ;;
           *)
               case "$(opamrun --version)" in
                2.1.*|2.0.*|1.*) opamrun init --disable-sandboxing --no-setup --kind local --bare "$setup_WORKSPACE/.ci/sd4/eor" ;;
-               *) opamrun init --disable-sandboxing --no-setup --kind local --bare "$setup_WORKSPACE/.ci/sd4/eor" "--git-location=$GIT_EXE" ;;
+               *) opamrun init --disable-sandboxing --no-setup --kind local --bare "$setup_WORKSPACE/.ci/sd4/eor" "--git-location=$GIT_LOCATION" ;;
               esac
               ;;
           esac
@@ -2704,7 +2704,7 @@ variables:
       Context
       -------
       PC_PROJECT_DIR=${PC_PROJECT_DIR:-}
-      GIT_EXE=${GIT_EXE:-}
+      GIT_LOCATION=${GIT_LOCATION:-}
       .
       ------
       Matrix
@@ -3270,14 +3270,14 @@ variables:
           # Clear any partial previous attempt
           rm -rf "$opam_root"
 
-          case "${GIT_EXE:-git}" in
-           git) GIT_EXE=$(command -v git) ;;
+          case "${GIT_LOCATION:-git}" in
+           git) GIT_LOCATION=$(command -v git) ;;
           esac
           case "$dkml_host_abi,${in_docker:-}" in
           windows_*,*)
               eor=$(/usr/bin/cygpath -am "$setup_WORKSPACE"/.ci/sd4/eor)
               cygloc=$(/usr/bin/cygpath -am /)
-              GIT_EXE_MIXED=$(/usr/bin/cygpath -am "$GIT_EXE")
+              GIT_EXE_MIXED=$(/usr/bin/cygpath -am "$GIT_LOCATION")
               case "$(opamrun --version)" in
                2.1.*|2.0.*|1.*) opamrun init --disable-sandboxing --no-setup --kind local --bare "$eor" ;;
                *) opamrun init --disable-sandboxing --no-setup --kind local "--cygwin-location=$cygloc" "--git-location=$GIT_EXE_MIXED" --bare "$eor" ;;
@@ -3290,13 +3290,13 @@ variables:
           *,true)
               case "$(opamrun --version)" in
                2.1.*|2.0.*|1.*) opamrun init --disable-sandboxing --no-setup --kind local --bare "/work/.ci/sd4/eor" ;;
-               *) opamrun init --disable-sandboxing --no-setup --kind local --bare "/work/.ci/sd4/eor" "--git-location=$GIT_EXE" ;;
+               *) opamrun init --disable-sandboxing --no-setup --kind local --bare "/work/.ci/sd4/eor" "--git-location=$GIT_LOCATION" ;;
               esac
               ;;
           *)
               case "$(opamrun --version)" in
                2.1.*|2.0.*|1.*) opamrun init --disable-sandboxing --no-setup --kind local --bare "$setup_WORKSPACE/.ci/sd4/eor" ;;
-               *) opamrun init --disable-sandboxing --no-setup --kind local --bare "$setup_WORKSPACE/.ci/sd4/eor" "--git-location=$GIT_EXE" ;;
+               *) opamrun init --disable-sandboxing --no-setup --kind local --bare "$setup_WORKSPACE/.ci/sd4/eor" "--git-location=$GIT_LOCATION" ;;
               esac
               ;;
           esac
@@ -4364,7 +4364,7 @@ variables:
       Context
       -------
       PC_PROJECT_DIR=${PC_PROJECT_DIR:-}
-      GIT_EXE=${GIT_EXE:-}
+      GIT_LOCATION=${GIT_LOCATION:-}
       .
       ------
       Matrix
@@ -4930,14 +4930,14 @@ variables:
           # Clear any partial previous attempt
           rm -rf "$opam_root"
 
-          case "${GIT_EXE:-git}" in
-           git) GIT_EXE=$(command -v git) ;;
+          case "${GIT_LOCATION:-git}" in
+           git) GIT_LOCATION=$(command -v git) ;;
           esac
           case "$dkml_host_abi,${in_docker:-}" in
           windows_*,*)
               eor=$(/usr/bin/cygpath -am "$setup_WORKSPACE"/.ci/sd4/eor)
               cygloc=$(/usr/bin/cygpath -am /)
-              GIT_EXE_MIXED=$(/usr/bin/cygpath -am "$GIT_EXE")
+              GIT_EXE_MIXED=$(/usr/bin/cygpath -am "$GIT_LOCATION")
               case "$(opamrun --version)" in
                2.1.*|2.0.*|1.*) opamrun init --disable-sandboxing --no-setup --kind local --bare "$eor" ;;
                *) opamrun init --disable-sandboxing --no-setup --kind local "--cygwin-location=$cygloc" "--git-location=$GIT_EXE_MIXED" --bare "$eor" ;;
@@ -4950,13 +4950,13 @@ variables:
           *,true)
               case "$(opamrun --version)" in
                2.1.*|2.0.*|1.*) opamrun init --disable-sandboxing --no-setup --kind local --bare "/work/.ci/sd4/eor" ;;
-               *) opamrun init --disable-sandboxing --no-setup --kind local --bare "/work/.ci/sd4/eor" "--git-location=$GIT_EXE" ;;
+               *) opamrun init --disable-sandboxing --no-setup --kind local --bare "/work/.ci/sd4/eor" "--git-location=$GIT_LOCATION" ;;
               esac
               ;;
           *)
               case "$(opamrun --version)" in
                2.1.*|2.0.*|1.*) opamrun init --disable-sandboxing --no-setup --kind local --bare "$setup_WORKSPACE/.ci/sd4/eor" ;;
-               *) opamrun init --disable-sandboxing --no-setup --kind local --bare "$setup_WORKSPACE/.ci/sd4/eor" "--git-location=$GIT_EXE" ;;
+               *) opamrun init --disable-sandboxing --no-setup --kind local --bare "$setup_WORKSPACE/.ci/sd4/eor" "--git-location=$GIT_LOCATION" ;;
               esac
               ;;
           esac
