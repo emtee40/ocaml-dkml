@@ -22,8 +22,8 @@ depends: [
   "base" {= "v0.16.1"}
   "conf-sqlite3" {= "3.1+cpkgs"}
   "csexp" {= "1.5.2"}
-  "dkml-apps" {= "2.1.1"}
-  "dkml-exe" {= "2.1.1"}
+  "dkml-apps" {= "2.1.2"}
+  "dkml-exe" {= "2.1.2"}
   "graphics" {= "5.1.2"}
   "hmap" {= "0.8.1"}
   "iostream" {= "0.2.2"}
@@ -47,7 +47,7 @@ depends: [
   "refl" {= "0.4.1"}
   "result" {= "1.5"}
   "sexplib0" {= "v0.16.0"}
-  "sqlite3" {= "5.1.0+msvc"}
+  "sqlite3" {= "5.2.0"}
   "stdcompat" {= "19+optautoconf"}
   "stdlib-shims" {= "0.3.0"}
   "tiny_httpd" {= "0.16"}
@@ -58,7 +58,7 @@ depends: [
   "uucp" {= "15.0.0"}
   "uuseg" {= "15.0.0"}
   "uutf" {= "1.0.3"}
-  "with-dkml" {= "2.1.1"}
+  "with-dkml" {= "2.1.2"}
   "xdg" {= "3.15.0"}
   "zed" {= "3.2.3"}
 ]

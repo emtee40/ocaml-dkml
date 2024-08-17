@@ -19,8 +19,8 @@ depends: [
   "dkml-install" {>= "0.2.0"}
   "diskuvbox" {>= "0.1.0"}
   "dune" {>= "3.6" & = "3.15.0"}
-  "dkml-apps" {= "2.1.1"}
-  "dkml-exe" {= "2.1.1"}
+  "dkml-apps" {= "2.1.2"}
+  "dkml-exe" {= "2.1.2"}
   "metapp" {= "0.4.4+win"}
   "ocaml-compiler-libs" {= "v0.12.4"}
   "ocamlfind" {= "1.9.5"}
@@ -30,7 +30,7 @@ depends: [
   "stdcompat" {= "19+optautoconf"}
   "stdlib-shims" {= "0.3.0"}
   "traverse" {= "0.3.0"}
-  "with-dkml" {= "2.1.1"}
+  "with-dkml" {= "2.1.2"}
   "odoc" {with-doc}
 ]
 depopts: ["conf-withdkml"]
