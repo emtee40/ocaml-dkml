@@ -941,6 +941,7 @@ function(add_GenerateLaunchers_target)
                 -GIT_LOCATION "${GIT_EXECUTABLE_DIR}"
                 -OCAML_OPAM_REPOSITORY "${OCAML_OPAM_REPOSITORY_GITREF}"
                 -DKML_COMPILER "file://${dkml-compiler_SOURCE_DIR}"
+                -DKML_RUNTIME_DISTRIBUTION "file://${dkml-runtime-distribution_SOURCE_DIR}"
                 ${pins_WIN32})
         else()
             set(runSetupScript sh "${dkml-workflows_SOURCE_DIR}/test/pc/setup-dkml-${DKML_TARGET_ABI}.sh"
@@ -951,6 +952,7 @@ function(add_GenerateLaunchers_target)
                 "--GIT_LOCATION=${GIT_EXECUTABLE_DIR}"
                 "--OCAML_OPAM_REPOSITORY=${OCAML_OPAM_REPOSITORY_GITREF}"
                 "--DKML_COMPILER=file://${dkml-compiler_SOURCE_DIR}"
+                "--DKML_RUNTIME_DISTRIBUTION=file://${dkml-runtime-distribution_SOURCE_DIR}"
                 ${pins_UNIX})
             if(DKML_HOST_LINUX_DOCKER)
                 list(APPEND runSetupScript --in_docker=true)
@@ -960,7 +962,7 @@ function(add_GenerateLaunchers_target)
         endif()
         add_custom_command(
             OUTPUT ${anyrun_OUTPUTS}
-            COMMENT "Creating [cmdrun] and [opamrun] scripts with ${pins_DESCR}"
+            COMMENT "Creating opam root, opam switch, [cmdrun] and [opamrun] with ${pins_DESCR}"
             COMMAND ${runSetupScript}
             VERBATIM
             USES_TERMINAL
