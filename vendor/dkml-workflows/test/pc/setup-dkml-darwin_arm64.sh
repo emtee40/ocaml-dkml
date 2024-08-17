@@ -11,6 +11,7 @@ unset OCAML_TOPLEVEL_PATH
 
 export PC_PROJECT_DIR="$PWD"
 export GIT_LOCATION=
+export DKML_RUNTIME_DISTRIBUTION=
 export FDOPEN_OPAMEXE_BOOTSTRAP=false
 export CACHE_PREFIX=v1
 export OCAML_COMPILER=
@@ -200,18 +201,19 @@ usage() {
   # Context variables
   echo "  --PC_PROJECT_DIR=<value>. Defaults to the current directory (${PC_PROJECT_DIR})" >&2
   echo "  --GIT_LOCATION=<value>. Defaults to ${GIT_LOCATION}" >&2
+  echo "  --DKML_RUNTIME_DISTRIBUTION=<value>. Optional. May be file:// uri. Overrides PIN_DKML_RUNTIME_DISTRIBUTION and TAG_DKML_RUNTIME_DISTRIBUTION, if any." >&2
 
   # Input variables
   echo "  --FDOPEN_OPAMEXE_BOOTSTRAP=true|false. Defaults to: ${FDOPEN_OPAMEXE_BOOTSTRAP}" >&2
   echo "  --CACHE_PREFIX=<value>. Defaults to: ${CACHE_PREFIX}" >&2
   echo "  --OCAML_COMPILER=<value>. --DKML_COMPILER takes priority. If --DKML_COMPILER is not set and --OCAML_COMPILER is set, then the specified OCaml version tag of dkml-compiler (ex. 4.12.1) is used. Defaults to: ${OCAML_COMPILER}" >&2
-  echo "  --DKML_COMPILER=<value>. Unspecified or blank is the latest from the default branch (main) of dkml-compiler. Defaults to: ${DKML_COMPILER}" >&2
+  echo "  --DKML_COMPILER=<value>. Unspecified or blank is the latest from the default branch (main) of dkml-compiler. May be file:// uri. Defaults to: ${DKML_COMPILER}" >&2
   echo "  --SKIP_OPAM_MODIFICATIONS=true|false. If true then the opam root and switches will not be created or modified. Defaults to: ${SKIP_OPAM_MODIFICATIONS}" >&2
   echo "  --SECONDARY_SWITCH=true|false. If true then the secondary switch named 'two' is created. Defaults to: ${SECONDARY_SWITCH}" >&2
   echo "  --PRIMARY_SWITCH_SKIP_INSTALL=true|false. If true no dkml-base-compiler will be installed in the 'dkml' switch. Defaults to: ${PRIMARY_SWITCH_SKIP_INSTALL}" >&2
   echo "  --CONF_DKML_CROSS_TOOLCHAIN=<value>. Unspecified or blank is the latest from the default branch (main) of conf-dkml-cross-toolchain. @repository@ is the latest from Opam. Defaults to: ${CONF_DKML_CROSS_TOOLCHAIN}" >&2
   echo "  --OCAML_OPAM_REPOSITORY=<value>. Defaults to the value of --DEFAULT_OCAML_OPAM_REPOSITORY_TAG (see below)" >&2
-  echo "  --DISKUV_OPAM_REPOSITORY=<value>. Defaults to the value of --DEFAULT_DISKUV_OPAM_REPOSITORY_TAG (see below)" >&2
+  echo "  --DISKUV_OPAM_REPOSITORY=<value>. Defaults to the value of --DEFAULT_DISKUV_OPAM_REPOSITORY_TAG (see below). May be file:// uri." >&2
   echo "  --DKML_HOME=<value>. then DiskuvOCamlHome, DiskuvOCamlBinaryPaths and DiskuvOCamlDeploymentId will be set, in addition to the always-present DiskuvOCamlVarsVersion and DiskuvOCamlVersion." >&2
   echo "  --in_docker=true|false. When true, opamrun and cmdrun will launch commands inside a Docker container. Defaults to '${in_docker:-}'" >&2
   echo "  --dockcross_image=<value>. When --in_docker=true, will be Docker container image. Defaults to '${dockcross_image:-}'" >&2
@@ -393,6 +395,8 @@ while getopts :h-: option; do
     PC_PROJECT_DIR=*) PC_PROJECT_DIR=${OPTARG#*=} ;;
     GIT_LOCATION) fail "Option \"$OPTARG\" missing argument" ;;
     GIT_LOCATION=*) GIT_LOCATION=${OPTARG#*=} ;;
+    DKML_RUNTIME_DISTRIBUTION) fail "Option \"$OPTARG\" missing argument" ;;
+    DKML_RUNTIME_DISTRIBUTION=*) DKML_RUNTIME_DISTRIBUTION=${OPTARG#*=} ;;
     CACHE_PREFIX) fail "Option \"$OPTARG\" missing argument" ;;
     CACHE_PREFIX=*) CACHE_PREFIX=${OPTARG#*=} ;;
     FDOPEN_OPAMEXE_BOOTSTRAP) fail "Option \"$OPTARG\" missing argument" ;;
@@ -911,11 +915,19 @@ fi
 # shellcheck source=./common-values.sh
 . .ci/sd4/common-values.sh
 
+do_git() {
+    if [ -z "${GIT_LOCATION:-}" ]; then
+        git "$@"
+    else
+        PATH="$GIT_LOCATION:$PATH" git "$@"
+    fi
+}
+
 # Disable automatic garbage collection
 git_disable_gc() {
     git_disable_gc_NAME=$1
     shift
-    git -C ".ci/sd4/g/$git_disable_gc_NAME" config --local gc.auto 0
+    do_git -C ".ci/sd4/g/$git_disable_gc_NAME" config --local gc.auto 0
 }
 
 # Mimic the behavior of GitHub's actions/checkout@v3
@@ -928,19 +940,26 @@ git_checkout() {
     git_checkout_REF=$1
     shift
 
-    if [ -e ".ci/sd4/g/$git_checkout_NAME" ]; then
-        git_disable_gc "$git_checkout_NAME"
-        git -C ".ci/sd4/g/$git_checkout_NAME" remote set-url origin "$git_checkout_URL"
-        git -C ".ci/sd4/g/$git_checkout_NAME" fetch --no-tags --progress --no-recurse-submodules --depth=1 origin "+${git_checkout_REF}:refs/tags/v0.0"
-    else
-        install -d ".ci/sd4/g/$git_checkout_NAME"
-        git -C ".ci/sd4/g/$git_checkout_NAME" -c init.defaultBranch=main init
-        git_disable_gc "$git_checkout_NAME"
-        git -C ".ci/sd4/g/$git_checkout_NAME" remote add origin "$git_checkout_URL"
-        git -C ".ci/sd4/g/$git_checkout_NAME" fetch --no-tags --prune --progress --no-recurse-submodules --depth=1 origin "+${git_checkout_REF}:refs/tags/v0.0"
-    fi
-    git -C ".ci/sd4/g/$git_checkout_NAME" -c advice.detachedHead=false checkout --progress --force refs/tags/v0.0
-    git -C ".ci/sd4/g/$git_checkout_NAME" log -1 --format='%H'
+    case "$git_checkout_REF" in
+      file://*)
+        git_checkout_FILEURI=$(printf "%s" "$git_checkout_REF" | sed 's#^file://##')
+        rm -rf ".ci/sd4/g/$git_checkout_NAME"
+        cp -rp "$git_checkout_FILEURI" ".ci/sd4/g/$git_checkout_NAME" ;;
+      *)
+        if [ -e ".ci/sd4/g/$git_checkout_NAME" ]; then
+            git_disable_gc "$git_checkout_NAME"
+            do_git -C ".ci/sd4/g/$git_checkout_NAME" remote set-url origin "$git_checkout_URL"
+            do_git -C ".ci/sd4/g/$git_checkout_NAME" fetch --no-tags --progress --no-recurse-submodules --depth=1 origin "+${git_checkout_REF}:refs/tags/v0.0"
+        else
+            install -d ".ci/sd4/g/$git_checkout_NAME"
+            do_git -C ".ci/sd4/g/$git_checkout_NAME" -c init.defaultBranch=main init
+            git_disable_gc "$git_checkout_NAME"
+            do_git -C ".ci/sd4/g/$git_checkout_NAME" remote add origin "$git_checkout_URL"
+            do_git -C ".ci/sd4/g/$git_checkout_NAME" fetch --no-tags --prune --progress --no-recurse-submodules --depth=1 origin "+${git_checkout_REF}:refs/tags/v0.0"
+        fi
+        do_git -C ".ci/sd4/g/$git_checkout_NAME" -c advice.detachedHead=false checkout --progress --force refs/tags/v0.0
+        do_git -C ".ci/sd4/g/$git_checkout_NAME" log -1 --format='%H' ;;
+    esac
 }
 
 # ---------------------------------------------------------------------
@@ -949,6 +968,7 @@ section_begin checkout-info "Summary: code checkout"
 
 PIN_DKML_RUNTIME_DISTRIBUTION=${PIN_DKML_RUNTIME_DISTRIBUTION:-}
 TAG_DKML_RUNTIME_DISTRIBUTION=${TAG_DKML_RUNTIME_DISTRIBUTION:-$PIN_DKML_RUNTIME_DISTRIBUTION}
+DKML_RUNTIME_DISTRIBUTION=${DKML_RUNTIME_DISTRIBUTION:-$TAG_DKML_RUNTIME_DISTRIBUTION}
 
 # shellcheck disable=SC2154
 echo "
@@ -967,6 +987,11 @@ Inputs
 ------
 VERBOSE=${VERBOSE:-}
 .
+-------
+Context
+-------
+GIT_LOCATION=${GIT_LOCATION:-}
+.
 ------
 Matrix
 ------
@@ -977,6 +1002,7 @@ Constants
 ---------
 PIN_DKML_RUNTIME_DISTRIBUTION=${PIN_DKML_RUNTIME_DISTRIBUTION}
 TAG_DKML_RUNTIME_DISTRIBUTION=${TAG_DKML_RUNTIME_DISTRIBUTION}
+DKML_RUNTIME_DISTRIBUTION=${DKML_RUNTIME_DISTRIBUTION}
 .
 "
 
@@ -993,7 +1019,7 @@ install -d .ci/sd4/g
 case "$dkml_host_abi" in
 windows_*)
     section_begin checkout-dkml-runtime-distribution 'Checkout dkml-runtime-distribution'
-    git_checkout dkml-runtime-distribution https://github.com/diskuv/dkml-runtime-distribution.git "$TAG_DKML_RUNTIME_DISTRIBUTION"
+    git_checkout dkml-runtime-distribution https://github.com/diskuv/dkml-runtime-distribution.git "$DKML_RUNTIME_DISTRIBUTION"
     section_end checkout-dkml-runtime-distribution
     ;;
 esac

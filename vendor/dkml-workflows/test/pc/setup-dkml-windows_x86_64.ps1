@@ -16,6 +16,9 @@ Context variable for the project directory. Defaults to the current directory.
 .PARAMETER GIT_LOCATION
 Context variable for the location of the git executable. Default to 'git'
 
+.PARAMETER DKML_RUNTIME_DISTRIBUTION
+Context variable for location of dkml-runtime-distribution. May be a file:// uri. Overrides PIN_DKML_RUNTIME_DISTRIBUTION and TAG_DKML_RUNTIME_DISTRIBUTION, if any.
+
 .PARAMETER FDOPEN_OPAMEXE_BOOTSTRAP
 Input variable.
 
@@ -535,6 +538,9 @@ param (
   [Parameter(HelpMessage='Defaults to "git"')]
   [string]
   $GIT_LOCATION = "",
+  [Parameter(HelpMessage='May be file:// uri. Overrides PIN_DKML_RUNTIME_DISTRIBUTION and TAG_DKML_RUNTIME_DISTRIBUTION, if any.')]
+  [string]
+  $DKML_RUNTIME_DISTRIBUTION = "",
 
   # Input variables
   [string]
@@ -740,6 +746,8 @@ if (Test-Path Env:OCAML_TOPLEVEL_PATH)  { Remove-Item Env:OCAML_TOPLEVEL_PATH }
 # Pushdown context variables
 $env:PC_CI = 'true'
 $env:PC_PROJECT_DIR = $PC_PROJECT_DIR
+$env:GIT_LOCATION = $GIT_LOCATION
+$env:DKML_RUNTIME_DISTRIBUTION = $DKML_RUNTIME_DISTRIBUTION
 
 # Pushdown input variables
 $env:FDOPEN_OPAMEXE_BOOTSTRAP = $FDOPEN_OPAMEXE_BOOTSTRAP
@@ -1150,11 +1158,19 @@ fi
 # shellcheck source=./common-values.sh
 . .ci/sd4/common-values.sh
 
+do_git() {
+    if [ -z "${GIT_LOCATION:-}" ]; then
+        git "$@"
+    else
+        PATH="$GIT_LOCATION:$PATH" git "$@"
+    fi
+}
+
 # Disable automatic garbage collection
 git_disable_gc() {
     git_disable_gc_NAME=$1
     shift
-    git -C ".ci/sd4/g/$git_disable_gc_NAME" config --local gc.auto 0
+    do_git -C ".ci/sd4/g/$git_disable_gc_NAME" config --local gc.auto 0
 }
 
 # Mimic the behavior of GitHub's actions/checkout@v3
@@ -1167,19 +1183,26 @@ git_checkout() {
     git_checkout_REF=$1
     shift
 
-    if [ -e ".ci/sd4/g/$git_checkout_NAME" ]; then
-        git_disable_gc "$git_checkout_NAME"
-        git -C ".ci/sd4/g/$git_checkout_NAME" remote set-url origin "$git_checkout_URL"
-        git -C ".ci/sd4/g/$git_checkout_NAME" fetch --no-tags --progress --no-recurse-submodules --depth=1 origin "+${git_checkout_REF}:refs/tags/v0.0"
-    else
-        install -d ".ci/sd4/g/$git_checkout_NAME"
-        git -C ".ci/sd4/g/$git_checkout_NAME" -c init.defaultBranch=main init
-        git_disable_gc "$git_checkout_NAME"
-        git -C ".ci/sd4/g/$git_checkout_NAME" remote add origin "$git_checkout_URL"
-        git -C ".ci/sd4/g/$git_checkout_NAME" fetch --no-tags --prune --progress --no-recurse-submodules --depth=1 origin "+${git_checkout_REF}:refs/tags/v0.0"
-    fi
-    git -C ".ci/sd4/g/$git_checkout_NAME" -c advice.detachedHead=false checkout --progress --force refs/tags/v0.0
-    git -C ".ci/sd4/g/$git_checkout_NAME" log -1 --format='%H'
+    case "$git_checkout_REF" in
+      file://*)
+        git_checkout_FILEURI=$(printf "%s" "$git_checkout_REF" | sed 's#^file://##')
+        rm -rf ".ci/sd4/g/$git_checkout_NAME"
+        cp -rp "$git_checkout_FILEURI" ".ci/sd4/g/$git_checkout_NAME" ;;
+      *)
+        if [ -e ".ci/sd4/g/$git_checkout_NAME" ]; then
+            git_disable_gc "$git_checkout_NAME"
+            do_git -C ".ci/sd4/g/$git_checkout_NAME" remote set-url origin "$git_checkout_URL"
+            do_git -C ".ci/sd4/g/$git_checkout_NAME" fetch --no-tags --progress --no-recurse-submodules --depth=1 origin "+${git_checkout_REF}:refs/tags/v0.0"
+        else
+            install -d ".ci/sd4/g/$git_checkout_NAME"
+            do_git -C ".ci/sd4/g/$git_checkout_NAME" -c init.defaultBranch=main init
+            git_disable_gc "$git_checkout_NAME"
+            do_git -C ".ci/sd4/g/$git_checkout_NAME" remote add origin "$git_checkout_URL"
+            do_git -C ".ci/sd4/g/$git_checkout_NAME" fetch --no-tags --prune --progress --no-recurse-submodules --depth=1 origin "+${git_checkout_REF}:refs/tags/v0.0"
+        fi
+        do_git -C ".ci/sd4/g/$git_checkout_NAME" -c advice.detachedHead=false checkout --progress --force refs/tags/v0.0
+        do_git -C ".ci/sd4/g/$git_checkout_NAME" log -1 --format='%H' ;;
+    esac
 }
 
 # ---------------------------------------------------------------------
@@ -1188,6 +1211,7 @@ section_begin checkout-info "Summary: code checkout"
 
 PIN_DKML_RUNTIME_DISTRIBUTION=${PIN_DKML_RUNTIME_DISTRIBUTION:-}
 TAG_DKML_RUNTIME_DISTRIBUTION=${TAG_DKML_RUNTIME_DISTRIBUTION:-$PIN_DKML_RUNTIME_DISTRIBUTION}
+DKML_RUNTIME_DISTRIBUTION=${DKML_RUNTIME_DISTRIBUTION:-$TAG_DKML_RUNTIME_DISTRIBUTION}
 
 # shellcheck disable=SC2154
 echo "
@@ -1206,6 +1230,11 @@ Inputs
 ------
 VERBOSE=${VERBOSE:-}
 .
+-------
+Context
+-------
+GIT_LOCATION=${GIT_LOCATION:-}
+.
 ------
 Matrix
 ------
@@ -1216,6 +1245,7 @@ Constants
 ---------
 PIN_DKML_RUNTIME_DISTRIBUTION=${PIN_DKML_RUNTIME_DISTRIBUTION}
 TAG_DKML_RUNTIME_DISTRIBUTION=${TAG_DKML_RUNTIME_DISTRIBUTION}
+DKML_RUNTIME_DISTRIBUTION=${DKML_RUNTIME_DISTRIBUTION}
 .
 "
 
@@ -1232,7 +1262,7 @@ install -d .ci/sd4/g
 case "$dkml_host_abi" in
 windows_*)
     section_begin checkout-dkml-runtime-distribution 'Checkout dkml-runtime-distribution'
-    git_checkout dkml-runtime-distribution https://github.com/diskuv/dkml-runtime-distribution.git "$TAG_DKML_RUNTIME_DISTRIBUTION"
+    git_checkout dkml-runtime-distribution https://github.com/diskuv/dkml-runtime-distribution.git "$DKML_RUNTIME_DISTRIBUTION"
     section_end checkout-dkml-runtime-distribution
     ;;
 esac

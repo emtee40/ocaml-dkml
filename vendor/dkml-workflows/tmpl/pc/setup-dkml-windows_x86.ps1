@@ -16,6 +16,9 @@ Context variable for the project directory. Defaults to the current directory.
 .PARAMETER GIT_LOCATION
 Context variable for the location of the git executable. Default to 'git'
 
+.PARAMETER DKML_RUNTIME_DISTRIBUTION
+Context variable for location of dkml-runtime-distribution. May be a file:// uri. Overrides any PIN_DKML_RUNTIME_DISTRIBUTION and TAG_DKML_RUNTIME_DISTRIBUTION.
+
 .PARAMETER FDOPEN_OPAMEXE_BOOTSTRAP
 Input variable.
 
@@ -61,6 +64,9 @@ param (
   [Parameter(HelpMessage='Defaults to "git"')]
   [string]
   $GIT_LOCATION = "",
+  [Parameter(HelpMessage='May be file:// uri. Overrides PIN_DKML_RUNTIME_DISTRIBUTION and TAG_DKML_RUNTIME_DISTRIBUTION, if any.')]
+  [string]
+  $DKML_RUNTIME_DISTRIBUTION = "",
 
   # Input variables
   [string]
@@ -108,6 +114,8 @@ if (Test-Path Env:OCAML_TOPLEVEL_PATH)  { Remove-Item Env:OCAML_TOPLEVEL_PATH }
 # Pushdown context variables
 $env:PC_CI = 'true'
 $env:PC_PROJECT_DIR = $PC_PROJECT_DIR
+$env:GIT_LOCATION = $GIT_LOCATION
+$env:DKML_RUNTIME_DISTRIBUTION = $DKML_RUNTIME_DISTRIBUTION
 
 # Pushdown input variables
 $env:FDOPEN_OPAMEXE_BOOTSTRAP = $FDOPEN_OPAMEXE_BOOTSTRAP

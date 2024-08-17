@@ -270,11 +270,19 @@ runs:
         # shellcheck source=./common-values.sh
         . .ci/sd4/common-values.sh
 
+        do_git() {
+            if [ -z "${GIT_LOCATION:-}" ]; then
+                git "$@"
+            else
+                PATH="$GIT_LOCATION:$PATH" git "$@"
+            fi
+        }
+
         # Disable automatic garbage collection
         git_disable_gc() {
             git_disable_gc_NAME=$1
             shift
-            git -C ".ci/sd4/g/$git_disable_gc_NAME" config --local gc.auto 0
+            do_git -C ".ci/sd4/g/$git_disable_gc_NAME" config --local gc.auto 0
         }
 
         # Mimic the behavior of GitHub's actions/checkout@v3
@@ -287,19 +295,26 @@ runs:
             git_checkout_REF=$1
             shift
 
-            if [ -e ".ci/sd4/g/$git_checkout_NAME" ]; then
-                git_disable_gc "$git_checkout_NAME"
-                git -C ".ci/sd4/g/$git_checkout_NAME" remote set-url origin "$git_checkout_URL"
-                git -C ".ci/sd4/g/$git_checkout_NAME" fetch --no-tags --progress --no-recurse-submodules --depth=1 origin "+${git_checkout_REF}:refs/tags/v0.0"
-            else
-                install -d ".ci/sd4/g/$git_checkout_NAME"
-                git -C ".ci/sd4/g/$git_checkout_NAME" -c init.defaultBranch=main init
-                git_disable_gc "$git_checkout_NAME"
-                git -C ".ci/sd4/g/$git_checkout_NAME" remote add origin "$git_checkout_URL"
-                git -C ".ci/sd4/g/$git_checkout_NAME" fetch --no-tags --prune --progress --no-recurse-submodules --depth=1 origin "+${git_checkout_REF}:refs/tags/v0.0"
-            fi
-            git -C ".ci/sd4/g/$git_checkout_NAME" -c advice.detachedHead=false checkout --progress --force refs/tags/v0.0
-            git -C ".ci/sd4/g/$git_checkout_NAME" log -1 --format='%H'
+            case "$git_checkout_REF" in
+              file://*)
+                git_checkout_FILEURI=$(printf "%s" "$git_checkout_REF" | sed 's#^file://##')
+                rm -rf ".ci/sd4/g/$git_checkout_NAME"
+                cp -rp "$git_checkout_FILEURI" ".ci/sd4/g/$git_checkout_NAME" ;;
+              *)
+                if [ -e ".ci/sd4/g/$git_checkout_NAME" ]; then
+                    git_disable_gc "$git_checkout_NAME"
+                    do_git -C ".ci/sd4/g/$git_checkout_NAME" remote set-url origin "$git_checkout_URL"
+                    do_git -C ".ci/sd4/g/$git_checkout_NAME" fetch --no-tags --progress --no-recurse-submodules --depth=1 origin "+${git_checkout_REF}:refs/tags/v0.0"
+                else
+                    install -d ".ci/sd4/g/$git_checkout_NAME"
+                    do_git -C ".ci/sd4/g/$git_checkout_NAME" -c init.defaultBranch=main init
+                    git_disable_gc "$git_checkout_NAME"
+                    do_git -C ".ci/sd4/g/$git_checkout_NAME" remote add origin "$git_checkout_URL"
+                    do_git -C ".ci/sd4/g/$git_checkout_NAME" fetch --no-tags --prune --progress --no-recurse-submodules --depth=1 origin "+${git_checkout_REF}:refs/tags/v0.0"
+                fi
+                do_git -C ".ci/sd4/g/$git_checkout_NAME" -c advice.detachedHead=false checkout --progress --force refs/tags/v0.0
+                do_git -C ".ci/sd4/g/$git_checkout_NAME" log -1 --format='%H' ;;
+            esac
         }
 
         # ---------------------------------------------------------------------
@@ -308,6 +323,7 @@ runs:
 
         PIN_DKML_RUNTIME_DISTRIBUTION=${PIN_DKML_RUNTIME_DISTRIBUTION:-}
         TAG_DKML_RUNTIME_DISTRIBUTION=${TAG_DKML_RUNTIME_DISTRIBUTION:-$PIN_DKML_RUNTIME_DISTRIBUTION}
+        DKML_RUNTIME_DISTRIBUTION=${DKML_RUNTIME_DISTRIBUTION:-$TAG_DKML_RUNTIME_DISTRIBUTION}
 
         # shellcheck disable=SC2154
         echo "
@@ -326,6 +342,11 @@ runs:
         ------
         VERBOSE=${VERBOSE:-}
         .
+        -------
+        Context
+        -------
+        GIT_LOCATION=${GIT_LOCATION:-}
+        .
         ------
         Matrix
         ------
@@ -336,6 +357,7 @@ runs:
         ---------
         PIN_DKML_RUNTIME_DISTRIBUTION=${PIN_DKML_RUNTIME_DISTRIBUTION}
         TAG_DKML_RUNTIME_DISTRIBUTION=${TAG_DKML_RUNTIME_DISTRIBUTION}
+        DKML_RUNTIME_DISTRIBUTION=${DKML_RUNTIME_DISTRIBUTION}
         .
         "
 
@@ -352,7 +374,7 @@ runs:
         case "$dkml_host_abi" in
         windows_*)
             section_begin checkout-dkml-runtime-distribution 'Checkout dkml-runtime-distribution'
-            git_checkout dkml-runtime-distribution https://github.com/diskuv/dkml-runtime-distribution.git "$TAG_DKML_RUNTIME_DISTRIBUTION"
+            git_checkout dkml-runtime-distribution https://github.com/diskuv/dkml-runtime-distribution.git "$DKML_RUNTIME_DISTRIBUTION"
             section_end checkout-dkml-runtime-distribution
             ;;
         esac
