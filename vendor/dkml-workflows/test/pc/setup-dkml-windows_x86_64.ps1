@@ -607,7 +607,7 @@ param (
   ,[Parameter()] [string] $PIN_DKML_INSTALL_INSTALLER = "0.5.2"
   ,[Parameter()] [string] $PIN_DKML_INSTALL_RUNNER = "0.5.2"
   ,[Parameter()] [string] $PIN_DKML_INSTALL = "0.5.2"
-  ,[Parameter()] [string] $PIN_DKML_INSTALLER_OCAML_COMMON = "2.1.1"
+  ,[Parameter()] [string] $PIN_DKML_INSTALLER_OCAML_COMMON = "2.1.2"
   ,[Parameter()] [string] $PIN_DKML_PACKAGE_CONSOLE = "0.5.2"
   ,[Parameter()] [string] $PIN_DKML_RUNTIME_COMMON_NATIVE = "2.1.2"
   ,[Parameter()] [string] $PIN_DKML_RUNTIME_COMMON = "2.1.2"
