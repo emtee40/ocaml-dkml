@@ -924,6 +924,7 @@ function(add_GenerateLaunchers_target)
                 -SKIP_OPAM_MODIFICATIONS true
                 -BOOTSTRAP_OPAM_VERSION ${BOOTSTRAP_OPAM_VERSION}
                 -DISKUV_OPAM_REPOSITORY "file://${diskuv-opam-repository_SOURCE_DIR}"
+                -GIT_EXE "${GIT_EXECUTABLE}"
                 ${pins_WIN32})
         else()
             set(runSetupScript sh "${dkml-workflows_SOURCE_DIR}/test/pc/setup-dkml-${DKML_TARGET_ABI}.sh"
@@ -932,6 +933,7 @@ function(add_GenerateLaunchers_target)
                 --SKIP_OPAM_MODIFICATIONS=true
                 --BOOTSTRAP_OPAM_VERSION=${BOOTSTRAP_OPAM_VERSION}
                 "--DISKUV_OPAM_REPOSITORY=file://${diskuv-opam-repository_SOURCE_DIR}"
+                "--GIT_EXE=${GIT_EXECUTABLE}"
                 ${pins_UNIX})
             if(DKML_HOST_LINUX_DOCKER)
                 list(APPEND runSetupScript --in_docker=true)
