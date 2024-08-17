@@ -1047,11 +1047,15 @@ runs:
 
             case "$dkml_host_abi,${in_docker:-}" in
             windows_*,*)
-                eor=$(cygpath -am "$setup_WORKSPACE"/.ci/sd4/eor)
-                opamrun init --disable-sandboxing --no-setup --kind local --bare "$eor"
+                eor=$(/usr/bin/cygpath -am "$setup_WORKSPACE"/.ci/sd4/eor)
+                cygloc=$(/usr/bin/cygpath -am /)
                 case "$(opamrun --version)" in
-                2.0.*) echo 'download-command: wget' >>"$opam_root/config" ;;
-                *) opamrun option --yes --global download-command=wget ;;
+                 2.1.*|2.0.*|1.*) opamrun init --disable-sandboxing --no-setup --kind local --bare "$eor" ;;
+                 *) opamrun init --disable-sandboxing --no-setup --kind local "--cygwin-location=$cygloc" --bare "$eor" ;;
+                esac
+                case "$(opamrun --version)" in
+                 2.0.*) echo 'download-command: wget' >>"$opam_root/config" ;;
+                 *) opamrun option --yes --global download-command=wget ;;
                 esac
                 ;;
             *,true)
@@ -1720,7 +1724,7 @@ runs:
       shell: bash
       run: |
         set -x
-        echo '907cad-${{ steps.full_matrix_vars.outputs.dkml_host_abi }}-${{ steps.full_matrix_vars.outputs.opam_abi }}' > .ci/sd4/cachekey.opam.binaries
+        echo '0144df-${{ steps.full_matrix_vars.outputs.dkml_host_abi }}-${{ steps.full_matrix_vars.outputs.opam_abi }}' > .ci/sd4/cachekey.opam.binaries
         echo '${{ steps.full_matrix_vars.outputs.abi_pattern }}-${{ steps.full_matrix_vars.outputs.vsstudio_arch }}-${{ steps.full_matrix_vars.outputs.vsstudio_hostarch }}-${{ steps.full_matrix_vars.outputs.vsstudio_dir }}-${{ steps.full_matrix_vars.outputs.vsstudio_vcvarsver }}-${{ steps.full_matrix_vars.outputs.vsstudio_winsdkver }}-${{ steps.full_matrix_vars.outputs.vsstudio_msvspreference }}-${{ steps.full_matrix_vars.outputs.vsstudio_cmakegenerator }}' > .ci/sd4/cachekey.vsstudio
         echo '${{ inputs.OCAML_COMPILER }}-${{ inputs.DISKUV_OPAM_REPOSITORY }}-${{ inputs.DKML_COMPILER }}-${{ inputs.CONF_DKML_CROSS_TOOLCHAIN }}' > .ci/sd4/cachekey.ci.inputs
 

@@ -8,6 +8,7 @@
 - Switch from `shared-windows, window, windows-1809` GitLab CI runner to `saas-windows-medium-amd64` (Windows 2022).
   Confer: <https://about.gitlab.com/blog/2024/01/22/windows-2022-support-for-gitlab-saas-runners/>
 - Use OCaml 4.14.2 from DkML 2.1.1; allow non-DkML 4.14.2 compiler
+- Add `--cygwin-location` to `opam init` if opam 2.2+ on Windows.
 
 ## 2.1.1
 

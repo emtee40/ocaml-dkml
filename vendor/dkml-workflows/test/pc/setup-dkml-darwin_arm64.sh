@@ -1772,11 +1772,15 @@ if [ "${SKIP_OPAM_MODIFICATIONS:-}" = "false" ] && [ ! -s "$opam_root/.ci.root-i
 
     case "$dkml_host_abi,${in_docker:-}" in
     windows_*,*)
-        eor=$(cygpath -am "$setup_WORKSPACE"/.ci/sd4/eor)
-        opamrun init --disable-sandboxing --no-setup --kind local --bare "$eor"
+        eor=$(/usr/bin/cygpath -am "$setup_WORKSPACE"/.ci/sd4/eor)
+        cygloc=$(/usr/bin/cygpath -am /)
         case "$(opamrun --version)" in
-        2.0.*) echo 'download-command: wget' >>"$opam_root/config" ;;
-        *) opamrun option --yes --global download-command=wget ;;
+         2.1.*|2.0.*|1.*) opamrun init --disable-sandboxing --no-setup --kind local --bare "$eor" ;;
+         *) opamrun init --disable-sandboxing --no-setup --kind local "--cygwin-location=$cygloc" --bare "$eor" ;;
+        esac
+        case "$(opamrun --version)" in
+         2.0.*) echo 'download-command: wget' >>"$opam_root/config" ;;
+         *) opamrun option --yes --global download-command=wget ;;
         esac
         ;;
     *,true)
