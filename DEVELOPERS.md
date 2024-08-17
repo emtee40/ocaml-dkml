@@ -274,3 +274,12 @@ sh /work/.ci/dkml-compilers/pc/setup-dkml-linux_x86_64.sh --in_docker=false --PR
 sh ./dk dksdk.cmake.copy QUIET
 sh ci/build-unix-targz.sh linux_x86_64 dockcross
 ```
+
+## Subproject builds
+
+### dkml-workflows
+
+```powershell
+with-dkml build\pkg\bump\.ci\sd4\bs\bin\opam.exe install --root build\pkg\bump\.ci\o crunch uutf astring jingoo bos
+with-dkml build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root build\pkg\bump\.ci\o -- dune runtest --root vendor/dkml-workflows --auto-promote
+```
