@@ -517,6 +517,12 @@ runs:
         DEFAULT_DKML_COMPILER=$DEFAULT_DKML_COMPILER
         BOOTSTRAP_OPAM_VERSION=$BOOTSTRAP_OPAM_VERSION
         .
+        -------
+        Context
+        -------
+        PC_PROJECT_DIR=${PC_PROJECT_DIR:-}
+        GIT_EXE=${GIT_EXE:-}
+        .
         ------
         Matrix
         ------
@@ -1081,13 +1087,17 @@ runs:
             # Clear any partial previous attempt
             rm -rf "$opam_root"
 
+            case "${GIT_EXE:-}" in
+             git) GIT_EXE=$(command -v git) ;;
+            esac
             case "$dkml_host_abi,${in_docker:-}" in
             windows_*,*)
                 eor=$(/usr/bin/cygpath -am "$setup_WORKSPACE"/.ci/sd4/eor)
                 cygloc=$(/usr/bin/cygpath -am /)
+                GIT_EXE_MIXED=$(/usr/bin/cygpath -am "$GIT_EXE")
                 case "$(opamrun --version)" in
                  2.1.*|2.0.*|1.*) opamrun init --disable-sandboxing --no-setup --kind local --bare "$eor" ;;
-                 *) opamrun init --disable-sandboxing --no-setup --kind local "--cygwin-location=$cygloc" --bare "$eor" ;;
+                 *) opamrun init --disable-sandboxing --no-setup --kind local "--cygwin-location=$cygloc" "--git-location=$GIT_EXE_MIXED" --bare "$eor" ;;
                 esac
                 case "$(opamrun --version)" in
                  2.0.*) echo 'download-command: wget' >>"$opam_root/config" ;;
@@ -1095,10 +1105,16 @@ runs:
                 esac
                 ;;
             *,true)
-                opamrun init --disable-sandboxing --no-setup --kind local --bare "/work/.ci/sd4/eor"
+                case "$(opamrun --version)" in
+                 2.1.*|2.0.*|1.*) opamrun init --disable-sandboxing --no-setup --kind local --bare "/work/.ci/sd4/eor" ;;
+                 *) opamrun init --disable-sandboxing --no-setup --kind local --bare "/work/.ci/sd4/eor" "--git-location=$GIT_EXE" ;;
+                esac
                 ;;
             *)
-                opamrun init --disable-sandboxing --no-setup --kind local --bare "$setup_WORKSPACE/.ci/sd4/eor"
+                case "$(opamrun --version)" in
+                 2.1.*|2.0.*|1.*) opamrun init --disable-sandboxing --no-setup --kind local --bare "$setup_WORKSPACE/.ci/sd4/eor" ;;
+                 *) opamrun init --disable-sandboxing --no-setup --kind local --bare "$setup_WORKSPACE/.ci/sd4/eor" "--git-location=$GIT_EXE" ;;
+                esac
                 ;;
             esac
             echo yes > "$opam_root/.ci.root-init"
@@ -1898,7 +1914,7 @@ runs:
       shell: bash
       run: |
         set -x
-        echo '0144df-${{ steps.full_matrix_vars.outputs.dkml_host_abi }}-${{ steps.full_matrix_vars.outputs.opam_abi }}' > .ci/sd4/cachekey.opam.binaries
+        echo 'da4bf6-${{ steps.full_matrix_vars.outputs.dkml_host_abi }}-${{ steps.full_matrix_vars.outputs.opam_abi }}' > .ci/sd4/cachekey.opam.binaries
         echo '${{ steps.full_matrix_vars.outputs.abi_pattern }}-${{ steps.full_matrix_vars.outputs.vsstudio_arch }}-${{ steps.full_matrix_vars.outputs.vsstudio_hostarch }}-${{ steps.full_matrix_vars.outputs.vsstudio_dir }}-${{ steps.full_matrix_vars.outputs.vsstudio_vcvarsver }}-${{ steps.full_matrix_vars.outputs.vsstudio_winsdkver }}-${{ steps.full_matrix_vars.outputs.vsstudio_msvspreference }}-${{ steps.full_matrix_vars.outputs.vsstudio_cmakegenerator }}' > .ci/sd4/cachekey.vsstudio
         echo '${{ inputs.OCAML_COMPILER }}-${{ inputs.DISKUV_OPAM_REPOSITORY }}-${{ inputs.DKML_COMPILER }}-${{ inputs.CONF_DKML_CROSS_TOOLCHAIN }}' > .ci/sd4/cachekey.ci.inputs
 

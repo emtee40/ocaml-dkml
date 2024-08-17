@@ -10,6 +10,7 @@ unset OCAMLLIB
 unset OCAML_TOPLEVEL_PATH
 
 export PC_PROJECT_DIR="$PWD"
+export GIT_EXE=git
 export FDOPEN_OPAMEXE_BOOTSTRAP=false
 export CACHE_PREFIX=v1
 export OCAML_COMPILER=
@@ -35,6 +36,7 @@ usage() {
 
   # Context variables
   echo "  --PC_PROJECT_DIR=<value>. Defaults to the current directory (${PC_PROJECT_DIR})" >&2
+  echo "  --GIT_EXE=<value>. Defaults to ${GIT_EXE}" >&2
 
   # Input variables
   echo "  --FDOPEN_OPAMEXE_BOOTSTRAP=true|false. Defaults to: ${FDOPEN_OPAMEXE_BOOTSTRAP}" >&2
@@ -68,6 +70,8 @@ while getopts :h-: option; do
   -) case $OPTARG in
     PC_PROJECT_DIR) fail "Option \"$OPTARG\" missing argument" ;;
     PC_PROJECT_DIR=*) PC_PROJECT_DIR=${OPTARG#*=} ;;
+    GIT_EXE) fail "Option \"$OPTARG\" missing argument" ;;
+    GIT_EXE=*) GIT_EXE=${OPTARG#*=} ;;
     CACHE_PREFIX) fail "Option \"$OPTARG\" missing argument" ;;
     CACHE_PREFIX=*) CACHE_PREFIX=${OPTARG#*=} ;;
     FDOPEN_OPAMEXE_BOOTSTRAP) fail "Option \"$OPTARG\" missing argument" ;;

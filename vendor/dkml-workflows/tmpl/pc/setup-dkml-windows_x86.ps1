@@ -13,6 +13,9 @@ Setup DkML compiler on a desktop PC.
 .PARAMETER PC_PROJECT_DIR
 Context variable for the project directory. Defaults to the current directory.
 
+.PARAMETER GIT_EXE
+Context variable for the location of the git executable. Default to 'git'
+
 .PARAMETER FDOPEN_OPAMEXE_BOOTSTRAP
 Input variable.
 
@@ -55,6 +58,9 @@ param (
   [Parameter(HelpMessage='Defaults to the current directory')]
   [string]
   $PC_PROJECT_DIR = $PWD,
+  [Parameter(HelpMessage='Defaults to "git"')]
+  [string]
+  $GIT_EXE = "git",
 
   # Input variables
   [string]
