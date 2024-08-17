@@ -57,6 +57,24 @@ macro(DkMLPatches_Init)
         ${diskuv-opam-repository_SOURCE_DIR}/packages/*/*/opam)
 endmacro()
 
+# Input: pkgvers
+# Output: pkgs=<pkg> <pkg> <pkg>
+# Output: <pkg>_<STEM>_PKGVER=<ver>
+macro(DkMLPatches_SetPkgs STEM)
+    set(pkgs)
+    foreach(pkgver IN LISTS pkgvers)
+        # conf-pkg-config.3+cpkgs -> conf-pkg-config;3+cpkgs
+        string(REGEX REPLACE "[.](.*)" ";\\1" pkg_and_ver "${pkgver}")
+        list(GET pkg_and_ver 0 pkg)
+        list(GET pkg_and_ver 1 ver)
+        if("${pkg}" STREQUAL "" OR "${ver}" STREQUAL "")
+            message(FATAL_ERROR "Parse error: pkgver=${pkgver} | pkg_and_ver=${pkg_and_ver} | pkg=${pkg} | ver=${ver}")
+        endif()
+        set(${pkg}_${STEM}_PKGVER "${ver}" PARENT_SCOPE)
+        list(APPEND pkgs ${pkg})
+    endforeach()
+endmacro()
+
 # Get the list of the latest package versions compatible with
 # [OCAML_VERSION]. The diskuv-opam-repository will be scanned.
 # Any packages that are part of [SYNCHRONIZED_PACKAGES]
@@ -134,18 +152,7 @@ function(DkMLPatches_GetPackageVersions)
         endif()
     endforeach()
 
-    set(pkgs)
-    foreach(pkgver IN LISTS pkgvers)
-        # conf-pkg-config.3+cpkgs -> conf-pkg-config;3+cpkgs
-        string(REGEX REPLACE "[.](.*)" ";\\1" pkg_and_ver "${pkgver}")
-        list(GET pkg_and_ver 0 pkg)
-        list(GET pkg_and_ver 1 ver)
-        if("${pkg}" STREQUAL "" OR "${ver}" STREQUAL "")
-            message(FATAL_ERROR "Parse error: pkgver=${pkgver} | pkg_and_ver=${pkg_and_ver} | pkg=${pkg} | ver=${ver}")
-        endif()
-        set(${pkg}_PATCH_PKGVER "${ver}" PARENT_SCOPE)
-        list(APPEND pkgs ${pkg})
-    endforeach()
+    DkMLPatches_SetPkgs(PATCH)
 
     set(${ARG_OUTPUT_PKGS_VARIABLE} ${pkgs} PARENT_SCOPE)
     set(${ARG_OUTPUT_PKGVERS_VARIABLE} ${pkgvers} PARENT_SCOPE)

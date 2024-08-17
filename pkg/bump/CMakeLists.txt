@@ -754,7 +754,7 @@ function(get_flavor_packages)
         list(FILTER pkgvers EXCLUDE REGEX "^${EXCLUDE_PKG}[.]")
     endforeach()
 
-    list(TRANSFORM pkgvers REPLACE "[.].*" "" OUTPUT_VARIABLE pkgs)
+    DkMLPatches_SetPkgs(FLAVOR)
 
     set(${ARG_OUTPUT_PKGS_VARIABLE} ${pkgs} PARENT_SCOPE)
     set(${ARG_OUTPUT_PKGVERS_VARIABLE} ${pkgvers} PARENT_SCOPE)
@@ -883,7 +883,7 @@ function(add_GenerateLaunchers_target)
     # CMake so we can set the FetchContent based local pins.
 
     if(NOT SETUP_DKML_OVERRIDE)
-        # We need the intersection of:
+        # A) We need the intersection of:
         # 1. the latest patch versions from diskuv-opam-repository.
         # 2. the pins that exist in dkml-workflows/test/pc/setup-dkml-*
         #
@@ -891,28 +891,43 @@ function(add_GenerateLaunchers_target)
         # version in (1) that hasn't made it to (2). Or you may remove
         # a patch in (1) that is still in (2).
         #
-        # With the intersection, we can set the PIN_ package versions
+        # B) We also need the flavor packages
+        #
+        # C) We do not want pinning of the DkML apps like with-dkml that are in CI flavor packages
+        # since those are part of the synchronized projects (dkml-runtime-apps)
+        #
+        # With A+B-C, we can set the PIN_ package versions
         # correctly when we call setup-dkml-* since dkml-workflows/test/pc/setup-dkml-*
         # is likely out-of-date.
         set(pins_WIN32)
         set(pins_UNIX)
         set(pins_DESCR)
         file(READ "${dkml-workflows_SOURCE_DIR}/test/pc/setup-dkml-linux_x86_64.sh" setup_CONTENTS)
-        foreach(pkg IN LISTS DKML_UNMANAGED_PATCHED_PACKAGES_PKGS)
+        set(pins_PKGS ${DKML_UNMANAGED_PATCHED_PACKAGES_PKGS} ${DUNE_FLAVOR_PKGS} ${FULL_NOT_DUNE_FLAVOR_PKGS})
+        list(REMOVE_DUPLICATES pins_PKGS)
+        foreach(synced IN LISTS dkml-runtime-apps_PACKAGES)
+            list(REMOVE_ITEM pins_PKGS ${synced})
+        endforeach()
+        foreach(pkg IN LISTS pins_PKGS)
             # ex. if(conf-pkg-config_PATCH_PKGVER)
-            if(${pkg}_PATCH_PKGVER)
-                # ex. PIN_CONF_PKG_CONFIG
-                string(TOUPPER "PIN_${pkg}" pkg_PIN)
-                string(REPLACE "-" "_" pkg_PIN ${pkg_PIN})
-                # ex. export PIN_CONF_PKG_CONFIG=
-                if(setup_CONTENTS MATCHES "export ${pkg_PIN}=")                
-                    # ex. -PIN_CONF_PKG_CONFIG ${conf-pkg-config_PATCH_PKGVER}
-                    list(APPEND pins_WIN32  "-${pkg_PIN}" "${${pkg}_PATCH_PKGVER}")
-                    # ex. --PIN_CONF_PKG_CONFIG=${conf-pkg-config_PATCH_PKGVER}
-                    list(APPEND pins_UNIX  "--${pkg_PIN}=${${pkg}_PATCH_PKGVER}")
-                    # ex. PIN_CONF_PKG_CONFIG=${conf-pkg-config_PATCH_PKGVER}
-                    list(APPEND pins_DESCR  "${pkg_PIN}=${${pkg}_PATCH_PKGVER}")
-                endif()
+            if(${pkg}_FLAVOR_PKGVER)
+                set(ver ${${pkg}_FLAVOR_PKGVER})
+            elseif(${pkg}_PATCH_PKGVER)
+                set(ver ${${pkg}_PATCH_PKGVER})
+            else()
+                message(FATAL_ERROR "Illegal state. No package version found for package '${pkg}'")
+            endif()
+            # ex. PIN_CONF_PKG_CONFIG
+            string(TOUPPER "PIN_${pkg}" pkg_PIN)
+            string(REPLACE "-" "_" pkg_PIN ${pkg_PIN})
+            # ex. export PIN_CONF_PKG_CONFIG=
+            if(setup_CONTENTS MATCHES "export ${pkg_PIN}=")                
+                # ex. -PIN_CONF_PKG_CONFIG ${conf-pkg-config_PATCH_PKGVER}
+                list(APPEND pins_WIN32  "-${pkg_PIN}" "${ver}")
+                # ex. --PIN_CONF_PKG_CONFIG=${conf-pkg-config_PATCH_PKGVER}
+                list(APPEND pins_UNIX  "--${pkg_PIN}=${ver}")
+                # ex. PIN_CONF_PKG_CONFIG=${conf-pkg-config_PATCH_PKGVER}
+                list(APPEND pins_DESCR  "${pkg_PIN}=${ver}")
             endif()
         endforeach()
         string(JOIN " " pins_DESCR ${pins_DESCR})
