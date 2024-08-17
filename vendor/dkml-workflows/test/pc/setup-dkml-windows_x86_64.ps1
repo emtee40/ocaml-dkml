@@ -828,7 +828,6 @@ if (Test-Path Env:OCAML_TOPLEVEL_PATH)  { Remove-Item Env:OCAML_TOPLEVEL_PATH }
 # Pushdown context variables
 $env:PC_CI = 'true'
 $env:PC_PROJECT_DIR = $PC_PROJECT_DIR
-$env:GIT_LOCATION = $GIT_LOCATION
 
 # Pushdown input variables
 $env:FDOPEN_OPAMEXE_BOOTSTRAP = $FDOPEN_OPAMEXE_BOOTSTRAP
@@ -2044,7 +2043,7 @@ if [ "${SKIP_OPAM_MODIFICATIONS:-}" = "false" ] && [ ! -s "$opam_root/.ci.root-i
 
     # Clear any partial previous attempt
     rm -rf "$opam_root"
-
+    
     # Set --git-location variant
     if [ -n "${GIT_LOCATION:-}" ]; then
         if [ -x /usr/bin/cygpath ]; then
@@ -2222,7 +2221,7 @@ do_pins() {
         do_pin_add_NAME=$1; shift
         do_pin_add_VER=$1; shift
         # ex. "astring.1.0.2" - The double-quotes are necessary.
-        if ! grep "\"$do_pin_add_NAME.$do_pin_add_VER\"" "$opam_root/.ci.$do_pins_NAME.pinned"; then
+        if ! grep -q "\"$do_pin_add_NAME.$do_pin_add_VER\"" "$opam_root/.ci.$do_pins_NAME.pinned"; then
             opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version "$do_pin_add_NAME" "$do_pin_add_VER"
         fi
     }
