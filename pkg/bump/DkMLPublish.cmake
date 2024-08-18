@@ -56,33 +56,70 @@ function(DkMLPublish_AddArchiveTarget)
     file(TIMESTAMP ${ARCHIVEDIR}/archive-${ARG_TARGET}.mtime mtime_YYYYMMDD "%Y-%m-%d" UTC)
 
     set(outputs)
-
+    set(checked_dirty_PROJECT_SOURCE_DIR OFF)
     foreach(pkg IN ITEMS ${ARG_PROJECTS})
         FetchContent_GetProperties(${pkg})
+        set(git_ls_tree ${CMAKE_CURRENT_BINARY_DIR}/git-ls-tree/${pkg}.txt)
+        set(git_ls_tree_ARGS)
+        set(check_dirty OFF)
+        if(pkg IN_LIST DKML_SUBTREE_PROJECTS)
+            # vendor/<pkg>
+            set(git_WORKDIR "${PROJECT_SOURCE_DIR}")
+            list(APPEND git_ls_tree_ARGS vendor/${pkg})
+            # only check PROJECT_SOURCE_DIR working tree for dirty files once
+            # (for optimization, and to avoid git bailing with concurrent `git update-index`)
+            if(NOT checked_dirty_PROJECT_SOURCE_DIR)
+                set(check_dirty ON)
+                set(checked_dirty_PROJECT_SOURCE_DIR ON)
+            endif()
+        else()
+            # Isolated checkout.
+            set(git_WORKDIR "${${pkg}_SOURCE_DIR}")
+        endif()
         execute_process(
-            WORKING_DIRECTORY ${${pkg}_SOURCE_DIR}
-            COMMAND ${GIT_EXECUTABLE} ls-tree -r HEAD --name-only
+            WORKING_DIRECTORY "${git_WORKDIR}"
+            COMMAND ${GIT_EXECUTABLE} ls-tree -r HEAD --name-only ${git_ls_tree_ARGS}
             OUTPUT_VARIABLE files
             OUTPUT_STRIP_TRAILING_WHITESPACE
             COMMAND_ERROR_IS_FATAL ANY
         )
-        set(git_ls_tree ${CMAKE_CURRENT_BINARY_DIR}/git-ls-tree/${pkg}.txt)
         file(WRITE ${git_ls_tree} "${files}")
         string(REPLACE "\n" ";" absfiles "${files}")
-        list(TRANSFORM absfiles PREPEND ${${pkg}_SOURCE_DIR}/)
+        list(TRANSFORM absfiles PREPEND "${git_WORKDIR}/")
+
+        if(pkg IN_LIST DKML_SUBTREE_PROJECTS)
+            # vendor/<pkg>/x/y/z -> x/y/z
+            file(STRINGS "${git_ls_tree}" git_ls_tree_CONTENTS)
+            list(TRANSFORM git_ls_tree_CONTENTS REPLACE "^vendor/${pkg}/" "" OUTPUT_VARIABLE git_ls_tree_REROOT)
+            set(git_ls_tree_ACTUAL "${CMAKE_CURRENT_BINARY_DIR}/git-ls-tree/${pkg}.reroot.txt")
+            list(JOIN git_ls_tree_REROOT "\n" git_ls_tree_REROOT)
+            file(WRITE "${git_ls_tree_ACTUAL}" "${git_ls_tree_REROOT}")
+        else()
+            # Isolated checkout. No transformation.
+            set(git_ls_tree_ACTUAL "${git_ls_tree}")
+        endif()
+
+        set(tar_PRECMD)
+        if(check_dirty)
+            list(APPEND tar_PRECMD
+                # Verify no dirty tracked files in working tree. The
+                # source archive must correspond exactly to a clean git checkout.
+                # https://unix.stackexchange.com/a/394674
+                COMMAND
+                ${GIT_EXECUTABLE} update-index --really-refresh
+                COMMAND
+                ${GIT_EXECUTABLE} diff-index --quiet HEAD)
+        endif()
+
         set(output ${ARCHIVEDIR}/src.${pkg}.tar.gz)
         add_custom_command(
-            WORKING_DIRECTORY ${${pkg}_SOURCE_DIR}
+            # Always make the source archive relative to the root of the project,
+            # regardless if it is a subtree project
+            WORKING_DIRECTORY "${${pkg}_SOURCE_DIR}"
             OUTPUT ${output}
             DEPENDS ${absfiles}
 
-            # Verify no dirty tracked files in working tree. The
-            # source archive must correspond exactly to a clean git checkout.
-            # https://unix.stackexchange.com/a/394674
-            COMMAND
-            ${GIT_EXECUTABLE} update-index --really-refresh
-            COMMAND
-            ${GIT_EXECUTABLE} diff-index --quiet HEAD
+            ${tar_PRECMD}
 
             # Create tarball
             COMMAND
@@ -92,7 +129,7 @@ function(DkMLPublish_AddArchiveTarget)
 
             # --mtime format is not documented. Use https://gitlab.kitware.com/cmake/cmake/-/blob/master/Tests/RunCMake/CommandLineTar/mtime-tests.cmake
             --mtime=${mtime_YYYYMMDD}UTC
-            --files-from=${git_ls_tree}
+            --files-from=${git_ls_tree_ACTUAL}
         )
         list(APPEND outputs ${output})
     endforeach()
