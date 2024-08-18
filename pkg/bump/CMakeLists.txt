@@ -643,8 +643,9 @@ function(add_GitPush_command)
             DEPENDS ${ARG_DEPENDS}
 
             # git push branch and tag
-            COMMAND "${GIT_EXECUTABLE}" subtree push ${subtree_args} ${${ARG_CONTEXT}_BRANCH}
-            COMMAND "${GIT_EXECUTABLE}" subtree push ${subtree_args} ${refspec}
+            COMMAND ${CMAKE_COMMAND} -E echo "Pushing git subtree. This can take several minutes, especially on Windows."
+            COMMAND "${GIT_EXECUTABLE}" subtree push -q ${subtree_args} ${${ARG_CONTEXT}_BRANCH}
+            COMMAND "${GIT_EXECUTABLE}" subtree push -q ${subtree_args} ${refspec}
             COMMAND ${CMAKE_COMMAND} -E copy_if_different ${newSemverFile} ${ARG_OUTPUT_FILE}
 
             VERBATIM
