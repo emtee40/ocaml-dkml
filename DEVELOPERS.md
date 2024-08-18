@@ -287,5 +287,7 @@ with-dkml build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root build\pkg\bump\.ci\
 ### dkml-runtime-apps
 
 ```powershell
-with-dkml build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root build\pkg\bump\.ci\o -- dune build --root vendor/dkml-runtime-apps -w
+with-dkml build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root build\pkg\bump\.ci\o -- dune build --root vendor/dkml-runtime-apps '@install' -w
+
+vendor\dkml-runtime-apps> with-dkml ..\..\build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root ..\..\build\pkg\bump\.ci\o -- dune build *.opam
 ```
