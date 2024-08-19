@@ -30,7 +30,7 @@ if(possibleTag STREQUAL ${DKML_VERSION_SEMVER_NEW})
     return()
 endif()
 
-message(WARNING "If the next `git tag` command fails and you want to force the tags to be moved, place an empty file at '${PROJECT_BINARY_DIR}/force-${regex_DKML_VERSION_SEMVER_NEW}'.")
+message(WARNING "If the next `git tag` command fails and you want to force the tags to be moved, place an empty file at '${DKML_FORCE_VERSION_FILE}'.")
 execute_process(
     COMMAND
     ${GIT_EXECUTABLE} tag ${tag_ARGS} -a ${DKML_VERSION_SEMVER_NEW} -m ${DKML_VERSION_OPAMVER_NEW}

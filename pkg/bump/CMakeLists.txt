@@ -620,7 +620,8 @@ function(add_GitPush_command)
         string(APPEND refspec "${ARG_TAG_SUFFIX}")
     endif()
 
-    if(EXISTS "${PROJECT_BINARY_DIR}/force-${DKML_VERSION_SEMVER_NEW}")
+    set(DKML_FORCE_VERSION_FILE "${PROJECT_BINARY_DIR}/force-${DKML_VERSION_SEMVER}")
+    if(EXISTS "${DKML_FORCE_VERSION_FILE}")
         set(DKML_FORCE_VERSION ON)
     else()
         set(DKML_FORCE_VERSION OFF)
@@ -674,6 +675,7 @@ function(add_GitPush_command)
             -D "DKML_VERSION_SEMVER_NEW=${DKML_VERSION_SEMVER}${ARG_TAG_SUFFIX}"
             -D "DKML_VERSION_OPAMVER_NEW=${DKML_VERSION_OPAMVER}"
             -D "DKML_FORCE_VERSION=${DKML_FORCE_VERSION}"
+            -D "DKML_FORCE_VERSION_FILE=${DKML_FORCE_VERSION_FILE}"
             -P ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/idempotent-tag.cmake
             COMMAND ${CMAKE_COMMAND} -E copy_if_different ${newSemverFile} ${ARG_OUTPUT_FILE}
 
