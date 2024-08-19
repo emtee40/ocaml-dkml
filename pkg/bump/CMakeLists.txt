@@ -656,28 +656,19 @@ function(add_GitPush_command)
             #  cf. https://stackoverflow.com/questions/16134975/how-can-i-reduce-the-ever-increasing-time-to-push-a-subtree
             #  cf. https://medium.com/@porteneuve/mastering-git-subtrees-943d29a798ec
             COMMAND ${CMAKE_COMMAND} -E echo "Pushing git subtree. This can take several minutes, especially on Windows."
-            #   split the history onto a new subtree-<pkg> branch
+            #   split the history, and then tag+branch as subtree-<pkg>
             COMMAND
                 ${CMAKE_COMMAND}
                 -D CMAKE_MESSAGE_CONTEXT=${ARG_CONTEXT}
                 -D "GIT_EXECUTABLE=${GIT_EXECUTABLE}"
-                -D "BRANCH_TO_DELETE=subtree-${ARG_CONTEXT}"
-                -P ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/branch-delete.cmake
-            COMMAND "${GIT_EXECUTABLE}" subtree split --prefix "vendor/${ARG_CONTEXT}" --rejoin ${SUBTREE_SQUASH_OPTIONS} "--branch=subtree-${ARG_CONTEXT}"
-            #   tag the subtree-<pkg> branch
-            COMMAND
-                ${CMAKE_COMMAND}
-                -D CMAKE_MESSAGE_CONTEXT=${ARG_CONTEXT}
-                -D "GIT_EXECUTABLE=${GIT_EXECUTABLE}"
-                -D "DKML_VERSION_SEMVER_NEW=subtree-${ARG_CONTEXT}-${DKML_VERSION_SEMVER}${ARG_TAG_SUFFIX}"
-                -D "DKML_VERSION_OPAMVER_NEW=${DKML_VERSION_OPAMVER}"
-                -D "DKML_FORCE_VERSION=ON"
-                -D "TAG_REF=subtree-${ARG_CONTEXT}"
-                -P ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/idempotent-tag.cmake
-            #   push to remote url
-            COMMAND "${GIT_EXECUTABLE}" push "${${ARG_CONTEXT}_URL}" "subtree-${ARG_CONTEXT}:${${ARG_CONTEXT}_BRANCH}"
-            #   push tag. we force overwrite using (+) because if parent project `dkml` has been / will be retagged, so should subtrees.
-            COMMAND "${GIT_EXECUTABLE}" push "${${ARG_CONTEXT}_URL}" "+subtree-${ARG_CONTEXT}-${DKML_VERSION_SEMVER}${ARG_TAG_SUFFIX}:${DKML_VERSION_SEMVER}${ARG_TAG_SUFFIX}"
+                -D "SUBTREE_PREFIX=vendor/${ARG_CONTEXT}"
+                -D "SUBTREE_REF=subtree-${ARG_CONTEXT}"
+                -D "SUBTREE_SQUASH_OPTIONS=${SUBTREE_SQUASH_OPTIONS}"
+                -P ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/subtree-split.cmake
+            #   push branch to remote url
+            COMMAND "${GIT_EXECUTABLE}" push "${${ARG_CONTEXT}_URL}" "refs/heads/subtree-${ARG_CONTEXT}:${${ARG_CONTEXT}_BRANCH}"
+            #   push tag to remote url. we force overwrite using (+) because if parent project `dkml` has been / will be retagged, so should subtrees.
+            COMMAND "${GIT_EXECUTABLE}" push "${${ARG_CONTEXT}_URL}" "+refs/tags/subtree-${ARG_CONTEXT}:${DKML_VERSION_SEMVER}${ARG_TAG_SUFFIX}"
 
             COMMAND ${CMAKE_COMMAND} -E copy_if_different ${newSemverFile} ${ARG_OUTPUT_FILE}
 
