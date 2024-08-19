@@ -1135,7 +1135,7 @@ function(add_Flavor_targets)
         #  [dkml/pkg/bump/CMakeLists.txt]
         #CMAKE_SIZEOF_VOID_P will not be available. But irrelevant (mostly) some dkml-install-api will install bytecode and
         #components (like dkml-component-ocamlrun) will be selected based on dkml-install target ABI not this 64-bit clang64 host ABI.
-        list(APPEND compiler_ADJUNCT_PACKAGES msys2-clang64 host-arch-x86_64)
+        list(APPEND compiler_ADJUNCT_PACKAGES msys2-clang64 host-arch-x86_64 dkml-host-abi-windows_x86_64)
     endif()
     string(JOIN " " compiler_ADJUNCT_PACKAGES_SPACES ${compiler_ADJUNCT_PACKAGES})
 

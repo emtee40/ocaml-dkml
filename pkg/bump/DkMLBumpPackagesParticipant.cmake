@@ -360,10 +360,10 @@ function(DkMLBumpPackagesParticipant_DkmlFlavorOpamUpgrade)
         list(APPEND buildspec ${i_buildspec})
 
         # Make a list of:
-        # [ "dkml-desktop-copy-installed" "--file-list" "opamshow-dkml-apps.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+        # [ "dkml-desktop-copy-installed" "--file-list" "opamshow-dkml-apps.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
         set(i_installspec ${pkgs})
         list(TRANSFORM i_installspec REPLACE "[A-Za-z0-9_-]+"
-            [==[  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-\0.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/I_DST" ]]==])
+            [==[  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-\0.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/I_DST" ]]==])
         list(TRANSFORM i_installspec REPLACE I_DST ${GLOBALTYPE})
         list(APPEND installspec ${i_installspec})
     endforeach()

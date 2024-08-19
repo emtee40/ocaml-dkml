@@ -49,13 +49,13 @@ Configuration File ``dkmlvars-v2.sexp``
 
    The directories are checked in order, and the first directory that contains ``dkmlvars-v2.sexp`` is used.
 
-   The value will have been set automatically by the Windows Diskuv OCaml installer or by ``makeit init-dev``
+   The value will have been set automatically by the Windows DkML installer or by ``makeit init-dev``
    of :ref:`SDKProjects` for non-Windows OSes.
 
 Configuration File ``vsstudio.dir.txt``
    This file is located using the same directory search as ``dkmlvars-v2.sexp``.
    It only needs to be present when Visual Studio has been detected, and is set automatically by
-   the Windows Diskuv OCaml installer.
+   the Windows DkML installer.
 
    The value is the location of the Visual Studio installation.
    Example: ``C:\DiskuvOCaml\BuildTools``
@@ -63,7 +63,7 @@ Configuration File ``vsstudio.dir.txt``
 Configuration File ``vsstudio.msvs_preference.txt``
    This file is located using the same directory search as ``dkmlvars-v2.sexp``.
    It only needs to be present when Visual Studio has been detected, and is set automatically by
-   the Windows Diskuv OCaml installer.
+   the Windows DkML installer.
 
    The value is the ``MSVS_PREFERENCE`` environment variable that must be set
    to locate the Visual Studio installation when https://github.com/metastack/msvs-tools's or
@@ -72,7 +72,7 @@ Configuration File ``vsstudio.msvs_preference.txt``
 Configuration File ``vsstudio.cmake_generator.txt``
    This file is located using the same directory search as ``dkmlvars-v2.sexp``.
    It only needs to be present when Visual Studio has been detected, and is set automatically by
-   the Windows Diskuv OCaml installer.
+   the Windows DkML installer.
 
    The value is a recommendation for which `CMake Generator <https://cmake.org/cmake/help/v3.22/manual/cmake-generators.7.html#visual-studio-generators>`_
    to use when setting up a CMake project initially.
@@ -104,9 +104,13 @@ Sequence of operations
       - ``windows_arm64``
       - ``windows_arm32``
 
-      The compiler probing is done when with-dkml is compiled. During Diskuv OCaml installation on Windows a
+      The compiler probing is done when with-dkml is compiled. During DkML installation on Windows a
       ``with-dkml`` will be placed on the PATH; that will use the Visual Studio compiler detected at installation time.
 
+      ``DKML_TARGET_ABI`` is the target C compiler of the native findlib toolchain.
+      However, we might have multiple findlib cross-compiler toolchains (``dune -x android_xxx``) which are
+      targets of different C compilers; ``DKML_TARGET_ABI`` does not specify any of the cross-compiler toolchains.
+     
       .. note::
 
          An :ref:`SDK Project <SDKProjects>` supports cross-compilation and can have many ``with-dkml`` binaries. Any
