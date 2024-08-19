@@ -291,3 +291,10 @@ with-dkml build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root build\pkg\bump\.ci\
 
 vendor\dkml-runtime-apps> with-dkml ..\..\build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root ..\..\build\pkg\bump\.ci\o -- dune build *.opam
 ```
+
+### diskuv-opam-repository
+
+```powershell
+build\pkg\bump\.ci\sd4\bs\bin\opam.exe repository --root build\pkg\bump\.ci\o remove diskuv --all
+build\pkg\bump\.ci\sd4\bs\bin\opam.exe repository --root build\pkg\bump\.ci\o add diskuv "file://$(cygpath -am .)/vendor/diskuv-opam-repository"
+```
