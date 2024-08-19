@@ -86,6 +86,8 @@ endmacro()
 # For example, if the latest conf-pkg-config is 3+cpkgs in
 # diskuv-opam-repository then conf-pkg-config_PATCH_PKGVER will be
 # set to 3+cpkgs.
+#
+# [dkml-host-abi-*] and [dkml-target-abi-*] packages are always excluded.
 function(DkMLPatches_GetPackageVersions)
     set(noValues)
     set(singleValues DUNE_VERSION OCAML_VERSION OUTPUT_PKGS_VARIABLE OUTPUT_PKGVERS_VARIABLE)
@@ -106,6 +108,8 @@ function(DkMLPatches_GetPackageVersions)
         cmake_path(GET pkgdir FILENAME pkgname)
 
         if(pkgname IN_LIST DKML_PATCH_EXCLUDE_PACKAGES OR pkgname IN_LIST ARG_EXCLUDE_PACKAGES)
+            continue()
+        elseif(pkgname MATCHES "^dkml-host-abi-" OR pkgname MATCHES "^dkml-target-abi-")
             continue()
         elseif(pkgname IN_LIST ARG_SYNCHRONIZED_PACKAGES)
             # Ex. dkml-runtimelib, with-dkml
