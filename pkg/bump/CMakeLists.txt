@@ -654,12 +654,18 @@ function(add_GitPush_command)
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
             DEPENDS ${ARG_DEPENDS}
 
-            # git push branch and tag
+            # git subtree push but with speed
+            #  cf. https://stackoverflow.com/questions/16134975/how-can-i-reduce-the-ever-increasing-time-to-push-a-subtree
+            #  cf. https://medium.com/@porteneuve/mastering-git-subtrees-943d29a798ec
             COMMAND ${CMAKE_COMMAND} -E echo "Pushing git subtree. This can take several minutes, especially on Windows."
-            COMMAND "${GIT_EXECUTABLE}" subtree push --rejoin ${SUBTREE_SQUASH_OPTIONS} ${subtree_args} ${${ARG_CONTEXT}_BRANCH}
-            # Creates a branch, not a tag! But since the parent `dkml` project is tagged, we don't have to tag
-            # the subtrees (although it would be nice albeit more complex!).
-            #   COMMAND "${GIT_EXECUTABLE}" subtree push -q ${subtree_args} ${refspec}
+            #   split the history onto a new subtree-<pkg> branch
+            COMMAND "${GIT_EXECUTABLE}" branch --delete --force "subtree-${ARG_CONTEXT}"
+            COMMAND "${GIT_EXECUTABLE}" subtree split --rejoin ${SUBTREE_SQUASH_OPTIONS} "--branch=subtree-${ARG_CONTEXT}"
+            #   push to remote url
+            COMMAND "${GIT_EXECUTABLE}" push "${${ARG_CONTEXT}_URL}" "subtree-${ARG_CONTEXT}:${${ARG_CONTEXT}_BRANCH}"
+            #   push tag. we force overwrite using (+) because if parent project `dkml` has been retagged, so should subtrees.
+            COMMAND "${GIT_EXECUTABLE}" push "${${ARG_CONTEXT}_URL}" "+subtree-${ARG_CONTEXT}:${DKML_VERSION_SEMVER}"
+
             COMMAND ${CMAKE_COMMAND} -E copy_if_different ${newSemverFile} ${ARG_OUTPUT_FILE}
 
             VERBATIM
