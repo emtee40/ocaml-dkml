@@ -203,10 +203,10 @@ function(DkMLPublish_PublishAssetsTarget)
     set(depends)
 
     if(DKML_INSTALL_OCAML_NETWORK)
-        set(tnetwork ${anyrun_OPAMROOT}/${DKML_VERSION_CMAKEVER}/share/dkml-installer-ocaml-network/t)
+        set(tnetwork ${anyrun_OPAMROOT}/dkml/share/dkml-installer-ocaml-network/t)
     endif()
     if(DKML_INSTALL_OCAML_OFFLINE)
-        set(toffline ${anyrun_OPAMROOT}/${DKML_VERSION_CMAKEVER}/share/dkml-installer-ocaml-offline/t)
+        set(toffline ${anyrun_OPAMROOT}/dkml/share/dkml-installer-ocaml-offline/t)
     endif()
 
     # Procedure
