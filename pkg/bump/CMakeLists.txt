@@ -869,7 +869,7 @@ DkMLPatches_GetPackageVersions(
     ${dkml-runtime-apps_PACKAGES}
     ${dune_PACKAGES}
     ${dkml-component_PACKAGES}
-    ${dkml-installer_PACKAGES}
+    ${dkml-installers_PACKAGES}
     ${dkml-runtime_PACKAGES}
     ${dkml-compiler_PACKAGES}
     ${dkml-workflows_PACKAGES}
@@ -1465,6 +1465,15 @@ function(add_Installer_target)
         OUTPUT_SWITCH_NAME SWITCH_NAME
         OUTPUT_WORKING_DIRECTORY opamsw
         OUTPUT_SWITCH_PATH switchPath)
+    
+    set(dkml-installer_REL_OPAMFILES)
+    if(DKML_INSTALL_OCAML_NETWORK)
+        list(APPEND dkml-installer_REL_OPAMFILES "${dkml-installer-ocaml_REL_SOURCE_DIR}/dkml-installer-ocaml-network.opam")
+    endif()
+    if(DKML_INSTALL_OCAML_OFFLINE)
+        list(APPEND dkml-installer_REL_OPAMFILES "${dkml-installer-ocaml-byte_REL_SOURCE_DIR}/dkml-installer-ocaml-offline.opam")
+    endif()
+    list(JOIN dkml-installer_REL_OPAMFILES " " dkml-installer_SPACED_REL_OPAMFILES)
 
     FetchContent_GetProperties(dkml-compiler) # upsert-installer
     FetchContent_GetProperties(dkml-component-desktop) # upsert-installer
@@ -1476,8 +1485,7 @@ function(add_Installer_target)
     FetchContent_GetProperties(dkml-installer-ocaml) # upsert-installer
     FetchContent_GetProperties(dkml-installer-ocaml-byte) # upsert-installer
 
-    foreach(p IN ITEMS
-        upsert-installer)
+    foreach(p IN ITEMS upsert-installer)
         configure_file(${p}.in.sh ${opamsw}/${p}.sh
             FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
             @ONLY NEWLINE_STYLE UNIX)
@@ -1486,22 +1494,41 @@ function(add_Installer_target)
     anyrun(${opamsw}/upsert-installer.sh upsert_installer_COMMAND)
 
     set(byproducts)
-    set(byproducts_byte ${byproducts}
-        bundle-dkml-byte-generic-i.sh   bundle-dkml-byte-generic-u.sh)
-    set(byproducts_native ${byproducts}
-        bundle-dkml-native-generic-i.sh bundle-dkml-native-generic-u.sh)
+    set(byproducts_native ${byproducts})
+    set(byproducts_byte ${byproducts})
+    set(installer_DEPENDS)
+    set(installer_SHORTREF)
+    if(DKML_INSTALL_OCAML_NETWORK)
+        list(APPEND byproducts_native bundle-dkml-native-generic-i.sh bundle-dkml-native-generic-u.sh)
+        list(APPEND installer_DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/depends/dkml-installer-ocaml.shortref")
+        list(APPEND installer_SHORTREF "${dkml-installer-ocaml_SHORTREF}")
+    endif()
+    if(DKML_INSTALL_OCAML_OFFLINE)
+        list(APPEND byproducts_byte bundle-dkml-byte-generic-i.sh   bundle-dkml-byte-generic-u.sh)
+        list(APPEND installer_DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/depends/dkml-installer-ocaml-byte.shortref")
+        list(APPEND installer_SHORTREF "${dkml-installer-ocaml-byte_SHORTREF}")
+    endif()
+    list(JOIN installer_SHORTREF "," installer_COMMA_SHORTREF)
 
     if(DKML_TARGET_ABI STREQUAL windows_x86 OR DKML_TARGET_ABI STREQUAL windows_x86_64)
-        list(APPEND byproducts_byte
-            unsigned-dkml-byte-${DKML_TARGET_ABI}-i-${DKML_VERSION_SEMVER}.exe
-            unsigned-dkml-byte-${DKML_TARGET_ABI}-u-${DKML_VERSION_SEMVER}.exe)
-        list(APPEND byproducts_native
-            unsigned-dkml-native-${DKML_TARGET_ABI}-i-${DKML_VERSION_SEMVER}.exe
-            unsigned-dkml-native-${DKML_TARGET_ABI}-u-${DKML_VERSION_SEMVER}.exe)
+        if(DKML_INSTALL_OCAML_NETWORK)
+            list(APPEND byproducts_native
+                unsigned-dkml-native-${DKML_TARGET_ABI}-i-${DKML_VERSION_SEMVER}.exe
+                unsigned-dkml-native-${DKML_TARGET_ABI}-u-${DKML_VERSION_SEMVER}.exe)
+        endif()
+        if(DKML_INSTALL_OCAML_OFFLINE)
+            list(APPEND byproducts_byte
+                unsigned-dkml-byte-${DKML_TARGET_ABI}-i-${DKML_VERSION_SEMVER}.exe
+                unsigned-dkml-byte-${DKML_TARGET_ABI}-u-${DKML_VERSION_SEMVER}.exe)
+        endif()
     endif()
 
-    list(TRANSFORM byproducts_byte PREPEND ${switchPath}/share/dkml-installer-ocaml-offline/t/)
-    list(TRANSFORM byproducts_native PREPEND ${switchPath}/share/dkml-installer-ocaml-network/t/)
+    if(DKML_INSTALL_OCAML_NETWORK)
+        list(TRANSFORM byproducts_native PREPEND ${switchPath}/share/dkml-installer-ocaml-network/t/)
+    endif()
+    if(DKML_INSTALL_OCAML_OFFLINE)
+        list(TRANSFORM byproducts_byte PREPEND ${switchPath}/share/dkml-installer-ocaml-offline/t/)
+    endif()
 
     set(installerCreated ${opamsw}/installer.created)
     #   Makefile Generators delete BYPRODUCTS during cmake clean. So no deleting files in opam switches.
@@ -1530,8 +1557,7 @@ function(add_Installer_target)
         ${CMAKE_CURRENT_BINARY_DIR}/depends/dkml-component-ocamlrun.shortref
         ${CMAKE_CURRENT_BINARY_DIR}/depends/dkml-component-opam.shortref
         ${CMAKE_CURRENT_BINARY_DIR}/depends/dkml-component-unixutils.shortref
-        ${CMAKE_CURRENT_BINARY_DIR}/depends/dkml-installer-ocaml-byte.shortref
-        ${CMAKE_CURRENT_BINARY_DIR}/depends/dkml-installer-ocaml.shortref
+        ${installer_DEPENDS}
         COMMENT "Creating/updating ${DKML_VERSION_CMAKEVER} installer"
         COMMAND ${upsert_installer_COMMAND}
         COMMAND ${CMAKE_COMMAND} -E touch ${installerCreated}

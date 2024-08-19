@@ -155,20 +155,12 @@ set(dkml-component-ocamlcompiler_PACKAGES
 set(dkml-component-ocamlrun_PACKAGES
     dkml-component-offline-ocamlrun
     dkml-component-staging-ocamlrun)
-set(dkml-installer-ocaml_PACKAGES
-    dkml-installer-ocaml-common
-    dkml-installer-ocaml-network)
-set(dkml-installer-ocaml-byte_PACKAGES
-    dkml-installer-ocaml-offline)
 
 set(dkml-component_PACKAGES
     ${dkml-component-desktop_PACKAGES}
     ${dkml-component-ocamlcompiler_PACKAGES}
     ${dkml-component-ocamlrun_PACKAGES}
     ${dkml-component-ocaml_PACKAGES})
-set(dkml-installer_PACKAGES
-    ${dkml-installer-ocaml_PACKAGES}
-    ${dkml-installer-ocaml-byte_PACKAGES})
 
 # These are packages that have opam version numbers like 4.14.0~v1.2.1~prerel10
 set(DKML_COMPILER_DKML_VERSIONED_PACKAGES
@@ -178,6 +170,22 @@ set(DKML_COMPILER_DKML_VERSIONED_PACKAGES
 # These are packages that have opam version numbers like 4.14.0
 set(DKML_COMPILER_VERSIONED_PACKAGES
     conf-dkml-cross-toolchain)
+
+# Installers
+#
+set(DKML_INSTALL_OCAML_NETWORK ON)
+#   We are deprecating the `dkml-installer-ocaml-offline` since unused and doubles build time.
+set(DKML_INSTALL_OCAML_OFFLINE OFF)
+#
+set(dkml-installer-ocaml_PACKAGES dkml-installer-ocaml-common dkml-installer-ocaml-network)
+set(dkml-installer-ocaml-byte_PACKAGES dkml-installer-ocaml-offline)
+set(dkml-installer_PACKAGES)
+if(DKML_INSTALL_OCAML_NETWORK)
+    list(APPEND dkml-installer_PACKAGES ${dkml-installer-ocaml_PACKAGES})
+endif()
+if(DKML_INSTALL_OCAML_OFFLINE)
+    list(APPEND dkml-installer_PACKAGES ${dkml-installer-ocaml-byte_PACKAGES})
+endif()
 
 # Sanity check
 foreach(PROJECT IN LISTS DKML_PROJECTS_PREDUNE DKML_PROJECTS_POSTDUNE)
