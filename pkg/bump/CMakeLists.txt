@@ -659,7 +659,12 @@ function(add_GitPush_command)
             #  cf. https://medium.com/@porteneuve/mastering-git-subtrees-943d29a798ec
             COMMAND ${CMAKE_COMMAND} -E echo "Pushing git subtree. This can take several minutes, especially on Windows."
             #   split the history onto a new subtree-<pkg> branch
-            COMMAND "${GIT_EXECUTABLE}" branch --delete --force "subtree-${ARG_CONTEXT}"
+            COMMAND
+                ${CMAKE_COMMAND}
+                -D CMAKE_MESSAGE_CONTEXT=${ARG_CONTEXT}
+                -D "GIT_EXECUTABLE=${GIT_EXECUTABLE}"
+                -D "BRANCH_TO_DELETE=subtree-${ARG_CONTEXT}"
+                -P ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/branch-delete.cmake
             COMMAND "${GIT_EXECUTABLE}" subtree split --rejoin ${SUBTREE_SQUASH_OPTIONS} "--branch=subtree-${ARG_CONTEXT}"
             #   push to remote url
             COMMAND "${GIT_EXECUTABLE}" push "${${ARG_CONTEXT}_URL}" "subtree-${ARG_CONTEXT}:${${ARG_CONTEXT}_BRANCH}"
