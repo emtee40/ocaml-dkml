@@ -646,15 +646,13 @@ function(add_GitPush_command)
     file(REMOVE ${ARG_OUTPUT_FILE})
 
     if(ARG_CONTEXT IN_LIST DKML_SUBTREE_PROJECTS)
-        # Reference: https://www.atlassian.com/git/tutorials/git-subtree
-        set(subtree_args --prefix "vendor/${ARG_CONTEXT}" "${${ARG_CONTEXT}_URL}")
-
         add_custom_command(
             OUTPUT ${ARG_OUTPUT_FILE}
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
             DEPENDS ${ARG_DEPENDS}
 
             # git subtree push but with speed
+            #  cf. https://www.atlassian.com/git/tutorials/git-subtree
             #  cf. https://stackoverflow.com/questions/16134975/how-can-i-reduce-the-ever-increasing-time-to-push-a-subtree
             #  cf. https://medium.com/@porteneuve/mastering-git-subtrees-943d29a798ec
             COMMAND ${CMAKE_COMMAND} -E echo "Pushing git subtree. This can take several minutes, especially on Windows."
@@ -665,7 +663,7 @@ function(add_GitPush_command)
                 -D "GIT_EXECUTABLE=${GIT_EXECUTABLE}"
                 -D "BRANCH_TO_DELETE=subtree-${ARG_CONTEXT}"
                 -P ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/branch-delete.cmake
-            COMMAND "${GIT_EXECUTABLE}" subtree split --rejoin ${SUBTREE_SQUASH_OPTIONS} "--branch=subtree-${ARG_CONTEXT}"
+            COMMAND "${GIT_EXECUTABLE}" subtree split --prefix "vendor/${ARG_CONTEXT}" --rejoin ${SUBTREE_SQUASH_OPTIONS} "--branch=subtree-${ARG_CONTEXT}"
             #   push to remote url
             COMMAND "${GIT_EXECUTABLE}" push "${${ARG_CONTEXT}_URL}" "subtree-${ARG_CONTEXT}:${${ARG_CONTEXT}_BRANCH}"
             #   push tag. we force overwrite using (+) because if parent project `dkml` has been retagged, so should subtrees.
