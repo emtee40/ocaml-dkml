@@ -35,15 +35,20 @@ file(READ ${PROJECT_SOURCE_DIR}/ocaml_opam_repository_gitref.txt OCAML_OPAM_REPO
 # Ported to [git subtree]
 # --------
 
+# Since manpage https://manpages.debian.org/testing/git-man/git-subtree.1.en.html says:
+# > If you do all your merges with --squash, make sure you also use --squash when you split --rejoin.
+# we have the option in a variable to be used for both push (which does a split) and pull (which does a merge).
+set(SUBTREE_SQUASH --squash)
+
 foreach(SUBTREE_PROJECT IN LISTS DKML_SUBTREE_PROJECTS)
     # Reference: https://www.atlassian.com/git/tutorials/git-subtree
     set(subtree_URL "${${SUBTREE_PROJECT}_URL}")
     set(subtree_BRANCH "${${SUBTREE_PROJECT}_BRANCH}")
-    set(subtree_args --prefix "vendor/${SUBTREE_PROJECT}" "${subtree_URL}" "${subtree_BRANCH}" --squash)
+    set(subtree_args --prefix "vendor/${SUBTREE_PROJECT}" "${subtree_URL}" "${subtree_BRANCH}")
     if(IS_DIRECTORY "${PROJECT_SOURCE_DIR}/vendor/${SUBTREE_PROJECT}")
         execute_process(
             WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-            COMMAND "${GIT_EXECUTABLE}" subtree pull ${subtree_args}
+            COMMAND "${GIT_EXECUTABLE}" subtree pull ${SUBTREE_SQUASH} ${subtree_args}
             COMMAND_ECHO STDOUT
             COMMAND_ERROR_IS_FATAL ANY
         )
@@ -651,7 +656,7 @@ function(add_GitPush_command)
 
             # git push branch and tag
             COMMAND ${CMAKE_COMMAND} -E echo "Pushing git subtree. This can take several minutes, especially on Windows."
-            COMMAND "${GIT_EXECUTABLE}" subtree push -q ${subtree_args} ${${ARG_CONTEXT}_BRANCH}
+            COMMAND "${GIT_EXECUTABLE}" subtree push --rejoin ${SUBTREE_SQUASH} ${subtree_args} ${${ARG_CONTEXT}_BRANCH}
             # Creates a branch, not a tag! But since the parent `dkml` project is tagged, we don't have to tag
             # the subtrees (although it would be nice albeit more complex!).
             #   COMMAND "${GIT_EXECUTABLE}" subtree push -q ${subtree_args} ${refspec}
