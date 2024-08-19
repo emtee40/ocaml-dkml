@@ -1283,7 +1283,6 @@ runs:
             do_pin_add dkml-install-runner "${PIN_DKML_INSTALL_RUNNER}"
             do_pin_add dkml-installer-ocaml-common "${PIN_DKML_INSTALLER_OCAML_COMMON}"
             do_pin_add dkml-installer-ocaml-network "${PIN_DKML_INSTALLER_OCAML_NETWORK}"
-            do_pin_add dkml-installer-ocaml-offline "${PIN_DKML_INSTALLER_OCAML_OFFLINE}"
             do_pin_add dkml-package-console "${PIN_DKML_PACKAGE_CONSOLE}"
             do_pin_add dkml-runtime-common "${PIN_DKML_RUNTIME_COMMON}"
             do_pin_add dkml-runtime-common-native "${PIN_DKML_RUNTIME_COMMON_NATIVE}"
@@ -1778,7 +1777,7 @@ runs:
       shell: bash
       run: |
         set -x
-        echo '497991-${{ steps.full_matrix_vars.outputs.dkml_host_abi }}-${{ steps.full_matrix_vars.outputs.opam_abi }}' > .ci/sd4/cachekey.opam.binaries
+        echo '468604-${{ steps.full_matrix_vars.outputs.dkml_host_abi }}-${{ steps.full_matrix_vars.outputs.opam_abi }}' > .ci/sd4/cachekey.opam.binaries
         echo '${{ steps.full_matrix_vars.outputs.abi_pattern }}-${{ steps.full_matrix_vars.outputs.vsstudio_arch }}-${{ steps.full_matrix_vars.outputs.vsstudio_hostarch }}-${{ steps.full_matrix_vars.outputs.vsstudio_dir }}-${{ steps.full_matrix_vars.outputs.vsstudio_vcvarsver }}-${{ steps.full_matrix_vars.outputs.vsstudio_winsdkver }}-${{ steps.full_matrix_vars.outputs.vsstudio_msvspreference }}-${{ steps.full_matrix_vars.outputs.vsstudio_cmakegenerator }}' > .ci/sd4/cachekey.vsstudio
         echo '${{ inputs.OCAML_COMPILER }}-${{ inputs.DISKUV_OPAM_REPOSITORY }}-${{ inputs.DKML_COMPILER }}-${{ inputs.CONF_DKML_CROSS_TOOLCHAIN }}' > .ci/sd4/cachekey.ci.inputs
 
@@ -1904,7 +1903,6 @@ runs:
         PIN_DKML_INSTALL: '0.5.2'
         PIN_DKML_INSTALLER_OCAML_COMMON: '2.1.2'
         PIN_DKML_INSTALLER_OCAML_NETWORK: '2.1.2'
-        PIN_DKML_INSTALLER_OCAML_OFFLINE: '2.1.2'
         PIN_DKML_PACKAGE_CONSOLE: '0.5.2'
         PIN_DKML_RUNTIME_COMMON_NATIVE: '2.1.2'
         PIN_DKML_RUNTIME_COMMON: '2.1.2'
