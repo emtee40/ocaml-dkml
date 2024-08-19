@@ -651,7 +651,9 @@ function(add_GitPush_command)
             # git push branch and tag
             COMMAND ${CMAKE_COMMAND} -E echo "Pushing git subtree. This can take several minutes, especially on Windows."
             COMMAND "${GIT_EXECUTABLE}" subtree push -q ${subtree_args} ${${ARG_CONTEXT}_BRANCH}
-            COMMAND "${GIT_EXECUTABLE}" subtree push -q ${subtree_args} ${refspec}
+            # Creates a branch, not a tag! But since the parent `dkml` project is tagged, we don't have to tag
+            # the subtrees (although it would be nice albeit more complex!).
+            #   COMMAND "${GIT_EXECUTABLE}" subtree push -q ${subtree_args} ${refspec}
             COMMAND ${CMAKE_COMMAND} -E copy_if_different ${newSemverFile} ${ARG_OUTPUT_FILE}
 
             VERBATIM
