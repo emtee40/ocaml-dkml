@@ -3,11 +3,11 @@ if(NOT GIT_EXECUTABLE OR
     message(FATAL_ERROR "Invalid idempotent-tag.cmake arguments")
 endif()
 
-set(tar_ARGS)
+set(tag_ARGS)
 
-if(DKML_VERSION_PRERELEASE_NEW)
+if(DKML_VERSION_PRERELEASE_NEW OR DKML_FORCE_VERSION)
     # Prereleases can always be overwritten, so force overwrite the git tag if present.
-    list(APPEND tar_ARGS --force)
+    list(APPEND tag_ARGS --force)
 endif()
 
 # Does not re-tag in PRERELEASE when the tag is already on HEAD.
@@ -30,8 +30,10 @@ if(possibleTag STREQUAL ${DKML_VERSION_SEMVER_NEW})
     return()
 endif()
 
+message(WARNING "If the next `git tag` command fails and you want to force the tags to be moved, place an empty file at '${PROJECT_BINARY_DIR}/force-${regex_DKML_VERSION_SEMVER_NEW}'.")
 execute_process(
     COMMAND
-    ${GIT_EXECUTABLE} tag ${tar_ARGS} -a ${DKML_VERSION_SEMVER_NEW} -m ${DKML_VERSION_OPAMVER_NEW}
+    ${GIT_EXECUTABLE} tag ${tag_ARGS} -a ${DKML_VERSION_SEMVER_NEW} -m ${DKML_VERSION_OPAMVER_NEW}
+    COMMAND_ECHO STDOUT
     COMMAND_ERROR_IS_FATAL ANY
 )
