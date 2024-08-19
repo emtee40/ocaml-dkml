@@ -1,0 +1,13 @@
+opam-version: "2.0"
+synopsis: "DkML cross-compile target: Android/ARM64 v8a"
+description: """
+This package should be selected if the DkML compiler should cross-compile to
+Android with an ARM64 v8a CPU.
+
+Multiple dkml-target-abi packages may be chosen when multiple ABIs should be available for cross-compilation."""
+maintainer: ["opensource+dkml@support.diskuv.com"]
+authors: ["Diskuv, Inc. <opensource+dkml@support.diskuv.com>"]
+license: "Apache-2.0"
+homepage: "https://diskuv.com/dkmlbook/"
+bug-reports: "https://gitlab.com/dkml/distributions/dkml/-/issues"
+flags: compiler

@@ -1,0 +1,13 @@
+opam-version: "2.0"
+synopsis: "DkML cross-compile target: Linux/Intel 32-bit"
+description: """
+This package should be selected if the DkML compiler should cross-compile to
+Linux with a 32-bit Intel/AMD CPU or cross-compiling to a 32-bit Intel/AMD CPU.
+
+Multiple dkml-target-abi packages may be chosen when multiple ABIs should be available for cross-compilation."""
+maintainer: ["opensource+dkml@support.diskuv.com"]
+authors: ["Diskuv, Inc. <opensource+dkml@support.diskuv.com>"]
+license: "Apache-2.0"
+homepage: "https://diskuv.com/dkmlbook/"
+bug-reports: "https://gitlab.com/dkml/distributions/dkml/-/issues"
+flags: compiler
