@@ -880,7 +880,7 @@ DkMLPatches_GetPackageVersions(
     ${dkml-runtime-apps_PACKAGES}
     ${dune_PACKAGES}
     ${dkml-component_PACKAGES}
-    ${dkml-installers_PACKAGES}
+    ${dkml-installer_ALL_PACKAGES}
     ${dkml-runtime_PACKAGES}
     ${dkml-compiler_PACKAGES}
     ${dkml-workflows_PACKAGES}

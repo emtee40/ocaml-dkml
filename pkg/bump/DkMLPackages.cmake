@@ -179,6 +179,7 @@ set(DKML_INSTALL_OCAML_OFFLINE OFF)
 #
 set(dkml-installer-ocaml_PACKAGES dkml-installer-ocaml-common dkml-installer-ocaml-network)
 set(dkml-installer-ocaml-byte_PACKAGES dkml-installer-ocaml-offline)
+set(dkml-installer_ALL_PACKAGES ${dkml-installer-ocaml_PACKAGES} ${dkml-installer-ocaml-byte_PACKAGES})
 set(dkml-installer_PACKAGES)
 if(DKML_INSTALL_OCAML_NETWORK)
     list(APPEND dkml-installer_PACKAGES ${dkml-installer-ocaml_PACKAGES})
