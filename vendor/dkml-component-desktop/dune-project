@@ -39,6 +39,7 @@
  (depends
   conf-dkml-sys-opam
   (dkml-build-desktop (= :version)) ; dkml-desktop-copy-installed
+  dkml-host-abi ; %{dkml-host-abi:abi}
   (dkml-install (>= 0.2.0))
   ; BEGIN dkml-apps-only. DO NOT EDIT THE LINES IN THIS SECTION
   ; Managed by bump-packages.cmake
@@ -58,6 +59,7 @@
  (depends
   conf-dkml-sys-opam
   (dkml-build-desktop (= :version)) ; dkml-desktop-copy-installed
+  dkml-host-abi ; %{dkml-host-abi:abi}
   (dkml-install (>= 0.2.0))
   (diskuvbox (>= 0.1.0))))
 
@@ -76,6 +78,7 @@
  (depends
   conf-dkml-sys-opam
   (dkml-build-desktop (= :version)) ; dkml-desktop-copy-installed
+  dkml-host-abi ; %{dkml-host-abi:abi}
   (dkml-install (>= 0.2.0))
   (diskuvbox (>= 0.1.0))
   ; BEGIN flavor-ci. DO NOT EDIT THE LINES IN THIS SECTION
@@ -111,6 +114,7 @@
  (depends
   conf-dkml-sys-opam
   (dkml-build-desktop (= :version)) ; dkml-desktop-copy-installed
+  dkml-host-abi ; %{dkml-host-abi:abi}
   (dkml-install (>= 0.2.0))
   (diskuvbox (>= 0.1.0))
   ; BEGIN flavor-full. DO NOT EDIT THE LINES IN THIS SECTION

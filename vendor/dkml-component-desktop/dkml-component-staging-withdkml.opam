@@ -37,5 +37,5 @@ build: [
   [ "sh" "-c" "OPAMLOGS=$PWD '%{conf-dkml-sys-opam:location-mixed}%' show --readonly --list-files with-dkml > opamshow-with-dkml.txt" ]
 ]
 install: [
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-with-dkml.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-with-dkml.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%" ]
 ]
