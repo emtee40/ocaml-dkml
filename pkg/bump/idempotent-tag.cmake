@@ -10,6 +10,10 @@ if(DKML_VERSION_PRERELEASE_NEW OR DKML_FORCE_VERSION)
     list(APPEND tag_ARGS --force)
 endif()
 
+if(NOT TAG_REF)
+    set(TAG_REF HEAD)
+endif()
+
 # Does not re-tag in PRERELEASE when the tag is already on HEAD.
 # Relies on prior annotated tag ([git tag -a]) so that [git describe] works.
 execute_process(
@@ -30,10 +34,13 @@ if(possibleTag STREQUAL ${DKML_VERSION_SEMVER_NEW})
     return()
 endif()
 
-message(WARNING "If the next `git tag` command fails and you want to force the tags to be moved, place an empty file at '${DKML_FORCE_VERSION_FILE}'.")
+if(NOT DKML_FORCE_VERSION AND DKML_FORCE_VERSION_FILE)
+    message(NOTICE "If the next `git tag` command fails and you want to force the tags to be moved, place an empty file at '${DKML_FORCE_VERSION_FILE}'.")
+endif()
+
 execute_process(
     COMMAND
-    ${GIT_EXECUTABLE} tag ${tag_ARGS} -a ${DKML_VERSION_SEMVER_NEW} -m ${DKML_VERSION_OPAMVER_NEW}
+    ${GIT_EXECUTABLE} tag ${tag_ARGS} -m ${DKML_VERSION_OPAMVER_NEW} -a ${DKML_VERSION_SEMVER_NEW} ${TAG_REF}
     COMMAND_ECHO STDOUT
     COMMAND_ERROR_IS_FATAL ANY
 )

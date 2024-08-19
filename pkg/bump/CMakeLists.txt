@@ -664,10 +664,20 @@ function(add_GitPush_command)
                 -D "BRANCH_TO_DELETE=subtree-${ARG_CONTEXT}"
                 -P ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/branch-delete.cmake
             COMMAND "${GIT_EXECUTABLE}" subtree split --prefix "vendor/${ARG_CONTEXT}" --rejoin ${SUBTREE_SQUASH_OPTIONS} "--branch=subtree-${ARG_CONTEXT}"
+            #   tag the subtree-<pkg> branch
+            COMMAND
+                ${CMAKE_COMMAND}
+                -D CMAKE_MESSAGE_CONTEXT=${ARG_CONTEXT}
+                -D "GIT_EXECUTABLE=${GIT_EXECUTABLE}"
+                -D "DKML_VERSION_SEMVER_NEW=subtree-${ARG_CONTEXT}-${DKML_VERSION_SEMVER}${ARG_TAG_SUFFIX}"
+                -D "DKML_VERSION_OPAMVER_NEW=${DKML_VERSION_OPAMVER}"
+                -D "DKML_FORCE_VERSION=ON"
+                -D "TAG_REF=subtree-${ARG_CONTEXT}"
+                -P ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/idempotent-tag.cmake
             #   push to remote url
             COMMAND "${GIT_EXECUTABLE}" push "${${ARG_CONTEXT}_URL}" "subtree-${ARG_CONTEXT}:${${ARG_CONTEXT}_BRANCH}"
-            #   push tag. we force overwrite using (+) because if parent project `dkml` has been retagged, so should subtrees.
-            COMMAND "${GIT_EXECUTABLE}" push "${${ARG_CONTEXT}_URL}" "+subtree-${ARG_CONTEXT}:${DKML_VERSION_SEMVER}"
+            #   push tag. we force overwrite using (+) because if parent project `dkml` has been / will be retagged, so should subtrees.
+            COMMAND "${GIT_EXECUTABLE}" push "${${ARG_CONTEXT}_URL}" "+subtree-${ARG_CONTEXT}-${DKML_VERSION_SEMVER}${ARG_TAG_SUFFIX}:${DKML_VERSION_SEMVER}${ARG_TAG_SUFFIX}"
 
             COMMAND ${CMAKE_COMMAND} -E copy_if_different ${newSemverFile} ${ARG_OUTPUT_FILE}
 
@@ -682,15 +692,15 @@ function(add_GitPush_command)
 
             # git tag
             COMMAND
-            ${CMAKE_COMMAND}
-            -D CMAKE_MESSAGE_CONTEXT=${ARG_CONTEXT}
-            -D "GIT_EXECUTABLE=${GIT_EXECUTABLE}"
-            -D "DKML_VERSION_PRERELEASE_NEW=${DKML_VERSION_PRERELEASE}"
-            -D "DKML_VERSION_SEMVER_NEW=${DKML_VERSION_SEMVER}${ARG_TAG_SUFFIX}"
-            -D "DKML_VERSION_OPAMVER_NEW=${DKML_VERSION_OPAMVER}"
-            -D "DKML_FORCE_VERSION=${DKML_FORCE_VERSION}"
-            -D "DKML_FORCE_VERSION_FILE=${DKML_FORCE_VERSION_FILE}"
-            -P ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/idempotent-tag.cmake
+                ${CMAKE_COMMAND}
+                -D CMAKE_MESSAGE_CONTEXT=${ARG_CONTEXT}
+                -D "GIT_EXECUTABLE=${GIT_EXECUTABLE}"
+                -D "DKML_VERSION_PRERELEASE_NEW=${DKML_VERSION_PRERELEASE}"
+                -D "DKML_VERSION_SEMVER_NEW=${DKML_VERSION_SEMVER}${ARG_TAG_SUFFIX}"
+                -D "DKML_VERSION_OPAMVER_NEW=${DKML_VERSION_OPAMVER}"
+                -D "DKML_FORCE_VERSION=${DKML_FORCE_VERSION}"
+                -D "DKML_FORCE_VERSION_FILE=${DKML_FORCE_VERSION_FILE}"
+                -P ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/idempotent-tag.cmake
             COMMAND ${CMAKE_COMMAND} -E copy_if_different ${newSemverFile} ${ARG_OUTPUT_FILE}
 
             # git push
