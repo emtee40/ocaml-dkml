@@ -1,1 +1,1 @@
-winget install Microsoft.VisualStudio.2019.BuildTools --override "--wait --passive --installPath C:\VS --addProductLang En-us --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
+winget install Microsoft.VisualStudio.2022.BuildTools --override "--wait --passive --installPath C:\VS17 --addProductLang En-us --add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Component.VC.14.38.17.8.x86.x64 --includeRecommended"
