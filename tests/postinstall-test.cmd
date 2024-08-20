@@ -36,7 +36,7 @@ goto end
     if not exist "%TEMP%\scratch2" mkdir %TEMP%\scratch2
     pushd %TEMP%\scratch2
 
-    dkml init --yes
+    dk Ml.Switch init --yes
     if %errorlevel% neq 0 popd & exit /b %errorlevel%
 
     REM install something with a low number of dependencies, that sufficiently exercises Opam

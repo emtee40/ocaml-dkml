@@ -53,7 +53,7 @@ else
     # Optional since done automatically with the first ocamlopt/dune/opam/... but test it explicitly.
     # --disable-sandboxing is needed on macOS/Linux because the installation path of DkMLNative
     # is not known apriori (it can be customized by the user).
-    dkml init --yes --disable-sandboxing
+    dk Ml.Switch init --yes --disable-sandboxing
 
     # install something with a low number of dependencies, that sufficiently exercises Opam.
     # Enable tracing in case something goes wrong.
