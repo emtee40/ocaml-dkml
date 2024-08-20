@@ -1,0 +1,21 @@
+opam-version: "2.0"
+synopsis: "DkML on Windows/Intel 32-bit"
+description: """
+This package is installed if the underlying DkML compiler is for
+Windows with a 32-bit Intel/AMD CPU or cross-compiling to a 32-bit Intel/AMD CPU.
+
+This package may be used in depends or conflicts fields of dependent packages
+to indicate either a requirement or an incompatibility with this
+ABI."""
+maintainer: ["opensource+dkml@support.diskuv.com"]
+authors: ["Diskuv, Inc. <opensource+dkml@support.diskuv.com>"]
+license: "Apache-2.0"
+homepage: "https://diskuv.com/dkmlbook/"
+bug-reports: "https://gitlab.com/dkml/distributions/dkml/-/issues"
+flags: compiler
+conflict-class: "dkml-host-abi"
+available: [os = "win32"]
+depends: [ "dkml-target-abi-windows_x86" ]
+depopts: [
+  "ocaml-option-32bit"
+]

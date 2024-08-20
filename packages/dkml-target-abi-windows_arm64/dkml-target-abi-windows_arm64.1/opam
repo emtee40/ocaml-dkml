@@ -1,0 +1,17 @@
+opam-version: "2.0"
+synopsis: "DkML cross-compile target: Windows/ARM 64-bit"
+description: """
+This package should be selected if the DkML compiler should cross-compile to
+Windows with a 64-bit ARM CPU.
+
+DkML does not support Windows on ARM64 yet, but this package is available
+for use in other opam packages to get ready for when DkML does support
+Windows on ARM64.
+
+Multiple dkml-target-abi packages may be chosen when multiple ABIs should be available for cross-compilation."""
+maintainer: ["opensource+dkml@support.diskuv.com"]
+authors: ["Diskuv, Inc. <opensource+dkml@support.diskuv.com>"]
+license: "Apache-2.0"
+homepage: "https://diskuv.com/dkmlbook/"
+bug-reports: "https://gitlab.com/dkml/distributions/dkml/-/issues"
+flags: compiler
