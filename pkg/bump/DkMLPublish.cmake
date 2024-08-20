@@ -3,6 +3,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/DkMLAnyRun.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/DkMLBumpLevels.cmake)
 
 # Aka. https://gitlab.com/dkml/distributions/dkml
+set(GITLAB_REPO dkml/distributions/dkml)
 set(GITLAB_UPLOAD_BASE_URL https://gitlab.com/api/v4/projects/dkml%2Fdistributions%2Fdkml)
 set(PACKAGE_REGISTRY_URL_BASE "${GITLAB_UPLOAD_BASE_URL}/packages/generic/release")
 set(PUBLISHDIR ${CMAKE_CURRENT_BINARY_DIR}/${DKML_VERSION_CMAKEVER}/publish)
@@ -165,7 +166,7 @@ function(DkMLPublish_CreateReleaseTarget)
 
         # https://gitlab.com/gitlab-org/cli/-/blob/main/docs/source/release/create.md
         COMMAND
-        ${GLAB_EXECUTABLE} release create ${DKML_VERSION_SEMVER}
+        ${GLAB_EXECUTABLE} release create ${DKML_VERSION_SEMVER} --repo "${GITLAB_REPO}"
         --name "DkML ${DKML_VERSION_SEMVER}"
         --ref "${DKML_VERSION_SEMVER}"
         --notes-file ${changes_MD_NEW_FILENAME}
@@ -271,7 +272,7 @@ function(DkMLPublish_PublishAssetsTarget)
 
         list(APPEND postcommands
             COMMAND
-            ${GLAB_EXECUTABLE} release upload ${DKML_VERSION_SEMVER}
+            ${GLAB_EXECUTABLE} release upload ${DKML_VERSION_SEMVER} --repo "${GITLAB_REPO}"
             --assets-links=[${assetlinks_csv}]
         )
     endif()
@@ -289,7 +290,7 @@ function(DkMLPublish_PublishAssetsTarget)
         ${precommands}
 
         COMMAND
-        ${GLAB_EXECUTABLE} release upload ${DKML_VERSION_SEMVER}
+        ${GLAB_EXECUTABLE} release upload ${DKML_VERSION_SEMVER} --repo "${GITLAB_REPO}"
         ${uploads}
 
         ${postcommands}

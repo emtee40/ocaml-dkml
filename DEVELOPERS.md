@@ -3,6 +3,8 @@
 ## Prerequisites
 
 1. You must install the [`glab` GitLab CLI](https://gitlab.com/gitlab-org/cli/#installation).
+   You need a version **higher** than 1.45.0 because <https://gitlab.com/gitlab-org/cli/-/issues/7617> will cause undownloadable assets.
+   Building from source is fine.
 
 ## Use Cases
 
