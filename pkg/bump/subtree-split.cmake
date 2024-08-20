@@ -52,20 +52,32 @@ function(create_tag_and_branch commit_id)
     )
 endfunction()
 
-execute_process(
-    COMMAND ${GIT_EXECUTABLE} subtree split --prefix "${SUBTREE_PREFIX}" --rejoin ${SUBTREE_SQUASH_OPTIONS}
-    COMMAND_ERROR_IS_FATAL ANY
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    # Examples on the standard error:
-    #   1. Subtree is already at commit d3bad8cc922c05960dea56682948316faee5efdc.
-    #   2. <what is message when rejoin point changes?>
-    ERROR_VARIABLE split_output
-)
-
-if(split_output MATCHES "already at commit ([0-9a-f]+)")
+macro(do_subtree_split)    
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} subtree split --prefix "${SUBTREE_PREFIX}" --rejoin ${SUBTREE_SQUASH_OPTIONS}
+        COMMAND_ERROR_IS_FATAL ANY
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        # Examples on the standard error:
+        #   1. Subtree is already at commit d3bad8cc922c05960dea56682948316faee5efdc.
+        #   2. <what is message when rejoin point changes?>
+        ERROR_VARIABLE split_output
+    )
+endmacro()
+macro(proceed gitref)
     delete_local_branch_if_exists()
     delete_local_tag_if_exists()
-    create_tag_and_branch("${CMAKE_MATCH_1}")
+    create_tag_and_branch("${gitref}")
+endmacro()
+
+do_subtree_split()
+if(split_output MATCHES "already at commit ([0-9a-f]+)")
+    proceed("${CMAKE_MATCH_1}")
 else()
-    message(FATAL_ERROR "TODO: Parse the subtree message to get the commit id: ${split_output}")
+    # Likely: The `git subtree split` succeeded but had a merge. Rerun so the commit id is reported back by `git subtree`.
+    do_subtree_split()
+    if(split_output MATCHES "already at commit ([0-9a-f]+)")
+        proceed("${CMAKE_MATCH_1}")
+    else()
+        message(FATAL_ERROR "The `git subtree split` succeeded. However, even after running twice it has not reported back the commit id (or we don't recognize it).\nOutput:\n${split_output}")
+    endif()
 endif()
