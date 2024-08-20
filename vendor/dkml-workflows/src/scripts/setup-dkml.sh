@@ -925,6 +925,7 @@ do_pins() {
     do_pin_add dkml-install-installer "${PIN_DKML_INSTALL_INSTALLER}"
     do_pin_add dkml-install-runner "${PIN_DKML_INSTALL_RUNNER}"
     do_pin_add dkml-installer-ocaml-common "${PIN_DKML_INSTALLER_OCAML_COMMON}"
+    do_pin_add dkml-installer-ocaml-network "${PIN_DKML_INSTALLER_OCAML_NETWORK}"
     do_pin_add dkml-package-console "${PIN_DKML_PACKAGE_CONSOLE}"
     do_pin_add dkml-runtime-common "${PIN_DKML_RUNTIME_COMMON}"
     do_pin_add dkml-runtime-common-native "${PIN_DKML_RUNTIME_COMMON_NATIVE}"
