@@ -13,6 +13,7 @@ depends: [
   "dune" {>= "3.6"}
   "conf-dkml-sys-opam"
   "dkml-build-desktop" {= version}
+  "dkml-host-abi"
   "dkml-install" {>= "0.2.0"}
   "diskuvbox" {>= "0.1.0"}
   "odoc" {with-doc}
@@ -35,11 +36,11 @@ build: [
   [ "sh" "-c" "OPAMLOGS=$PWD '%{conf-dkml-sys-opam:location-mixed}%' show --readonly --list-files with-dkml > opamshow-with-dkml.txt" ]
 ]
 install: [
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-with-dkml.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-with-dkml.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%" ]
 ]
 url {
   src: "https://gitlab.com/dkml/distributions/dkml/-/releases/2.1.2/downloads/src.dkml-component-desktop.tar.gz"
   checksum: [
-    "sha512=bbc441889b8e5edaf12127a4e9979898c13c2255dee160deb034a3d2e31b7f41948beb2f76fcf2dbb34ba12efed74eef0f46f78af86a6c02dd2e522c842ac669"
+    "sha512=fe1af3b15db895bde89e227a77d145aaaa7cacf9d413baabf4abe01f9387976b915aeac66700d58e6a1fa61cd745c20d9e3291a084c950a16cc5f75608c7b823"
   ]
 }
