@@ -1,0 +1,40 @@
+opam-version: "2.0"
+synopsis: "Common code for opam DkML components"
+description: "Common code for opam DkML components"
+maintainer: "opensource+dkml@support.diskuv.com"
+authors: "Diskuv, Inc. <opensource+dkml@support.diskuv.com>"
+license: "Apache-2.0"
+homepage: "https://github.com/diskuv/dkml-component-opam"
+bug-reports: "https://github.com/diskuv/dkml-component-opam/issues"
+depends: [
+  "dune" {>= "2.9"}
+  "dkml-install" {>= "0.5.1"}
+  "cmdliner" {>= "1.2.0"}
+  "diskuvbox" {>= "0.2.0"}
+  "odoc" {with-doc}
+]
+build: [
+  ["dune" "subst"] {dev}
+  [
+    "dune"
+    "build"
+    "-p"
+    name
+    "-j"
+    jobs
+    "--promote-install-files=false"
+    "@install"
+    "@runtest" {with-test}
+    "@doc" {with-doc}
+  ]
+  ["dune" "install" "-p" name "--create-install-files" name]
+]
+dev-repo: "git+https://github.com/diskuv/dkml-component-opam.git"
+url {
+  src:
+    "https://github.com/diskuv/dkml-component-opam/releases/download/2.2.0.1/src.tar.gz"
+  checksum: [
+    "md5=96093b6cf38dc6aba193e946708a5a03"
+    "sha512=b35cb06041a0ae2d1514767b15afd2d5232c12ed61bea266046aef9007468fe976a9d1de86948c2d02c96347c162fa7abe54abc4c56dc0961fbaf7e70e15eff3"
+  ]
+}
