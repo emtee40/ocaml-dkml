@@ -26,6 +26,10 @@ install: [
   # TODO: opam does not pass to Command Prompt correctly when there is a
   # space in the _:lib so we have to avoid the (correct) Command Prompt
   # shell. https://github.com/ocaml/opam/issues/5673
+  #
+  # TODO 2: install.cmd has no dos2unix ability like install.sh
+  #
   #[".\\install.cmd" "\"%{_:lib}%\""] { os = "win32"}
+
   ["sh" "./install.sh"   "%{_:lib}%"] # {!(os = "win32")}
 ]
