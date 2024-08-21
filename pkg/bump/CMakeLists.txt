@@ -6,14 +6,6 @@ include(${CMAKE_CURRENT_LIST_DIR}/DkMLPackages.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/DkMLPatches.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/DkMLPublish.cmake)
 
-# Input variables
-#   Always prefer to configure the build with CMake variables
-#   rather than inside .gitlab-ci.yml so that desktop testing
-#   can mimic the CI.
-#   2.2.0 - Only generated Windows but not Linux or macOS. That means it is inappropriate to be hardcoded into DkML compilers in CI.
-#   2.2.0.1 - Same as 2.2.0 but generated also Linux and macOS.
-set(BOOTSTRAP_OPAM_VERSION 2.2.0.1)
-
 if(CMAKE_HOST_WIN32)
     find_program(POWERSHELL_EXECUTABLE NAMES pwsh powershell REQUIRED)
 endif()
@@ -25,7 +17,13 @@ cmake_path(GET GIT_EXECUTABLE PARENT_PATH GIT_EXECUTABLE_DIR)
 
 set(self_BRANCH next) # self is [dkml]
 
+# Global properties
+get_property(BOOTSTRAP_OPAM_VERSION GLOBAL PROPERTY dkml-component-opam_GIT_TAG)
+
 # Sanity check
+if(NOT BOOTSTRAP_OPAM_VERSION)
+    message(FATAL_ERROR "dkml-component-opam_GIT_TAG must be set as a global property by fetch-git-projects.cmake")
+endif()
 foreach(PROJECT IN LISTS DKML_PROJECTS_SYNCED)
     if(NOT ${PROJECT}_BRANCH)
         message(FATAL_ERROR "Missing set(${PROJECT}_BRANCH ...) statement in ${CMAKE_CURRENT_LIST_FILE}")
