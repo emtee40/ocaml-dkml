@@ -146,8 +146,8 @@ url {
   src:
     "https://github.com/diskuv/dkml-component-opam/releases/download/2.2.0.1/src.tar.gz"
   checksum: [
-    "md5=96093b6cf38dc6aba193e946708a5a03"
-    "sha512=b35cb06041a0ae2d1514767b15afd2d5232c12ed61bea266046aef9007468fe976a9d1de86948c2d02c96347c162fa7abe54abc4c56dc0961fbaf7e70e15eff3"
+    "md5=10b4e498bd71af9cb78861e120207e95"
+    "sha512=5f3b8ac909cf696615a784d3b50cffdf9be5a6ad87201ab08e76311f1d882712339c40f86ddf60fd1b745fbfb17ede5d2f2797c2d491a69caff01c96bbb7538c"
   ]
 }
 extra-source "dl/dkml-compiler.tar.gz" {
