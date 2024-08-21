@@ -683,7 +683,7 @@ echo 'Pushing ${DKML_VERSION_CMAKEVER} release of ${PROJECT_SOURCE_DIR}/vendor/$
             #   push tag to remote url. we force overwrite using (+) because if parent project `dkml` has been / will be retagged, so should subtrees.
             COMMAND "${GIT_EXECUTABLE}" push "${${ARG_CONTEXT}_URL}" "+refs/tags/subtree-${ARG_CONTEXT}:${DKML_VERSION_SEMVER}${ARG_TAG_SUFFIX}"
 
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/${ARG_CONTEXT}.push.sh" ${ARG_OUTPUT_FILE}
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${push_SCRIPT}" ${ARG_OUTPUT_FILE}
 
             VERBATIM
             USES_TERMINAL
