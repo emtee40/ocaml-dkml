@@ -1,13 +1,13 @@
 opam-version: "2.0"
-maintainer: ["opensource+diskuv-ocaml@support.diskuv.com"]
-homepage: "https://diskuv.gitlab.io/diskuv-ocaml"
+maintainer: ["opensource+dkmll@support.diskuv.com"]
+homepage: "https://diskuv.com/dkmlbook/"
 bug-reports: "https://github.com/diskuv/dkml-runtime-apps/issues"
-authors: ["Diskuv, Inc. <opensource+diskuv-ocaml@support.diskuv.com>"]
+authors: ["Diskuv, Inc. <opensource+dkml@support.diskuv.com>"]
 license: "Apache-2.0"
 depends: [
-  # should dkml-runtime-common-native be a flags:conf package since it is a dependency
+  # should dkml-runtime-common be a flags:conf package since it is a dependency
   # of a flags:conf package?
-  "dkml-runtime-common-native" {>= "1.0.2~prerel17"}
+  "dkml-runtime-common" {>= "2.1.2"}
 ]
 build: [
   # Load crossplatform-functions.sh to get the canonical with-dkml.exe location.
@@ -19,7 +19,7 @@ build: [
   #   <dkmldir>/vendor/drc/
   ["rm" "-rf" "dkmldir/vendor/drc"]
   ["install" "-d" "dkmldir/vendor/drc"]
-  ["cp" "-r" "%{dkml-runtime-common-native:lib}%/unix" "dkmldir/vendor/drc"]
+  ["cp" "-r" "%{dkml-runtime-common:lib}%/unix" "dkmldir/vendor/drc"]
 
   [
     "sh"
@@ -52,7 +52,7 @@ build: [
       printf 'opam-version: "2.0"\n'
       printf 'file-depends: [ [ "%s" "sha256=%s" ] ]\n' "$(cat var.with-dkml.location.mixed )" "$(cat with-dkml.sha256 )"
       printf 'variables {\n'
-      printf '  location-native: "%s"\n' "$(cat var.with-dkml.location.native)" | sed "s/[$backslash]/$backslash$backslash$backslash$backslash/g"
+      printf '  location: "%s"\n' "$(cat var.with-dkml.location.native)" | sed "s/[$backslash]/$backslash$backslash$backslash$backslash/g"
       printf '  location-mixed: "%s"\n' "$(cat var.with-dkml.location.mixed )"
       printf '}\n'
     } > '%{name}%.config'
@@ -67,7 +67,7 @@ a DKML home or a DKSDK noabi directory.
 
 A 'file-depends' trigger will reinstall conf-withdkml when with-dkml.exe changes.
 
-The %{conf-withdkml:location-native}% variable will be the native (Win32, Unix) location
+The %{conf-withdkml:location}% variable will be the native (Win32, Unix) location
 of with-dkml.exe, while %{conf-withdkml:location-mixed}% will be the
 location of with-dkml.exe using only forward slashes (/).
 """
