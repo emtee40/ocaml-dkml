@@ -5,7 +5,7 @@
 #   https://github.com/microsoft/winget-pkgs/tree/master/doc/manifest/schema/1.2.0#best-practices
 # Reference: https://github.com/microsoft/winget-pkgs/blob/master/doc/manifest/schema/1.2.0/installer.md
 PackageIdentifier: Diskuv.OCamlByte
-PackageVersion: "2.1.1" # AUTO-BUMP
+PackageVersion: "2.1.2" # AUTO-BUMP
 # Scope: user
 UpgradeBehavior: uninstallPrevious
 Commands:
@@ -19,6 +19,7 @@ Commands:
   # BUT 1 ... max 16 entries in Commands:[] so took only the most commonly used
   # BUT 2 ... will be a [winget install dune] so do not register those commands!
   # - dune
+  - dk
   - dkml
   - ocaml
   - ocamlc
@@ -45,7 +46,7 @@ InstallerSwitches:
   SilentWithProgress: --ci
   Interactive: --color=always
   InstallLocation: --prefix "<INSTALLPATH>"
-ReleaseDate: 2024-05-09 # AUTO-BUMP
+ReleaseDate: 2024-08-20 # AUTO-BUMP
 # Dependencies:
   # ExternalDependencies:
   #   - Microsoft.VisualStudio.2019.BuildTools
@@ -69,7 +70,7 @@ ReleaseDate: 2024-05-09 # AUTO-BUMP
 Installers:
   - Architecture: x64
 
-    InstallerUrl: https://gitlab.com/dkml/distributions/dkml/-/releases/2.1.1/downloads/setup64bu.exe # AUTO-BUMP
+    InstallerUrl: https://gitlab.com/dkml/distributions/dkml/-/releases/2.1.2/downloads/setup64bu.exe # AUTO-BUMP
     InstallerType: exe
     InstallerSha256: df5bf69fb2d7ddb9bd64a03448b3d26befcf0823ab4662d4c5605b9a6fde9e92 # MANUAL-BUMP
 
