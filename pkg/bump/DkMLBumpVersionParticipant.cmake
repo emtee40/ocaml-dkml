@@ -203,8 +203,8 @@ function(DkMLBumpVersionParticipant_MetaReplace REL_FILENAME)
 endfunction()
 
 # version: "4.14.0~v1.2.1~prerel2" -> version: "4.14.0~v1.2.1~prerel3"
-# "dkml-runtime-common-native" {= "1.0.1"} -> "dkml-runtime-common-native" {= "1.0.2"}
-# "dkml-runtime-common-native" {>= "1.0.1"} -> "dkml-runtime-common-native" {= "1.0.2"}
+# "dkml-runtime-common" {= "1.0.1"} -> "dkml-runtime-common" {= "1.0.2"}
+# "dkml-runtime-common" {>= "1.0.1"} -> "dkml-runtime-common" {= "1.0.2"}
 function(DkMLBumpVersionParticipant_DkmlBaseCompilerReplace REL_FILENAME)
     file(READ ${REL_FILENAME} contents)
     set(contents_NEW "${contents}")
@@ -215,8 +215,8 @@ function(DkMLBumpVersionParticipant_DkmlBaseCompilerReplace REL_FILENAME)
         contents_NEW "${contents_NEW}")
 
     string(REGEX REPLACE
-        "(^|\n[ ]*)\"dkml-runtime-common-native\" {>?= \"${regex_DKML_VERSION_OPAMVER}\"}"
-        "\\1\"dkml-runtime-common-native\" {= \"${DKML_VERSION_OPAMVER_NEW}\"}"
+        "(^|\n[ ]*)\"dkml-runtime-common\" {>?= \"${regex_DKML_VERSION_OPAMVER}\"}"
+        "\\1\"dkml-runtime-common\" {= \"${DKML_VERSION_OPAMVER_NEW}\"}"
         contents_NEW "${contents_NEW}")
 
     _DkMLBumpVersionParticipant_Finish_Replace(OPAMVER)

@@ -1307,7 +1307,7 @@ function(add_Flavor_targets)
         ${WITH_COMPILER_SH}
         ${anyrun_OUTPUTS}
         ${CMAKE_CURRENT_BINARY_DIR}/depends/dkml-compiler.shortref # dkml-base-compiler.opam
-        ${CMAKE_CURRENT_BINARY_DIR}/depends/dkml-runtime-common.shortref # dkml-runtime-common-native.opam
+        ${CMAKE_CURRENT_BINARY_DIR}/depends/dkml-runtime-common.shortref # dkml-runtime-common.opam
         COMMENT "Creating/updating ${DKML_VERSION_CMAKEVER} compiler"
         COMMAND ${upsert_dkml_pkgs_compiler_COMMAND}
         COMMAND ${CMAKE_COMMAND} -E touch ${compilerCreated}

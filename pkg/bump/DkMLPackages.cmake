@@ -128,8 +128,7 @@ set(dkml-runtime-apps_PACKAGES
     opam-dkml
     with-dkml)
 set(dkml-runtime-common_PACKAGES
-    dkml-runtime-common
-    dkml-runtime-common-native)
+    dkml-runtime-common)
 set(dkml-runtime-distribution_PACKAGES dkml-runtime-distribution)
 set(dkml-runtime_PACKAGES
     ${dkml-runtime-common_PACKAGES}
