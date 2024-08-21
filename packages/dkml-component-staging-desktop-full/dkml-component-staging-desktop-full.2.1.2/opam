@@ -14,15 +14,14 @@ bug-reports:
 depends: [
   "conf-dkml-sys-opam"
   "dkml-build-desktop" {= version}
-  "dkml-host-abi"
   "dkml-install" {>= "0.2.0"}
   "diskuvbox" {>= "0.1.0"}
   "dune" {>= "3.6" & = "3.15.0"}
   "base" {= "v0.16.1"}
   "conf-sqlite3" {= "3.1+cpkgs"}
   "csexp" {= "1.5.2"}
-  "dkml-apps" {= "2.1.2"}
-  "dkml-exe" {= "2.1.2"}
+  "dkml-apps" {= "2.1.1"}
+  "dkml-exe" {= "2.1.1"}
   "graphics" {= "5.1.2"}
   "hmap" {= "0.8.1"}
   "iostream" {= "0.2.2"}
@@ -46,7 +45,7 @@ depends: [
   "refl" {= "0.4.1"}
   "result" {= "1.5"}
   "sexplib0" {= "v0.16.0"}
-  "sqlite3" {= "5.2.0"}
+  "sqlite3" {= "5.1.0+msvc"}
   "stdcompat" {= "19+optautoconf"}
   "stdlib-shims" {= "0.3.0"}
   "tiny_httpd" {= "0.16"}
@@ -57,7 +56,7 @@ depends: [
   "uucp" {= "15.0.0"}
   "uuseg" {= "15.0.0"}
   "uutf" {= "1.0.3"}
-  "with-dkml" {= "2.1.2"}
+  "with-dkml" {= "2.1.1"}
   "xdg" {= "3.15.0"}
   "zed" {= "3.2.3"}
 ]
@@ -146,61 +145,61 @@ build: [
 install: [
   # BEGIN install-flavor-full. DO NOT EDIT THE LINES IN THIS SECTION
   # Managed by bump-packages.cmake
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-base.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-conf-sqlite3.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-csexp.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-graphics.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-hmap.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-iostream.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-lambda-term.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-logs.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-lwt.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-lwt_react.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-metapp.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-mew.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-mew_vi.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ocaml-compiler-libs.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ocamlfind.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ocplib-endian.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ppx_derivers.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ppxlib.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-react.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-refl.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-result.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-sexplib0.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-sqlite3.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-stdcompat.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-stdlib-shims.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-tiny_httpd.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-traverse.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-trie.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-uchar.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-utop.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-uucp.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-uuseg.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-uutf.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-xdg.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-zed.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-dkml-apps.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/install" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-dkml-exe.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/install" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ocaml-lsp-server.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/install" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ocamlformat.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/install" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ocp-indent.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/install" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-odoc.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/install" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-base.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-conf-sqlite3.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-csexp.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-graphics.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-hmap.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-iostream.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-lambda-term.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-logs.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-lwt.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-lwt_react.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-metapp.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-mew.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-mew_vi.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ocaml-compiler-libs.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ocamlfind.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ocplib-endian.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ppx_derivers.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ppxlib.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-react.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-refl.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-result.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-sexplib0.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-sqlite3.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-stdcompat.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-stdlib-shims.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-tiny_httpd.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-traverse.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-trie.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-uchar.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-utop.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-uucp.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-uuseg.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-uutf.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-xdg.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-zed.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-dkml-apps.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/install" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-dkml-exe.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/install" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ocaml-lsp-server.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/install" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ocamlformat.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/install" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ocp-indent.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/install" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-odoc.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/install" ]
   # END install-flavor-full. DO NOT EDIT THE LINES ABOVE
 
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-stdlib.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ocamlexe.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-stdlib.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ocamlexe.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
 
   # As of DkML 2.1.0 [dune] is not installed to the global environment. May come back though when [dune build], either through
   # shim or natively, can effectively do an [opam install . --deps-only] and a [eval $(opam env)] followed by the real [dune build].
-  # [ "diskuvbox" "copy-file" "%{with-dkml:bin}%/with-dkml%{exe}%" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/install/bin/dune%{exe}%" ]
-  # [ "diskuvbox" "copy-file" "%{dune:bin}%/dune%{exe}%"      "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/install/bin/dune-real%{exe}%" ] {!(conf-withdkml:installed)}
-  # [ "diskuvbox" "copy-file" "%{dune:bin}%/dune-real%{exe}%" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/install/bin/dune-real%{exe}%" ] {  conf-withdkml:installed}
+  # [ "diskuvbox" "copy-file" "%{with-dkml:bin}%/with-dkml%{exe}%" "%{_:share}%/staging-files/%{dkml-abi}%/install/bin/dune%{exe}%" ]
+  # [ "diskuvbox" "copy-file" "%{dune:bin}%/dune%{exe}%"      "%{_:share}%/staging-files/%{dkml-abi}%/install/bin/dune-real%{exe}%" ] {!(conf-withdkml:installed)}
+  # [ "diskuvbox" "copy-file" "%{dune:bin}%/dune-real%{exe}%" "%{_:share}%/staging-files/%{dkml-abi}%/install/bin/dune-real%{exe}%" ] {  conf-withdkml:installed}
 ]
 url {
   src: "https://gitlab.com/dkml/distributions/dkml/-/releases/2.1.2/downloads/src.dkml-component-desktop.tar.gz"
   checksum: [
-    "sha512=fe1af3b15db895bde89e227a77d145aaaa7cacf9d413baabf4abe01f9387976b915aeac66700d58e6a1fa61cd745c20d9e3291a084c950a16cc5f75608c7b823"
+    "sha512=7f650f926c63e06f279ab563bf7f5f82aee44a705d0d2f414fc235f1afa3ea3f773a0c827f834ac87abda9c0e02d8b3ffd995af9af1322e20165b6a4ca9b9e80"
   ]
 }

@@ -109,6 +109,6 @@ extra-source "dl/flexdll.tar.gz" {
 url {
   src: "https://gitlab.com/dkml/distributions/dkml/-/releases/2.1.2/downloads/src.dkml-component-ocamlcompiler.tar.gz"
   checksum: [
-    "sha512=5cc7305fc7f8e87be9eb4fe427eba0871d3617bddc2836754908fae20ec8756c3844e9e9e11db0d0f7b4c076860650519f84b2cd7d4b8d64e4f75956610df0be"
+    "sha512=5a0f2e44a9488132a5fdad09993d4476d1240e8462fef195b809fcdec7ad3cf155668734dfdf19486e54a275cdefbca80b81d98aa7ef1b4c403ba122c92e623f"
   ]
 }
