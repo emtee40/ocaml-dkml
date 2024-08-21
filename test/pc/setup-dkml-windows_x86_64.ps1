@@ -673,7 +673,7 @@ param (
   ,[Parameter()] [string] $DEFAULT_DISKUV_OPAM_REPOSITORY_TAG = "2.1.2"
   ,[Parameter()] [string] $DEFAULT_OCAML_OPAM_REPOSITORY_TAG = "907d456e7c003c4c7ad1ad4945abf93cdc852874"
   ,[Parameter()] [string] $DEFAULT_DKML_COMPILER = "2.1.2"
-  ,[Parameter()] [string] $BOOTSTRAP_OPAM_VERSION = "2.2.0"
+  ,[Parameter()] [string] $BOOTSTRAP_OPAM_VERSION = "2.2.0.1"
   ,[Parameter()] [string] $PIN_ANGSTROM = "0.16.0"
   ,[Parameter()] [string] $PIN_ASTRING = "0.8.5"
   ,[Parameter()] [string] $PIN_BASE = "v0.16.1"
