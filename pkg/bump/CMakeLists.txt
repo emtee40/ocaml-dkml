@@ -65,11 +65,6 @@ foreach(SUBTREE_PROJECT IN LISTS DKML_SUBTREE_PROJECTS)
         SOURCE_DIR "${PROJECT_SOURCE_DIR}/vendor/${SUBTREE_PROJECT}"
     )
     FetchContent_MakeAvailable(${SUBTREE_PROJECT})
-
-    # Helpers for manual pushing
-    configure_file(push-subtree-project.in.sh ${CMAKE_CURRENT_BINARY_DIR}/push-${SUBTREE_PROJECT}.sh
-        FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-        @ONLY NEWLINE_STYLE UNIX)
 endforeach()
 
 # ----------------
@@ -645,7 +640,25 @@ function(add_GitPush_command)
     # it in each re-configure by deleting the output file during re-configure.
     file(REMOVE ${ARG_OUTPUT_FILE})
 
+    set(push_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/push-${ARG_CONTEXT}${ARG_TAG_SUFFIX}.sh")
     if(ARG_CONTEXT IN_LIST DKML_SUBTREE_PROJECTS)
+        file(GENERATE OUTPUT "${push_SCRIPT}" CONTENT "#!/bin/sh
+set -euf
+cd '${PROJECT_SOURCE_DIR}'
+echo 'Splitting ${DKML_VERSION_CMAKEVER} git history in ${PROJECT_SOURCE_DIR}/vendor/${ARG_CONTEXT}'
+${CMAKE_COMMAND} \
+    -D CMAKE_MESSAGE_CONTEXT=${ARG_CONTEXT} \
+    -D 'GIT_EXECUTABLE=${GIT_EXECUTABLE}' \
+    -D 'SUBTREE_PREFIX=vendor/${ARG_CONTEXT}' \
+    -D 'SUBTREE_REF=subtree-${ARG_CONTEXT}' \
+    -D 'SUBTREE_SQUASH_OPTIONS=${SUBTREE_SQUASH_OPTIONS}' \
+    -P ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/subtree-split.cmake
+echo 'Pushing ${DKML_VERSION_CMAKEVER} release of ${PROJECT_SOURCE_DIR}/vendor/${ARG_CONTEXT}'
+'${GIT_EXECUTABLE}' -C '${PROJECT_SOURCE_DIR}' push '${${ARG_CONTEXT}_URL}' 'refs/heads/subtree-${ARG_CONTEXT}:${${ARG_CONTEXT}_BRANCH}'
+'${GIT_EXECUTABLE}' -C '${PROJECT_SOURCE_DIR}' push '${${ARG_CONTEXT}_URL}' '+refs/tags/subtree-${ARG_CONTEXT}:${DKML_VERSION_SEMVER}${ARG_TAG_SUFFIX}'
+"
+            FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+            NEWLINE_STYLE UNIX)
         add_custom_command(
             OUTPUT ${ARG_OUTPUT_FILE}
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
@@ -670,12 +683,18 @@ function(add_GitPush_command)
             #   push tag to remote url. we force overwrite using (+) because if parent project `dkml` has been / will be retagged, so should subtrees.
             COMMAND "${GIT_EXECUTABLE}" push "${${ARG_CONTEXT}_URL}" "+refs/tags/subtree-${ARG_CONTEXT}:${DKML_VERSION_SEMVER}${ARG_TAG_SUFFIX}"
 
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${newSemverFile} ${ARG_OUTPUT_FILE}
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/${ARG_CONTEXT}.push.sh" ${ARG_OUTPUT_FILE}
 
             VERBATIM
             USES_TERMINAL
         )
     else()
+        file(GENERATE OUTPUT "${push_SCRIPT}" CONTENT "#!/bin/sh
+set -euf
+echo 'Pushing ${DKML_VERSION_CMAKEVER} release of ${ARG_SOURCE_DIR}'
+'${GIT_EXECUTABLE}' -C '${ARG_SOURCE_DIR}' push --atomic origin '${ARG_BRANCH}' '${refspec}'"
+            FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+            NEWLINE_STYLE UNIX)
         add_custom_command(
             OUTPUT ${ARG_OUTPUT_FILE}
             WORKING_DIRECTORY ${ARG_SOURCE_DIR}
@@ -692,11 +711,10 @@ function(add_GitPush_command)
                 -D "DKML_FORCE_VERSION=${DKML_FORCE_VERSION}"
                 -D "DKML_FORCE_VERSION_FILE=${DKML_FORCE_VERSION_FILE}"
                 -P ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/idempotent-tag.cmake
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${newSemverFile} ${ARG_OUTPUT_FILE}
 
             # git push
             COMMAND "${GIT_EXECUTABLE}" push --atomic origin "${ARG_BRANCH}" ${refspec}
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${newSemverFile} ${ARG_OUTPUT_FILE}
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${push_SCRIPT}" ${ARG_OUTPUT_FILE}
 
             VERBATIM
             USES_TERMINAL
@@ -743,11 +761,11 @@ function(add_GitPush_commands_for_synced_projects)
         add_GitPush_command(
             SOURCE_DIR ${srcDir}
             CONTEXT ${proj}
-            OUTPUT_FILE ${outputDir}/pushed
+            OUTPUT_FILE ${outputDir}/pushed.sh
             BRANCH ${branch}
             INTENDED_TARGET ${ARG_INTENDED_TARGET}
             DEPENDS ${ARG_DEPENDS})
-        list(APPEND retval ${outputDir}/pushed)
+        list(APPEND retval ${outputDir}/pushed.sh)
     endforeach()
 
     # Add to list
@@ -1757,18 +1775,20 @@ function(add_all_stage_targets)
         TAG_SUFFIX -final
         BRANCH ${self_BRANCH}
         INTENDED_TARGET Package-Stage13-GitPushRemaining
-        OUTPUT_FILE ${selfOutput}/pushed-finished
-        DEPENDS ${selfOutput}/pushed-starting "${CMAKE_CURRENT_BINARY_DIR}/${DKML_VERSION_CMAKEVER}/self/committed")
+        OUTPUT_FILE ${selfOutput}/pushed-finished.sh
+        #decouple 13: DEPENDS ${selfOutput}/pushed-starting "${CMAKE_CURRENT_BINARY_DIR}/${DKML_VERSION_CMAKEVER}/self/committed"
+        )
     add_GitPush_commands_for_synced_projects(
         OUTPUT_LIST_VARIABLE gitPushRemainingTargetDepends
         EXCLUDE diskuv-opam-repository
         INTENDED_TARGET Package-Stage13-GitPushRemaining
-        DEPENDS ${selfOutput}/pushed-finished)
+        DEPENDS ${selfOutput}/pushed-finished.sh
+        )
     add_custom_target(Package-Stage13-GitPushRemaining
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         DEPENDS ${newSemverFile} ${gitPushRemainingTargetDepends}
         VERBATIM)
-    add_dependencies(Package-Stage13-GitPushRemaining Package-Stage10-GitPushForTesting)
+    #decouple 13: add_dependencies(Package-Stage13-GitPushRemaining Package-Stage10-GitPushForTesting)
 endfunction()
 
 # ------------------ Add targets -------------------
