@@ -38,7 +38,7 @@ let get_opam_root =
           | _, _, _, Some home -> R.ok Fpath.(home / ".config" / "opam")
 
         CHANGE NOTICE: Also change dkml-runtime-common's [_common_tool.sh]
-        *)
+     *)
      | _, _, _, Some home -> R.ok Fpath.(home / ".opam")
      | _, _, _, _ ->
          R.error_msg
@@ -64,13 +64,15 @@ let get_opam_switch_prefix =
     MSYS2 is always part of the initial installation on Windows, but is not present on
     Unix. *)
 module SystemConfig = struct
-  type msys2_t = Msys2_on_windows of Fpath.t | No_msys2_on_unix
+  type msys2_t =
+    | Msys2_on_windows of Fpath.t * Dkml_environment.msys2_config
+    | No_msys2_on_unix
 
   type t = {
     dkml_home_fp : Fpath.t;
     scripts_dir_fp : Fpath.t;
     env_exe_wrapper : string list;
-    target_abi : string;
+    host_abi : string;
     msys2 : msys2_t;
     opam_home_fp : Fpath.t;
     ocaml_compiler_version : string;
@@ -120,7 +122,7 @@ module SystemConfig = struct
     (* Find env *)
     let* env_exe_wrapper = Dkml_environment.env_exe_wrapper () in
     (* Find target ABI *)
-    let* target_abi =
+    let* host_abi =
       Rresult.R.error_to_msg ~pp_error:Fmt.string
         (Dkml_c_probe.C_abi.V2.get_abi_name ())
     in
@@ -128,7 +130,8 @@ module SystemConfig = struct
     let* msys2 =
       if Sys.win32 then
         let* msys2_dir = Lazy.force Dkml_context.get_msys2_dir in
-        Ok (Msys2_on_windows msys2_dir)
+        let* msys2_config = Dkml_environment.get_msys2_environment ~host_abi in
+        Ok (Msys2_on_windows (msys2_dir, msys2_config))
       else Ok No_msys2_on_unix
     in
     (* Figure out OPAMHOME which is the DkML home directory as long as it contains the bin/opam *)
@@ -151,7 +154,7 @@ module SystemConfig = struct
         dkml_home_fp;
         scripts_dir_fp;
         env_exe_wrapper;
-        target_abi;
+        host_abi;
         msys2;
         opam_home_fp;
         ocaml_compiler_version;
@@ -161,25 +164,14 @@ end
 
 let get_msys2_create_opam_switch_options = function
   | SystemConfig.No_msys2_on_unix -> []
-  | SystemConfig.Msys2_on_windows msys2_dir ->
-      (*
-       MSYS2 sets PKG_CONFIG_SYSTEM_{INCLUDE,LIBRARY}_PATH which causes
-       native Windows pkgconf to not see MSYS2 packages.
-
-       Confer:
-       https://github.com/pkgconf/pkgconf#compatibility-with-pkg-config
-       https://github.com/msys2/MSYS2-packages/blob/f953d15d0ede1dfb8656a8b3e27c2b694fa1e9a7/filesystem/profile#L54-L55
-
-       Replicated (and need to change if these change):
-       [dkml/packaging/version-bump/upsert-dkml-switch.in.sh]
-       [dkml-component-ocamlcompiler/assets/staging-files/win32/setup-userprofile.ps1]
-    *)
+  | SystemConfig.Msys2_on_windows
+      (_msys2_dir, { opam_host_arch; msystem_prefix; _ }) ->
+      (* opam 2.2+ uses msys2-* and arch-* opam packages. *)
       [
-        "-e";
-        Fmt.str "PKG_CONFIG_PATH=%a" Fpath.pp
-          Fpath.(msys2_dir / "clang64" / "lib" / "pkgconfig");
-        "-e";
-        "PKG_CONFIG_SYSTEM_INCLUDE_PATH=";
-        "-e";
-        "PKG_CONFIG_SYSTEM_LIBRARY_PATH=";
+        (* Ex. msys2-clang64 *)
+        "-m";
+        "msys2-" ^ msystem_prefix;
+        (* Ex. host-arch-x86_32 *)
+        "-m";
+        opam_host_arch;
       ]

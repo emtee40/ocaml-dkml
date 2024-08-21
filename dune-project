@@ -1,6 +1,6 @@
 (lang dune 2.9)
 (name dkml-apps)
-(version 2.1.1)
+(version 2.1.2)
 
 (generate_opam_files true)
 
@@ -18,8 +18,12 @@
  (depends
   (ocaml        (>= 4.12.1))
   (bos          (>= 0.2.1))
+  (digestif     (>= 1.1.4))
+  (dkml-c-probe (>= 3.0.0))
   (sexplib      (>= 0.14.0))
-  (dkml-c-probe (>= 3.0.0))))
+  (ptime        (>= 1.1.0))
+  (uri          (>= 4.4.0))
+  (xdg          (>= 3.15.0))))
 
 (package
  (name dkml-runtimescripts)

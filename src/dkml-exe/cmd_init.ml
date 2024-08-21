@@ -87,7 +87,7 @@ let create_local_switch ~system_cfg ~ocaml_home_fp ~scripts_dir_fp ~yes
           "/bin/sh";
           Fpath.to_string create_switch_fp;
           "-p";
-          system_cfg.target_abi;
+          system_cfg.host_abi;
           "-t";
           Fpath.to_string localdir_fp;
           "-o";
@@ -96,6 +96,9 @@ let create_local_switch ~system_cfg ~ocaml_home_fp ~scripts_dir_fp ~yes
           Fpath.to_string opamroot_dir_fp;
           "-m";
           "conf-withdkml";
+          (* Ex. dkml-host-abi-windows_x86_64 *)
+          "-m";
+          "dkml-host-abi-" ^ system_cfg.host_abi;
         ]
       @ (if non_system_compiler then
            (* Without [-v OCAMLHOME] the [-b BUILDTYPE] is required *)
@@ -116,8 +119,11 @@ let create_local_switch ~system_cfg ~ocaml_home_fp ~scripts_dir_fp ~yes
       (* https://stackoverflow.com/questions/1101957/are-there-any-standard-exit-status-codes-in-linux/1535733#1535733 *)
       Ok (128 + signal)
 
-let run f_setup localdir_fp_opt yes non_system_compiler system_only
-    enable_imprecise_c99_float_ops disable_sandboxing =
+let run (_ : [ `Initialized ]) f_setup localdir_fp_opt yes non_system_compiler
+    system_only enable_imprecise_c99_float_ops disable_sandboxing =
+  (* Do check for news before proceeding. *)
+  Dkml_runtimelib.Dkml_news.show_and_update_if_expired `Initialized;
+  (* Continue with 'init' *)
   let ( let* ) = Result.bind in
   let* (_has_dkml_mutating_ancestor_process : bool) =
     Dkml_runtimelib.Dkml_environment.mark_dkml_mutating_ancestor_process ()
