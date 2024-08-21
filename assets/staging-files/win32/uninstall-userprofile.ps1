@@ -75,6 +75,13 @@ if ($env:LOCALAPPDATA) {
 } elseif ($env:HOME) {
     $DkmlParentHomeDir = "$env:HOME/.local/share/dkml"
 }
+if ($env:LOCALAPPDATA) {
+    $DkmlParentNativeDir = "$env:LOCALAPPDATA\Programs\DkMLNative"
+} elseif ($env:XDG_DATA_HOME) {
+    $DkmlParentNativeDir = "$env:XDG_DATA_HOME/dkml-native"
+} elseif ($env:HOME) {
+    $DkmlParentNativeDir = "$env:HOME/.local/share/dkml-native"
+}
 if (-not $InstallationPrefix) {
     $InstallationPrefix = $DkmlParentHomeDir
 }
@@ -203,7 +210,6 @@ function Set-UserEnvironmentVariable {
 
 $global:AdditionalDiagnostics = "`n`n"
 try {
-
     # ----------------------------------------------------------------
     # BEGIN Remove playground switch
 
@@ -346,3 +352,5 @@ Write-Information "Thanks for using DkML!"
 Write-Information ""
 Write-Information ""
 Write-Information ""
+
+exit 0
