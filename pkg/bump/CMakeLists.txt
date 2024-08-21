@@ -1099,7 +1099,7 @@ function(prepare_upsert_variables)
 
     get_switch_path(OUTPUT_SWITCH_PATH switchPath)
 
-    set(workdir ${CMAKE_CURRENT_BINARY_DIR}/${DKML_VERSION_CMAKEVER}/${ARG_ID})
+    set(workdir ${CMAKE_CURRENT_BINARY_DIR}/dkml/${ARG_ID})
     FetchContent_GetProperties(dkml-runtime-common)
     set(UPSERT_UTILS ${workdir}/upsert-utils.sh)
 
@@ -1108,7 +1108,7 @@ function(prepare_upsert_variables)
         @ONLY NEWLINE_STYLE UNIX)
 
     if(ARG_OUTPUT_SWITCH_NAME)
-        set(${ARG_OUTPUT_SWITCH_NAME} ${DKML_VERSION_CMAKEVER} PARENT_SCOPE)
+        set(${ARG_OUTPUT_SWITCH_NAME} dkml PARENT_SCOPE)
     endif()
 
     set(${ARG_OUTPUT_WORKING_DIRECTORY} ${workdir} PARENT_SCOPE)
