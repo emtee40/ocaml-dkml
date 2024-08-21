@@ -1,7 +1,7 @@
 (lang dune 3.6)
 
 (name dkml-component-common-desktop)
-(version 2.1.1)
+(version 2.1.2)
 
 (generate_opam_files true)
 
@@ -39,11 +39,12 @@
  (depends
   conf-dkml-sys-opam
   (dkml-build-desktop (= :version)) ; dkml-desktop-copy-installed
+  dkml-host-abi ; %{dkml-host-abi:abi}
   (dkml-install (>= 0.2.0))
   ; BEGIN dkml-apps-only. DO NOT EDIT THE LINES IN THIS SECTION
   ; Managed by bump-packages.cmake
   (dune (= 3.15.0))
-  (dkml-apps (= 2.1.1))
+  (dkml-apps (= 2.1.2))
   ; END dkml-apps-only. DO NOT EDIT THE LINES ABOVE
   (diskuvbox (>= 0.1.0))
   (sexplib (>= v0.14.0))
@@ -58,6 +59,7 @@
  (depends
   conf-dkml-sys-opam
   (dkml-build-desktop (= :version)) ; dkml-desktop-copy-installed
+  dkml-host-abi ; %{dkml-host-abi:abi}
   (dkml-install (>= 0.2.0))
   (diskuvbox (>= 0.1.0))))
 
@@ -76,13 +78,14 @@
  (depends
   conf-dkml-sys-opam
   (dkml-build-desktop (= :version)) ; dkml-desktop-copy-installed
+  dkml-host-abi ; %{dkml-host-abi:abi}
   (dkml-install (>= 0.2.0))
   (diskuvbox (>= 0.1.0))
   ; BEGIN flavor-ci. DO NOT EDIT THE LINES IN THIS SECTION
   ; Managed by bump-packages.cmake
   (dune (= 3.15.0))
-  (dkml-apps (= 2.1.1))
-  (dkml-exe (= 2.1.1))
+  (dkml-apps (= 2.1.2))
+  (dkml-exe (= 2.1.2))
   (metapp (= 0.4.4+win))
   (ocaml-compiler-libs (= v0.12.4))
   (ocamlfind (= 1.9.5))
@@ -92,7 +95,7 @@
   (stdcompat (= 19+optautoconf))
   (stdlib-shims (= 0.3.0))
   (traverse (= 0.3.0))
-  (with-dkml (= 2.1.1))
+  (with-dkml (= 2.1.2))
   ; END flavor-ci. DO NOT EDIT THE LINES ABOVE
  ))
 
@@ -111,6 +114,7 @@
  (depends
   conf-dkml-sys-opam
   (dkml-build-desktop (= :version)) ; dkml-desktop-copy-installed
+  dkml-host-abi ; %{dkml-host-abi:abi}
   (dkml-install (>= 0.2.0))
   (diskuvbox (>= 0.1.0))
   ; BEGIN flavor-full. DO NOT EDIT THE LINES IN THIS SECTION
@@ -119,8 +123,8 @@
   (base (= v0.16.1))
   (conf-sqlite3 (= 3.1+cpkgs))
   (csexp (= 1.5.2))
-  (dkml-apps (= 2.1.1))
-  (dkml-exe (= 2.1.1))
+  (dkml-apps (= 2.1.2))
+  (dkml-exe (= 2.1.2))
   (graphics (= 5.1.2))
   (hmap (= 0.8.1))
   (iostream (= 0.2.2))
@@ -144,7 +148,7 @@
   (refl (= 0.4.1))
   (result (= 1.5))
   (sexplib0 (= v0.16.0))
-  (sqlite3 (= 5.1.0+msvc))
+  (sqlite3 (= 5.2.0))
   (stdcompat (= 19+optautoconf))
   (stdlib-shims (= 0.3.0))
   (tiny_httpd (= 0.16))
@@ -155,7 +159,7 @@
   (uucp (= 15.0.0))
   (uuseg (= 15.0.0))
   (uutf (= 1.0.3))
-  (with-dkml (= 2.1.1))
+  (with-dkml (= 2.1.2))
   (xdg (= 3.15.0))
   (zed (= 3.2.3))
   ; END flavor-full. DO NOT EDIT THE LINES ABOVE
