@@ -10,7 +10,9 @@ include(${CMAKE_CURRENT_LIST_DIR}/DkMLPublish.cmake)
 #   Always prefer to configure the build with CMake variables
 #   rather than inside .gitlab-ci.yml so that desktop testing
 #   can mimic the CI.
-set(BOOTSTRAP_OPAM_VERSION 2.2.0)
+#   2.2.0 - Only generated Windows but not Linux or macOS. That means it is inappropriate to be hardcoded into DkML compilers in CI.
+#   2.2.0.1 - Same as 2.2.0 but generated also Linux and macOS.
+set(BOOTSTRAP_OPAM_VERSION 2.2.0.1)
 
 if(CMAKE_HOST_WIN32)
     find_program(POWERSHELL_EXECUTABLE NAMES pwsh powershell REQUIRED)
