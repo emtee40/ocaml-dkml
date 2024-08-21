@@ -65,7 +65,7 @@
 
    Consult the [Errata](#errata).
 
-3. Test it out with (for example macOS/Silicon):
+3. Test the installer with (for example macOS/Silicon):
 
    ```sh
    build/pkg/bump/.ci/o/2.1.0/share/dkml-installer-ocaml-network/t/bundle-dkml-native-darwin_arm64-i.sh tar
@@ -90,7 +90,16 @@
    values obtained from the prior stages, so do not skip any targets. Consult the
    [Errata](#errata)
 8. Run `cmake -E env DKTOOL_TTL_MINUTES=0 -- ./dk dkml.workflow.compilers CI GitLab PRERELEASE` (nit: This should be done as its own stage; before GitPushForTesting)
-9. Finish with the CMake target `-PublishAssets`.
+9. Test DkML workflows:
+
+   ```sh
+   [ -x /usr/bin/cygpath ] && export HOME=$(cygpath -am "$USERPROFILE")
+   build/pkg/bump/push-dkml-workflows.sh
+   ```
+
+   Wait for <https://github.com/diskuv/dkml-workflows-prerelease/actions> to complete.
+
+10. Finish with the CMake target `-PublishAssets`.
 
 ## Editing Source Code
 
