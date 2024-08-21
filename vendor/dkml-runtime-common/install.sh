@@ -17,10 +17,10 @@ install template.dkmlroot "$targetdir/"
 #
 #   shellcheck disable=SC2043
 for i in brewbundle.sh; do
-    tr -d '\r' macos/$i > "$targetdir/macos/$i"
+    tr -d '\r' < macos/$i > "$targetdir/macos/$i"
     chmod +x "$targetdir/macos/$i"
 done
 for i in _common_tool.sh _within_dev.sh crossplatform-functions.sh; do
-    tr -d '\r' unix/$i > "$targetdir/unix/$i"
+    tr -d '\r' < unix/$i > "$targetdir/unix/$i"
     chmod +x "$targetdir/unix/$i"
 done
