@@ -1528,11 +1528,15 @@ variables:
 
           section_begin "opam-pins-$do_pins_NAME" "Opam pins for $do_pins_NAME switch"
           #   adapted from dkml-runtime-common's _common_tool.sh:get_opam_switch_state_toplevelsection
-          #       shellcheck disable=SC2016
-          awk -v section="pinned" \
-              '$1 ~ ":" {state=0} $1==(section ":") {state=1} state==1{print}' \
-              "$opam_root/$do_pins_NAME/.opam-switch/switch-state" \
-              > "$opam_root/.ci.$do_pins_NAME.pinned"
+          if [ -e "$opam_root/$do_pins_NAME/.opam-switch/switch-state" ]; then
+              #       shellcheck disable=SC2016
+              awk -v section="pinned" \
+                  '$1 ~ ":" {state=0} $1==(section ":") {state=1} state==1{print}' \
+                  "$opam_root/$do_pins_NAME/.opam-switch/switch-state" \
+                  > "$opam_root/.ci.$do_pins_NAME.pinned"
+          else
+              touch "$opam_root/.ci.$do_pins_NAME.pinned"
+          fi
           do_pin_add() {
               do_pin_add_NAME=$1; shift
               do_pin_add_VER=$1; shift
@@ -3532,11 +3536,15 @@ variables:
 
           section_begin "opam-pins-$do_pins_NAME" "Opam pins for $do_pins_NAME switch"
           #   adapted from dkml-runtime-common's _common_tool.sh:get_opam_switch_state_toplevelsection
-          #       shellcheck disable=SC2016
-          awk -v section="pinned" \
-              '$1 ~ ":" {state=0} $1==(section ":") {state=1} state==1{print}' \
-              "$opam_root/$do_pins_NAME/.opam-switch/switch-state" \
-              > "$opam_root/.ci.$do_pins_NAME.pinned"
+          if [ -e "$opam_root/$do_pins_NAME/.opam-switch/switch-state" ]; then
+              #       shellcheck disable=SC2016
+              awk -v section="pinned" \
+                  '$1 ~ ":" {state=0} $1==(section ":") {state=1} state==1{print}' \
+                  "$opam_root/$do_pins_NAME/.opam-switch/switch-state" \
+                  > "$opam_root/.ci.$do_pins_NAME.pinned"
+          else
+              touch "$opam_root/.ci.$do_pins_NAME.pinned"
+          fi
           do_pin_add() {
               do_pin_add_NAME=$1; shift
               do_pin_add_VER=$1; shift
@@ -5254,11 +5262,15 @@ variables:
 
           section_begin "opam-pins-$do_pins_NAME" "Opam pins for $do_pins_NAME switch"
           #   adapted from dkml-runtime-common's _common_tool.sh:get_opam_switch_state_toplevelsection
-          #       shellcheck disable=SC2016
-          awk -v section="pinned" \
-              '$1 ~ ":" {state=0} $1==(section ":") {state=1} state==1{print}' \
-              "$opam_root/$do_pins_NAME/.opam-switch/switch-state" \
-              > "$opam_root/.ci.$do_pins_NAME.pinned"
+          if [ -e "$opam_root/$do_pins_NAME/.opam-switch/switch-state" ]; then
+              #       shellcheck disable=SC2016
+              awk -v section="pinned" \
+                  '$1 ~ ":" {state=0} $1==(section ":") {state=1} state==1{print}' \
+                  "$opam_root/$do_pins_NAME/.opam-switch/switch-state" \
+                  > "$opam_root/.ci.$do_pins_NAME.pinned"
+          else
+              touch "$opam_root/.ci.$do_pins_NAME.pinned"
+          fi
           do_pin_add() {
               do_pin_add_NAME=$1; shift
               do_pin_add_VER=$1; shift

@@ -1216,11 +1216,15 @@ runs:
 
             section_begin "opam-pins-$do_pins_NAME" "Opam pins for $do_pins_NAME switch"
             #   adapted from dkml-runtime-common's _common_tool.sh:get_opam_switch_state_toplevelsection
-            #       shellcheck disable=SC2016
-            awk -v section="pinned" \
-                '$1 ~ ":" {state=0} $1==(section ":") {state=1} state==1{print}' \
-                "$opam_root/$do_pins_NAME/.opam-switch/switch-state" \
-                > "$opam_root/.ci.$do_pins_NAME.pinned"
+            if [ -e "$opam_root/$do_pins_NAME/.opam-switch/switch-state" ]; then
+                #       shellcheck disable=SC2016
+                awk -v section="pinned" \
+                    '$1 ~ ":" {state=0} $1==(section ":") {state=1} state==1{print}' \
+                    "$opam_root/$do_pins_NAME/.opam-switch/switch-state" \
+                    > "$opam_root/.ci.$do_pins_NAME.pinned"
+            else
+                touch "$opam_root/.ci.$do_pins_NAME.pinned"
+            fi
             do_pin_add() {
                 do_pin_add_NAME=$1; shift
                 do_pin_add_VER=$1; shift
@@ -1780,7 +1784,7 @@ runs:
       shell: bash
       run: |
         set -x
-        echo '18a8dc-${{ steps.full_matrix_vars.outputs.dkml_host_abi }}-${{ steps.full_matrix_vars.outputs.opam_abi }}' > .ci/sd4/cachekey.opam.binaries
+        echo 'f9ee0a-${{ steps.full_matrix_vars.outputs.dkml_host_abi }}-${{ steps.full_matrix_vars.outputs.opam_abi }}' > .ci/sd4/cachekey.opam.binaries
         echo '${{ steps.full_matrix_vars.outputs.abi_pattern }}-${{ steps.full_matrix_vars.outputs.vsstudio_arch }}-${{ steps.full_matrix_vars.outputs.vsstudio_hostarch }}-${{ steps.full_matrix_vars.outputs.vsstudio_dir }}-${{ steps.full_matrix_vars.outputs.vsstudio_vcvarsver }}-${{ steps.full_matrix_vars.outputs.vsstudio_winsdkver }}-${{ steps.full_matrix_vars.outputs.vsstudio_msvspreference }}-${{ steps.full_matrix_vars.outputs.vsstudio_cmakegenerator }}' > .ci/sd4/cachekey.vsstudio
         echo '${{ inputs.OCAML_COMPILER }}-${{ inputs.DISKUV_OPAM_REPOSITORY }}-${{ inputs.DKML_COMPILER }}-${{ inputs.CONF_DKML_CROSS_TOOLCHAIN }}' > .ci/sd4/cachekey.ci.inputs
 
