@@ -75,9 +75,8 @@ variables:
   PIN_DKML_INSTALL_RUNNER: '0.5.2'
   PIN_DKML_INSTALL: '0.5.2'
   PIN_DKML_INSTALLER_OCAML_COMMON: '2.1.2'
-  PIN_DKML_INSTALLER_OCAML_NETWORK: '2.1.2'
   PIN_DKML_PACKAGE_CONSOLE: '0.5.2'
-  PIN_DKML_RUNTIME_COMMON_NATIVE: '2.1.2'
+  PIN_DKML_RUNTIME_COMMON_NATIVE: '2.1.1'
   PIN_DKML_RUNTIME_COMMON: '2.1.2'
   PIN_DKML_RUNTIME_DISTRIBUTION: '2.1.2'
   PIN_DKML_RUNTIMELIB: '2.1.2'
@@ -1600,7 +1599,6 @@ variables:
           do_pin_add dkml-install-installer "${PIN_DKML_INSTALL_INSTALLER}"
           do_pin_add dkml-install-runner "${PIN_DKML_INSTALL_RUNNER}"
           do_pin_add dkml-installer-ocaml-common "${PIN_DKML_INSTALLER_OCAML_COMMON}"
-          do_pin_add dkml-installer-ocaml-network "${PIN_DKML_INSTALLER_OCAML_NETWORK}"
           do_pin_add dkml-package-console "${PIN_DKML_PACKAGE_CONSOLE}"
           do_pin_add dkml-runtime-common "${PIN_DKML_RUNTIME_COMMON}"
           do_pin_add dkml-runtime-common-native "${PIN_DKML_RUNTIME_COMMON_NATIVE}"
@@ -3608,7 +3606,6 @@ variables:
           do_pin_add dkml-install-installer "${PIN_DKML_INSTALL_INSTALLER}"
           do_pin_add dkml-install-runner "${PIN_DKML_INSTALL_RUNNER}"
           do_pin_add dkml-installer-ocaml-common "${PIN_DKML_INSTALLER_OCAML_COMMON}"
-          do_pin_add dkml-installer-ocaml-network "${PIN_DKML_INSTALLER_OCAML_NETWORK}"
           do_pin_add dkml-package-console "${PIN_DKML_PACKAGE_CONSOLE}"
           do_pin_add dkml-runtime-common "${PIN_DKML_RUNTIME_COMMON}"
           do_pin_add dkml-runtime-common-native "${PIN_DKML_RUNTIME_COMMON_NATIVE}"
@@ -5334,7 +5331,6 @@ variables:
           do_pin_add dkml-install-installer "${PIN_DKML_INSTALL_INSTALLER}"
           do_pin_add dkml-install-runner "${PIN_DKML_INSTALL_RUNNER}"
           do_pin_add dkml-installer-ocaml-common "${PIN_DKML_INSTALLER_OCAML_COMMON}"
-          do_pin_add dkml-installer-ocaml-network "${PIN_DKML_INSTALLER_OCAML_NETWORK}"
           do_pin_add dkml-package-console "${PIN_DKML_PACKAGE_CONSOLE}"
           do_pin_add dkml-runtime-common "${PIN_DKML_RUNTIME_COMMON}"
           do_pin_add dkml-runtime-common-native "${PIN_DKML_RUNTIME_COMMON_NATIVE}"
