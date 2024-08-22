@@ -124,12 +124,12 @@ install: [
   [ "dkml-desktop-copy-installed" "--file-list" "opamshow-odoc.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/install" ]
   # END install-flavor-full. DO NOT EDIT THE LINES ABOVE
 
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-stdlib.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ocamlexe.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-stdlib.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ocamlexe.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
 
   # As of DkML 2.1.0 [dune] is not installed to the global environment. May come back though when [dune build], either through
   # shim or natively, can effectively do an [opam install . --deps-only] and a [eval $(opam env)] followed by the real [dune build].
-  # [ "diskuvbox" "copy-file" "%{with-dkml:bin}%/with-dkml%{exe}%" "%{_:share}%/staging-files/%{dkml-abi}%/install/bin/dune%{exe}%" ]
-  # [ "diskuvbox" "copy-file" "%{dune:bin}%/dune%{exe}%"      "%{_:share}%/staging-files/%{dkml-abi}%/install/bin/dune-real%{exe}%" ] {!(conf-withdkml:installed)}
-  # [ "diskuvbox" "copy-file" "%{dune:bin}%/dune-real%{exe}%" "%{_:share}%/staging-files/%{dkml-abi}%/install/bin/dune-real%{exe}%" ] {  conf-withdkml:installed}
+  # [ "diskuvbox" "copy-file" "%{with-dkml:bin}%/with-dkml%{exe}%" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/install/bin/dune%{exe}%" ]
+  # [ "diskuvbox" "copy-file" "%{dune:bin}%/dune%{exe}%"      "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/install/bin/dune-real%{exe}%" ] {!(conf-withdkml:installed)}
+  # [ "diskuvbox" "copy-file" "%{dune:bin}%/dune-real%{exe}%" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/install/bin/dune-real%{exe}%" ] {  conf-withdkml:installed}
 ]
