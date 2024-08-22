@@ -1,24 +1,35 @@
 opam-version: "2.0"
-synopsis: "Common runtime code used in DKML"
+synopsis: "Common runtime code used in DkML"
 description: "Common runtime code used in DKML.
 
 The runtime code will be available in the 'lib/dkml-runtime-common' folder
 of your Opam switch or findlib installation."
-maintainer: ["opensource+diskuv-ocaml@support.diskuv.com"]
-authors: ["Diskuv, Inc. <opensource+diskuv-ocaml@support.diskuv.com>"]
+maintainer: ["opensource+dkml@support.diskuv.com"]
+authors: ["Diskuv, Inc. <opensource+dkml@support.diskuv.com>"]
 license: "Apache-2.0"
 homepage: "https://github.com/diskuv/dkml-runtime-common"
 bug-reports: "https://github.com/diskuv/dkml-runtime-common/issues"
 dev-repo: "git+https://github.com/diskuv/dkml-runtime-common.git"
-depends: [
-  "dune" {>= "2.9"}
-]
+#   Must not rely on OCaml (ex. diskuvbox or dune) because this
+#   package is a dependency of OCaml compilers like dkml-base-compiler!
+depends: []
 build: [
-  ["dune" "build" "-p" name]
+  ["sh" "tests/crossplatform-tests.sh"] { with-test & !(os = "win32") }
+]
+install: [
+  # TODO: opam does not pass to Command Prompt correctly when there is a
+  # space in the _:lib so we have to avoid the (correct) Command Prompt
+  # shell. https://github.com/ocaml/opam/issues/5673
+  #
+  # TODO 2: install.cmd has no dos2unix ability like install.sh
+  #
+  #[".\\install.cmd" "\"%{_:lib}%\""] { os = "win32"}
+
+  ["sh" "./install.sh"   "%{_:lib}%"] # {!(os = "win32")}
 ]
 url {
   src: "https://gitlab.com/dkml/distributions/dkml/-/releases/2.1.2/downloads/src.dkml-runtime-common.tar.gz"
   checksum: [
-    "sha512=48c165bb2a8fd17d9506ad994ca94f37d18f44546eaa5eeb834acdbd0845c3acd9f6b21b8b8e4ec07452edb580516db3285a188c2e5aa59265a9c2e044449a90"
+    "sha512=f2ed16dff90936412194a412703e814a42be17f06d52466e969d3f8d96b26477fa5f55cda0d52234b6aa3757d52c028206a8bfd9cd6e932f5f301b7300958e8a"
   ]
 }

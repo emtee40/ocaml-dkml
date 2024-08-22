@@ -31,6 +31,6 @@ dev-repo: "git+https://github.com/diskuv/dkml-installer-ocaml.git"
 url {
   src: "https://gitlab.com/dkml/distributions/dkml/-/releases/2.1.2/downloads/src.dkml-installer-ocaml.tar.gz"
   checksum: [
-    "sha512=6c654d1477f509ee3b28fd91a072be9700acc2a6b8e12bb347b9e786093d015329945c44bae7487c89de31b2ff4b6c11e190ad0c78a6ed8fcd4ada922acf41d7"
+    "sha512=c833b067ccd08140ba6a7e6b8f9494bbeee795a1cfa7ab26da5b570beaec986624e9d2b2e944913fd3ad753322d3900a27e9b705611f404c235d5d3dab74da8c"
   ]
 }
