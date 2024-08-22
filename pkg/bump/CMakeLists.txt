@@ -909,6 +909,7 @@ DkMLPatches_GetPackageVersions(
     ${dkml-component_PACKAGES}
     ${dkml-installer_ALL_PACKAGES}
     ${dkml-runtime_PACKAGES}
+    dkml-runtime-common-native # deprecated and removed in 2.1.2
     ${dkml-compiler_PACKAGES}
     ${dkml-workflows_PACKAGES}
     ocaml-option-32bit
