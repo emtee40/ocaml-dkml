@@ -1088,7 +1088,7 @@ function(get_switch_path)
     set(multiValues)
     cmake_parse_arguments(PARSE_ARGV 0 ARG "${noValues}" "${singleValues}" "${multiValues}")
 
-    set(${ARG_OUTPUT_SWITCH_PATH} ${anyrun_OPAMROOT}/${DKML_VERSION_CMAKEVER} PARENT_SCOPE)
+    set(${ARG_OUTPUT_SWITCH_PATH} ${anyrun_OPAMROOT}/dkml PARENT_SCOPE)
 endfunction()
 
 function(prepare_upsert_variables)
@@ -1099,7 +1099,7 @@ function(prepare_upsert_variables)
 
     get_switch_path(OUTPUT_SWITCH_PATH switchPath)
 
-    set(workdir ${CMAKE_CURRENT_BINARY_DIR}/dkml/${ARG_ID})
+    set(workdir ${CMAKE_CURRENT_BINARY_DIR}/${DKML_VERSION_CMAKEVER}/${ARG_ID})
     FetchContent_GetProperties(dkml-runtime-common)
     set(UPSERT_UTILS ${workdir}/upsert-utils.sh)
 
