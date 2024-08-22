@@ -94,6 +94,7 @@
 
    ```sh
    [ -x /usr/bin/cygpath ] && export HOME=$(cygpath -am "$USERPROFILE")
+   build/pkg/bump/push-dkml-compiler.sh
    build/pkg/bump/push-dkml-workflows.sh
    ```
 
