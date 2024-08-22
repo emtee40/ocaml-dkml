@@ -8,7 +8,7 @@ opam-version: "2.0"
 # - 4.14.0~prerel69 (legacy format) < 4.14.0~v0.4.0 < 4.14.0~v0.4.1~prerel69 < 4.14.0~v0.4.1
 # Confer: Version Ordering in https://opam.ocaml.org/doc/Manual.html#Package-Formulas
 version: "4.14.2~v2.1.2"
-synopsis: "OCaml cross-compiler and libraries from the DkML distribution."
+synopsis: "OCaml cross-compiler and libraries from the DkML distribution"
 description:
   """The DkML distribution of the OCaml bytecode and native compiler, Stdlib and the other OCaml libraries (str, unix, bigarray, etc.).
 
@@ -37,7 +37,7 @@ depends: [
   "base-bigarray" {post}
   "base-threads" {post}
 
-  "dkml-runtime-common-native" {= "2.1.2"}
+  "dkml-runtime-common" {= "2.1.2"}
 
   "dkml-host-abi"
   ("dkml-host-abi-darwin_arm64" |
@@ -108,7 +108,7 @@ build: [
   #   <dkmldir>/vendor/drc/
   ["install" "-d" "dkmldir/vendor/drc"]
   #     tar through pipe is essentially an rsync (without requiring rsync)
-  ["sh" "-eufc" "tar cCf '%{dkml-runtime-common-native:lib}%/' - . | tar xCf dkmldir/vendor/drc/ -"]
+  ["sh" "-eufc" "tar cCf '%{dkml-runtime-common:lib}%/' - . | tar xCf dkmldir/vendor/drc/ -"]
 
   #   <dkmldir>/vendor/dkml-compiler/
   ["install" "-d" "dkmldir/vendor/dkml-compiler/src" "dkmldir/vendor/dkml-compiler/env"]
@@ -196,8 +196,8 @@ install: [
       #   Host architectures
       "-e%{dkml-host-abi:abi}%"
       #   Target architectures (if cross-compiling; similar to dkml-component-staging-ocamlrun.opam)
-      "-adarwin_x86_64=vendor/dkml-compiler/env/standard-compiler-env-to-ocaml-configure-env.sh" { dkml-target-abi-darwin_arm64:installed }
-      "-adarwin_arm64=vendor/dkml-compiler/env/standard-compiler-env-to-ocaml-configure-env.sh"  { dkml-target-abi-darwin_x86_64:installed }
+      "-adarwin_x86_64=vendor/dkml-compiler/env/standard-compiler-env-to-ocaml-configure-env.sh" { dkml-host-abi:abi != "darwin_x86_64" & dkml-target-abi-darwin_x86_64:installed }
+      "-adarwin_arm64=vendor/dkml-compiler/env/standard-compiler-env-to-ocaml-configure-env.sh"  { dkml-host-abi:abi != "darwin_arm64" & dkml-target-abi-darwin_arm64:installed }
       #     TODO: Would be nice to bundle the 3 Android cross-compilers here since they are already supported
       #     by DkML, but I (jonahbeckford@) doubt there is an Android NDK available on the Opam hosts.
       #     Confer: https://github.com/diskuv/diskuv-ocaml-ghmirror/runs/4831077050
