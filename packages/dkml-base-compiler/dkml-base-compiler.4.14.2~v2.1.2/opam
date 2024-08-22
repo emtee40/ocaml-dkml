@@ -36,7 +36,7 @@ depends: [
   "base-bigarray" {post}
   "base-threads" {post}
 
-  "dkml-runtime-common-native" {= "2.1.2"}
+  "dkml-runtime-common" {= "2.1.2"}
 
   "dkml-host-abi"
   ("dkml-host-abi-darwin_arm64" |
@@ -107,7 +107,7 @@ build: [
   #   <dkmldir>/vendor/drc/
   ["install" "-d" "dkmldir/vendor/drc"]
   #     tar through pipe is essentially an rsync (without requiring rsync)
-  ["sh" "-eufc" "tar cCf '%{dkml-runtime-common-native:lib}%/' - . | tar xCf dkmldir/vendor/drc/ -"]
+  ["sh" "-eufc" "tar cCf '%{dkml-runtime-common:lib}%/' - . | tar xCf dkmldir/vendor/drc/ -"]
 
   #   <dkmldir>/vendor/dkml-compiler/
   ["install" "-d" "dkmldir/vendor/dkml-compiler/src" "dkmldir/vendor/dkml-compiler/env"]
@@ -195,8 +195,8 @@ install: [
       #   Host architectures
       "-e%{dkml-host-abi:abi}%"
       #   Target architectures (if cross-compiling; similar to dkml-component-staging-ocamlrun.opam)
-      "-adarwin_x86_64=vendor/dkml-compiler/env/standard-compiler-env-to-ocaml-configure-env.sh" { dkml-target-abi-darwin_arm64:installed }
-      "-adarwin_arm64=vendor/dkml-compiler/env/standard-compiler-env-to-ocaml-configure-env.sh"  { dkml-target-abi-darwin_x86_64:installed }
+      "-adarwin_x86_64=vendor/dkml-compiler/env/standard-compiler-env-to-ocaml-configure-env.sh" { dkml-host-abi:abi != "darwin_x86_64" & dkml-target-abi-darwin_x86_64:installed }
+      "-adarwin_arm64=vendor/dkml-compiler/env/standard-compiler-env-to-ocaml-configure-env.sh"  { dkml-host-abi:abi != "darwin_arm64" & dkml-target-abi-darwin_arm64:installed }
       #     TODO: Would be nice to bundle the 3 Android cross-compilers here since they are already supported
       #     by DkML, but I (jonahbeckford@) doubt there is an Android NDK available on the Opam hosts.
       #     Confer: https://github.com/diskuv/diskuv-ocaml-ghmirror/runs/4831077050
@@ -264,6 +264,6 @@ extra-source "dl/darwin_arm64-ocamlc.opt" {
 url {
   src: "https://gitlab.com/dkml/distributions/dkml/-/releases/2.1.2/downloads/src.dkml-compiler.tar.gz"
   checksum: [
-    "sha512=6027960351e3c146c054cc5f160ea800a38c955ac827e8bbe5c9657aead5c06f968ebd22099baaf054494da4e85d61ece55091ba340061d26d8433545313873a"
+    "sha512=4fb6429725ed59b107f67972fa2c6adc7ae43a0433890a6aaf300164722ce73ecc76796470e19f5503638b78a318b5d61dfd7a342182c38810b3c6111eba3044"
   ]
 }

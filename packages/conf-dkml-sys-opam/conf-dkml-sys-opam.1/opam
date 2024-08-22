@@ -5,9 +5,9 @@ bug-reports: "https://github.com/diskuv/dkml-runtime-apps/issues"
 authors: ["Diskuv, Inc. <opensource+diskuv-ocaml@support.diskuv.com>"]
 license: "Apache-2.0"
 depends: [
-  # should dkml-runtime-common-native be a flags:conf package since it is a dependency
+  # should dkml-runtime-common be a flags:conf package since it is a dependency
   # of a flags:conf package?
-  "dkml-runtime-common-native" {>= "1.0.2~prerel17"}
+  "dkml-runtime-common" {>= "2.1.2"}
 ]
 build: [
   [ "sh" "-eufxc" "echo '%{dkml-sys-opam-exe}%' > opam-exe"]  { ?dkml-sys-opam-exe}
@@ -19,7 +19,7 @@ build: [
     "-eufxc"
     """
     # Load common functions
-    . '%{dkml-runtime-common-native:lib}%/unix/crossplatform-functions.sh'
+    . '%{dkml-runtime-common:lib}%/unix/crossplatform-functions.sh'
 
     OPAM_EXE=$(cat opam-exe)
     # Translate the opam executable location into different path styles
