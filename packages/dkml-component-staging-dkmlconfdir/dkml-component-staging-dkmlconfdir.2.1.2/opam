@@ -12,6 +12,7 @@ bug-reports:
 depends: [
   "conf-dkml-sys-opam"
   "dkml-build-desktop" {= version}
+  "dkml-host-abi"
   "dkml-install" {>= "0.2.0"}
   "dune" {>= "3.6" & = "3.15.0"}
   "dkml-apps" {= "2.1.2"}
@@ -40,11 +41,11 @@ build: [
   [ "sh" "-c" "OPAMLOGS=$PWD '%{conf-dkml-sys-opam:location-mixed}%' show --readonly --list-files dkml-apps | grep dkml-confdir > opamshow-dkml-apps-only-dkml-confdir.txt" ]
 ]
 install: [
-  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-dkml-apps-only-dkml-confdir.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-abi}%" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-dkml-apps-only-dkml-confdir.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%" ]
 ]
 url {
   src: "https://gitlab.com/dkml/distributions/dkml/-/releases/2.1.2/downloads/src.dkml-component-desktop.tar.gz"
   checksum: [
-    "sha512=73cae1c7ec5144556e7273896aeea15ef9c50c7fd5094d5f5e3c6e87ef2110b6aaf71a171a7b791fc44b19a52b0616b66bf6f509e9d73ae75896677e7859dd53"
+    "sha512=fabb58060e6b0fedc7681eac34e1d77a7d6d75b8847569dc778c26be105e312d8b268eabeb3299b5da610d0e0f999c3fadc90cd5a3b90f12dfa2943613e92f6c"
   ]
 }
