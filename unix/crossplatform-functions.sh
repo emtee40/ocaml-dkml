@@ -133,7 +133,7 @@ default_dkmlvars() {
     fi
     autodetect_dkmlvars_DiskuvOCamlBinaryPaths_Override="$autodetect_dkmlvars_DiskuvOCamlHome_Override/usr/bin;$autodetect_dkmlvars_DiskuvOCamlHome_Override/bin"
     autodetect_dkmlvars_DiskuvOCamlDeploymentId_Override="default-592592597"
-    autodetect_dkmlvars_DiskuvOCamlVersion_Override=2.1.2
+    autodetect_dkmlvars_DiskuvOCamlVersion_Override=2.1.3
     autodetect_dkmlvars_DiskuvOCamlMSYS2Dir_Override=
 }
 autodetect_dkmlvars() {
