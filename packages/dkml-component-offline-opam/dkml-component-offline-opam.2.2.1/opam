@@ -1,0 +1,76 @@
+opam-version: "2.0"
+synopsis: "Offline install of opam"
+description: """\
+Offline install that places opam in the installation directory.
+
+Depending on the end-user's integer size, as reported by Sys.int_size, either 32-bit or 64-bit opam will be installed.
+
+On macOS the end-user target ABI can be either darwin_arm64 or darwin_x86_64 when you have both dkml-base-compiler and
+conf-dkml-cross-toolchain installed in your switch, regardless whether your host's ABI is darwin_arm64 or darwin_x86.64.
+Otherwise on macOS the target ABI must match the host ABI.
+
+The package version, and what [opam --version] returns, are closely associated with the Opam version from the Opam
+source code. The only modifications are to ensure that the package version can be ordered using semver. In particular:
+
+* 2.2.0~alpha~dev -> 2.2.0~alpha0~20221231
+* 2.2.0~alpha~1   -> 2.2.0~alpha1~20230601
+* 2.2.0           -> 2.2.0
+
+The dates (YYYYMMDD) are the Git commit dates in the Opam source code, and simply replacing the tildes (~) with dashes (-) is
+sufficient to be compatible with semver and winget version ordering.
+
+Includes a patch to distinguish MSYS2 from Cygwin, esp. for rsync rather than symlinking which is needed on MSYS2."""
+maintainer: "opensource+dkml@support.diskuv.com"
+authors: "Diskuv, Inc. <opensource+dkml@support.diskuv.com>"
+license: "Apache-2.0"
+homepage: "https://github.com/diskuv/dkml-component-opam"
+bug-reports: "https://github.com/diskuv/dkml-component-opam/issues"
+depends: [
+  "dune" {>= "2.9"}
+  "dkml-component-common-opam" {= version}
+  "dkml-component-staging-opam32" {= version}
+  "dkml-component-staging-opam64" {= version}
+  "dkml-component-staging-ocamlrun" {>= "4.12.1~"}
+  "dkml-install" {>= "0.5.1"}
+  "diskuvbox" {>= "0.2.0"}
+  "odoc" {with-doc}
+]
+build: [
+  ["dune" "subst"] {dev}
+  [
+    "dune"
+    "build"
+    "-p"
+    name
+    "-j"
+    jobs
+    "--promote-install-files=false"
+    "@install"
+    "@runtest" {with-test}
+    "@doc" {with-doc}
+  ]
+  ["dune" "install" "-p" name "--create-install-files" name]
+]
+install: [
+  [
+    "diskuvbox"
+    "copy-dir"
+    "assets/staging-files/win32"
+    "%{_:share}%/staging-files/windows_x86"
+  ]
+  [
+    "diskuvbox"
+    "copy-dir"
+    "assets/staging-files/win32"
+    "%{_:share}%/staging-files/windows_x86_64"
+  ]
+]
+dev-repo: "git+https://github.com/diskuv/dkml-component-opam.git"
+url {
+  src:
+    "https://github.com/diskuv/dkml-component-opam/releases/download/2.2.1/src.tar.gz"
+  checksum: [
+    "md5=c3c32032b2be72e0aea5e94fd7844a13"
+    "sha512=32295203a85a9ec8315c9f362f073f8e8ef066de13614f32114201290c59953b13bf539d9d0a80d2182997de3d1b0465917fed25e55c718a3364a57996493b66"
+  ]
+}
