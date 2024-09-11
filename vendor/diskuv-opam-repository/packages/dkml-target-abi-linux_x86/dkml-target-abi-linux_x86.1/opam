@@ -11,3 +11,6 @@ license: "Apache-2.0"
 homepage: "https://diskuv.com/dkmlbook/"
 bug-reports: "https://gitlab.com/dkml/distributions/dkml/-/issues"
 flags: compiler
+depends: [
+    "ocaml-option-32bit"
+]
