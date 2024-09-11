@@ -79,7 +79,8 @@ FetchGit(dkml-component-unixutils
 )
 FetchGit(dkml-component-opam
     GIT_REPOSITORY https://github.com/diskuv/dkml-component-opam.git
+    # Unusual versions
     #   2.2.0 - Only generated Windows but not Linux or macOS. That means it is inappropriate to be hardcoded into DkML compilers in CI.
-    #   2.2.0.1 - Same as 2.2.0 but generated also Linux and macOS.
-    GIT_TAG 2.2.0.1 # opam 2.2.0
+    #   2.2.0.1 - (Recommended if need opam 2.2.0) Same as 2.2.0 but generated also Linux and macOS.
+    GIT_TAG 2.2.1
 )
