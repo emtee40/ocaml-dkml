@@ -228,7 +228,7 @@ function(DkMLPublish_PublishAssetsTarget)
             FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
             @ONLY)
         list(APPEND depends ${UPLOAD_SRCFILE})
-        list(APPEND assetlinks "{\"name\": \"${NAME}\", \"url\":\"${PACKAGE_REGISTRY_URL_BASE}/${UPLOAD_VERSION}/${UPLOAD_DESTFILE}\", \"filepath\": \"/${DESTFILE}\", \"link_type\": \"${LINKTYPE}\"}")
+        list(APPEND assetlinks "{\"name\": \"${NAME}\", \"url\":\"${PACKAGE_REGISTRY_URL_BASE}/${UPLOAD_VERSION}/${UPLOAD_DESTFILE}\", \"direct_asset_path\": \"/${DESTFILE}\", \"link_type\": \"${LINKTYPE}\"}")
         list(APPEND precommands
             COMMAND ${CMAKE_COMMAND} -P ${PUBLISHDIR}/upload-${DESTFILE}.cmake)
     endmacro()
@@ -263,8 +263,8 @@ function(DkMLPublish_PublishAssetsTarget)
     # is created below. Alternatively, this might fail but [release_job] succeeds.
     # But test.gitlab-ci.yml [upload] should work, so these following links should be populated.
     if(DKML_INSTALL_OCAML_NETWORK)
-        list(APPEND assetlinks "{\"name\": \"macOS/Silicon 64-bit Installer\", \"url\":\"${PACKAGE_REGISTRY_URL_BASE}/${DKML_VERSION_SEMVER}/dkml-native-darwin_arm64-i-${DKML_VERSION_SEMVER}.tar.gz\", \"filepath\": \"/dkml-native-darwin_arm64-i-${DKML_VERSION_SEMVER}.tar.gz\", \"link_type\": \"package\"}")
-        list(APPEND assetlinks "{\"name\": \"DebianOldOld/Intel 64-bit Installer\", \"url\":\"${PACKAGE_REGISTRY_URL_BASE}/${DKML_VERSION_SEMVER}/dkml-native-linux_x86_64-i-${DKML_VERSION_SEMVER}.tar.gz\", \"filepath\": \"/dkml-native-linux_x86_64-i-${DKML_VERSION_SEMVER}.tar.gz\", \"link_type\": \"package\"}")
+        list(APPEND assetlinks "{\"name\": \"macOS/Silicon 64-bit Installer\", \"url\":\"${PACKAGE_REGISTRY_URL_BASE}/${DKML_VERSION_SEMVER}/dkml-native-darwin_arm64-i-${DKML_VERSION_SEMVER}.tar.gz\", \"direct_asset_path\": \"/dkml-native-darwin_arm64-i-${DKML_VERSION_SEMVER}.tar.gz\", \"link_type\": \"package\"}")
+        list(APPEND assetlinks "{\"name\": \"DebianOldOld/Intel 64-bit Installer\", \"url\":\"${PACKAGE_REGISTRY_URL_BASE}/${DKML_VERSION_SEMVER}/dkml-native-linux_x86_64-i-${DKML_VERSION_SEMVER}.tar.gz\", \"direct_asset_path\": \"/dkml-native-linux_x86_64-i-${DKML_VERSION_SEMVER}.tar.gz\", \"link_type\": \"package\"}")
     endif()
 
     if(assetlinks)
