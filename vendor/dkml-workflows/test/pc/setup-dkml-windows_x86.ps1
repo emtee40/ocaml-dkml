@@ -1334,7 +1334,7 @@ git_disable_gc() {
     do_git -C ".ci/sd4/g/$git_disable_gc_NAME" config --local gc.auto 0
 }
 
-# Mimic the behavior of GitHub's actions/checkout@v3
+# Mimic the behavior of GitHub's actions/checkout@v4
 # - the plus symbol in 'git fetch ... origin +REF:refs/tags/v0.0' overrides any existing REF
 git_checkout() {
     git_checkout_NAME=$1

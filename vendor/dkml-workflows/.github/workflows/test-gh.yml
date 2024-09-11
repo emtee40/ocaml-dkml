@@ -42,7 +42,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # The Setup DkML action will create the environment variables:
       #   opam_root, exe_ext, dkml_host_abi, abi_pattern (and many more)
