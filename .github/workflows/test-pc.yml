@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Run test/pc/setup-dkml-${{ matrix.dkml_host_abi }}.ps1
         run: test/pc/setup-dkml-${{ matrix.dkml_host_abi }}.ps1
@@ -40,7 +40,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Run test/pc/setup-dkml-${{ matrix.dkml_host_abi }}.sh
         run: sh test/pc/setup-dkml-${{ matrix.dkml_host_abi }}.sh
@@ -60,7 +60,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Run test/pc/setup-dkml-${{ matrix.dkml_host_abi }}.sh
         run: sh test/pc/setup-dkml-${{ matrix.dkml_host_abi }}.sh

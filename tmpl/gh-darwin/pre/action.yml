@@ -109,7 +109,7 @@ runs:
     # Bootstrapping Opam
 
     - name: Cache Opam bootstrap by OS
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: cache-sd4-bs
       with:
         path: .ci/sd4/bs
@@ -117,7 +117,7 @@ runs:
           "{{ cachebust }}_{% raw -%}${{ inputs.CACHE_PREFIX }}_${{ runner.os }}-sd4-bs-${{ hashFiles('.ci/sd4/cachekey.opam.binaries') }}{%- endraw %}"
 
     - name: Cache Opam root by (host,target)
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: cache-sd4-opamroot
       with:
         path: |
@@ -136,7 +136,7 @@ runs:
     # The action/checkout steps used for pinning will re-use existing Git objects
     # because of caching
     - name: Cache Git checkouts of Opam pins by OS
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: cache-sd4-git
       with:
         path: .ci/sd4/g
