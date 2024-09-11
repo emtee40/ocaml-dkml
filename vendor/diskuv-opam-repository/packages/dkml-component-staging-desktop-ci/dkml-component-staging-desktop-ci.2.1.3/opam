@@ -1,0 +1,117 @@
+opam-version: "2.0"
+synopsis:
+  "Collection of end-user installers of the CI flavor of desktop executables"
+description:
+  "`desktop` provides desktop executables for all DKML installable platforms"
+maintainer: ["opensource+diskuv-ocaml@support.diskuv.com"]
+authors: ["Diskuv, Inc. <opensource+diskuv-ocaml@support.diskuv.com>"]
+license: "Apache-2.0"
+homepage: "https://gitlab.com/dkml/components/dkml-component-desktop"
+doc:
+  "https://gitlab.com/dkml/components/dkml-component-desktop/-/blob/main/README.md"
+bug-reports:
+  "https://gitlab.com/dkml/components/dkml-component-desktop/-/issues"
+depends: [
+  "conf-dkml-sys-opam"
+  "dkml-build-desktop" {= version}
+  "dkml-host-abi"
+  "dkml-install" {>= "0.2.0"}
+  "diskuvbox" {>= "0.1.0"}
+  "dune" {>= "3.6" & = "3.15.0"}
+  "dkml-apps" {= "2.1.3"}
+  "dkml-exe" {= "2.1.3"}
+  "metapp" {= "0.4.4+win"}
+  "ocaml-compiler-libs" {= "v0.12.4"}
+  "ocamlfind" {= "1.9.5"}
+  "ppx_derivers" {= "1.2.1"}
+  "ppxlib" {= "0.30.0"}
+  "refl" {= "0.4.1"}
+  "stdcompat" {= "19+optautoconf"}
+  "stdlib-shims" {= "0.3.0"}
+  "traverse" {= "0.3.0"}
+  "with-dkml" {= "2.1.3"}
+  "odoc" {with-doc}
+]
+depopts: ["conf-withdkml"]
+dev-repo: "git+https://gitlab.com/dkml/components/dkml-component-desktop.git"
+build: [
+  ["dune" "subst"] {dev}
+  [
+    "dune"
+    "build"
+    "-p"
+    name
+    "-j"
+    jobs
+    "@install"
+    "@runtest" {with-test}
+    "@doc" {with-doc}
+  ]
+
+  # BEGIN build-flavor-ci. DO NOT EDIT THE LINES IN THIS SECTION
+  # Managed by bump-packages.cmake. TODO: Use [opam] from dkml-component-opam
+  [ "sh" "-c" "OPAMLOGS=$PWD '%{dkml-sys-opam-exe}%' show --readonly --list-files metapp > opamshow-metapp.txt" ]
+  [ "sh" "-c" "OPAMLOGS=$PWD '%{dkml-sys-opam-exe}%' show --readonly --list-files ocaml-compiler-libs > opamshow-ocaml-compiler-libs.txt" ]
+  [ "sh" "-c" "OPAMLOGS=$PWD '%{dkml-sys-opam-exe}%' show --readonly --list-files ocamlfind > opamshow-ocamlfind.txt" ]
+  [ "sh" "-c" "OPAMLOGS=$PWD '%{dkml-sys-opam-exe}%' show --readonly --list-files ppx_derivers > opamshow-ppx_derivers.txt" ]
+  [ "sh" "-c" "OPAMLOGS=$PWD '%{dkml-sys-opam-exe}%' show --readonly --list-files ppxlib > opamshow-ppxlib.txt" ]
+  [ "sh" "-c" "OPAMLOGS=$PWD '%{dkml-sys-opam-exe}%' show --readonly --list-files refl > opamshow-refl.txt" ]
+  [ "sh" "-c" "OPAMLOGS=$PWD '%{dkml-sys-opam-exe}%' show --readonly --list-files stdcompat > opamshow-stdcompat.txt" ]
+  [ "sh" "-c" "OPAMLOGS=$PWD '%{dkml-sys-opam-exe}%' show --readonly --list-files stdlib-shims > opamshow-stdlib-shims.txt" ]
+  [ "sh" "-c" "OPAMLOGS=$PWD '%{dkml-sys-opam-exe}%' show --readonly --list-files traverse > opamshow-traverse.txt" ]
+  [ "sh" "-c" "OPAMLOGS=$PWD '%{dkml-sys-opam-exe}%' show --readonly --list-files dkml-apps > opamshow-dkml-apps.txt" ]
+  [ "sh" "-c" "OPAMLOGS=$PWD '%{dkml-sys-opam-exe}%' show --readonly --list-files dkml-exe > opamshow-dkml-exe.txt" ]
+  # END build-flavor-ci. DO NOT EDIT THE LINES ABOVE
+
+  # NOTE: Below ocaml.exe + binaries and stdlib can replace the now
+  # wasted space of [staging-ocamlrun] in the installer
+
+  # Need stdlib since can't mix end-user compiled stdlib with our currently compiled stdlib, or else:
+  #   The files C:/Users/WDAGUT~1/AppData/Local/Programs/DISKUV~1/lib/ocaml\stdlib.cmi
+  #      and C:\Users\WDAGUT~1\AppData\Local\Programs\DISKUV~1\desktop\bc\lib\logs\logs.cmi
+  #      make inconsistent assumptions over interface CamlinternalFormatBasics
+  [ "sh" "-c" "OPAMLOGS=$PWD '%{conf-dkml-sys-opam:location-mixed}%' show --readonly --list-files dkml-base-compiler | awk -f scripts/stdlib.awk > opamshow-stdlib.txt" ] { os = "win32" }
+  [ "sh" "-c" "OPAMLOGS=$PWD '%{conf-dkml-sys-opam:location-mixed}%' show --readonly --list-files dkml-base-compiler | awk -f scripts/stdlib-unixonly.awk > opamshow-stdlib.txt" ] { !(os = "win32") }
+
+  # Need ocaml.exe and other binaries for "offline" installer
+  [ "sh" "-c" "OPAMLOGS=$PWD '%{conf-dkml-sys-opam:location-mixed}%' show --readonly --list-files dkml-base-compiler | awk -f scripts/ocamlexe.awk > opamshow-ocamlexe.txt" ] { os = "win32" }
+  [ "sh" "-c" "OPAMLOGS=$PWD '%{conf-dkml-sys-opam:location-mixed}%' show --readonly --list-files dkml-base-compiler | awk -f scripts/ocamlexe-unixonly.awk > opamshow-ocamlexe.txt" ] { !(os = "win32") }
+
+  # Overwrite opamshow-dkml-apps.txt to exclude what we staged in staging-dkmlconfdir. There should not be overlap.
+  [ "sh" "-c" "OPAMLOGS=$PWD '%{conf-dkml-sys-opam:location-mixed}%' show --readonly --list-files dkml-apps | grep -v dkml-confdir > opamshow-dkml-apps.txt" ]
+
+  # Overwrite opamshow-ocamlfind.txt to exclude bin\ocamlfind.exe and man1/ocamlfind.1. [ocamlfind] should never be in the global PATH or it will
+  # interfere with dune in opam switches. Also remove unnecessary bin/safe_camlp4
+  [ "sh" "-c" "OPAMLOGS=$PWD '%{conf-dkml-sys-opam:location-mixed}%' show --readonly --list-files ocamlfind | grep -v bin.ocamlfind | grep -v bin.safe_camlp4 | grep -v man1 > opamshow-ocamlfind.txt" ]
+]
+install: [
+  # BEGIN install-flavor-ci. DO NOT EDIT THE LINES IN THIS SECTION
+  # Managed by bump-packages.cmake
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-metapp.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ocaml-compiler-libs.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ocamlfind.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ppx_derivers.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ppxlib.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-refl.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-stdcompat.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-stdlib-shims.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-traverse.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-dkml-apps.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/install" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-dkml-exe.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/install" ]
+  # END install-flavor-ci. DO NOT EDIT THE LINES ABOVE
+
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-stdlib.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
+  [ "dkml-desktop-copy-installed" "--file-list" "opamshow-ocamlexe.txt" "--opam-switch-prefix" "%{prefix}%" "--output-dir" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/compile" ]
+
+  # As of DkML 2.1.0 [dune] is not installed to the global environment. May come back though when [dune build], either through
+  # shim or natively, can effectively do an [opam install . --deps-only] and a [eval $(opam env)] followed by the real [dune build].
+  # [ "diskuvbox" "copy-file" "%{with-dkml:bin}%/with-dkml%{exe}%" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/install/bin/dune%{exe}%" ]
+  # [ "diskuvbox" "copy-file" "%{dune:bin}%/dune%{exe}%"      "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/install/bin/dune-real%{exe}%" ] {!(conf-withdkml:installed)}
+  # [ "diskuvbox" "copy-file" "%{dune:bin}%/dune-real%{exe}%" "%{_:share}%/staging-files/%{dkml-host-abi:abi}%/install/bin/dune-real%{exe}%" ] {  conf-withdkml:installed}
+]
+url {
+  src: "https://gitlab.com/dkml/distributions/dkml/-/releases/2.1.3/downloads/src.dkml-component-desktop.tar.gz"
+  checksum: [
+    "sha512=6d321706c5ec93937cd27eb3080db7c3e9a3d8fdd8db6e3a5a42dfecadadc4fa8fbec183bb89cbb13c93fdb114a92ab966e4334d22c814ae9520c2a241f34b6d"
+  ]
+}
