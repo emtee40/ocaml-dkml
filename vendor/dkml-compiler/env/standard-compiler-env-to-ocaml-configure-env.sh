@@ -15,8 +15,11 @@
 # limitations under the License.
 # ----------------------------
 #
-# Used by DKML's autodetect_compiler() function to customize compiler
-# variables before the variables are written to a launcher script.
+# This is a --post-transform script used by DkML's autodetect_compiler()
+# function to customize compiler variables before the variables are written
+# to a launcher script.
+#
+# Anything printed on stdout is ignored as of DkML 2.1.4.
 #
 # On entry autodetect_compiler() will have populated some or all of the
 # following non-export variables:
@@ -301,6 +304,8 @@ elif [ -n "${autodetect_compiler_AS:-}" ]; then
       #
       # The GNU AS assembler (https://sourceware.org/binutils/docs/as/index.html) does not support preprocessing
       # so it cannot be used as the `ASPP` ./configure variable.
+      #
+      # TODO: If no -as GNU assembler see "NDK 24+" comments in github-actions-ci-to-ocaml-configure-env.sh
 
       # XCode (macOS/iOS)
       # -----------------
