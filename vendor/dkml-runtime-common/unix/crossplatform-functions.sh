@@ -1822,6 +1822,8 @@ compiler_clear_environment() {
 # Used by DKML's autodetect_compiler() function to customize compiler
 # variables before the variables are written to a launcher script.
 #
+# Anything printed on stdout is redirected to stderr as of DkML 2.1.4.
+#
 # On entry autodetect_compiler() will have populated some or all of the
 # following non-export variables:
 #
@@ -1879,7 +1881,7 @@ autodetect_compiler_write_output() {
             }
 
             # Post-transform
-            DKML_TARGET_ABI="$autodetect_compiler_PLATFORM_ARCH" autodetect_compiler_user_post_transform
+            DKML_TARGET_ABI="$autodetect_compiler_PLATFORM_ARCH" autodetect_compiler_user_post_transform >&2
             if [ "$autodetect_compiler_has_supplied_post_transform" = 1 ]; then
                 autodetect_compiler_supplied_post_transform
             fi
@@ -1934,7 +1936,7 @@ autodetect_compiler_write_output() {
             }
 
             # Post-transform
-            DKML_TARGET_ABI="$autodetect_compiler_PLATFORM_ARCH" autodetect_compiler_user_post_transform
+            DKML_TARGET_ABI="$autodetect_compiler_PLATFORM_ARCH" autodetect_compiler_user_post_transform >&2
             if [ "$autodetect_compiler_has_supplied_post_transform" = 1 ]; then
                 autodetect_compiler_supplied_post_transform
             fi
@@ -2106,7 +2108,7 @@ output_make ()
             }
 
             # Post-transform
-            DKML_TARGET_ABI="$autodetect_compiler_PLATFORM_ARCH" autodetect_compiler_user_post_transform
+            DKML_TARGET_ABI="$autodetect_compiler_PLATFORM_ARCH" autodetect_compiler_user_post_transform >&2
             if [ "$autodetect_compiler_has_supplied_post_transform" = 1 ]; then
                 autodetect_compiler_supplied_post_transform
             fi
