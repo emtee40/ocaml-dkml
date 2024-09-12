@@ -75,7 +75,8 @@ function(DkMLBumpPackagesParticipant_CreateOpamSwitchUpgrade REL_FILENAME)
     # list(FILTER pkgvers EXCLUDE REGEX "^dune[.]")
     # list(APPEND pkgvers "dune.${DKML_RELEASE_DUNE_VERSION}+shim")
 
-    # Remove [dkml-host-abi], [dkml-host-abi-*] and [dkml-target-abi-*]
+    # Remove [host-arch-*], [dkml-host-abi], [dkml-host-abi-*] and [dkml-target-abi-*]
+    list(FILTER pkgvers EXCLUDE REGEX "^host-arch-")
     list(FILTER pkgvers EXCLUDE REGEX "^dkml-host-abi[.]")
     list(FILTER pkgvers EXCLUDE REGEX "^dkml-host-abi-")
     list(FILTER pkgvers EXCLUDE REGEX "^dkml-target-abi-")
