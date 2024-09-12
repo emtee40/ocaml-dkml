@@ -12,5 +12,5 @@ homepage: "https://diskuv.com/dkmlbook/"
 bug-reports: "https://gitlab.com/dkml/distributions/dkml/-/issues"
 flags: compiler
 depends: [
-    "ocaml-option-32bit" {>= "2"}
+    "ocaml-option-32bit" {>= "2" & arch = "x86_64" }
 ]

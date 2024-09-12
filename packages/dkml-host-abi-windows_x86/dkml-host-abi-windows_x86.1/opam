@@ -16,6 +16,3 @@ flags: compiler
 conflict-class: "dkml-host-abi"
 available: [os = "win32"]
 depends: [ "dkml-target-abi-windows_x86" ]
-depopts: [
-  "ocaml-option-32bit"
-]
