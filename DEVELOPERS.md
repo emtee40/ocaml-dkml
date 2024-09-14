@@ -79,18 +79,18 @@
 
    * Delete the `build` directory
 
-2. Bump the `DKML_VERSION_CMAKEVER` in `version.cmake` to a new major/minor/patch/prerelease version number.
+2. Bump both `DKML_PUBLICVERSION_CMAKEVER` and `DKML_VERSION_CMAKEVER` in `version.cmake` to a existing/new major/minor/patch/prerelease version number.
+   Then commit the change: `Start version X.Y.Z`.
+   *Do not use the appropriate `Package-VersionBump-{PRERELEASE,PATCH,MINOR,MAJOR}` target.*
 3. Run CMake configure: Either run `cmake --preset develop` or press a "configure" button in your
    CMake-enabled IDE with the `develop` configuration.
-4. Run the appropriate `Package-VersionBump-{PRERELEASE,PATCH,MINOR,MAJOR}` target.
-5. Rerun CMake configure (ex. `cmake --preset develop`).
-6. Edit `ocaml_opam_repository_gitref.txt` and set it to a commit id that you know works well with Windows, etc. Then commit the change. *You won't need to push it*.
-7. Run through each of the CMake stage targets **sequentially** starting from `Package-Stage01-` to
+4. Edit `ocaml_opam_repository_gitref.txt` and set it to a commit id that you know works well with Windows, etc. Then commit the change. *You won't need to push it*.
+5. Run through each of the CMake stage targets **sequentially** starting from `Package-Stage01-` to
    the highest Stage number. Many stages require a re-configuration based on
    values obtained from the prior stages, so do not skip any targets. Consult the
    [Errata](#errata)
-8. Run `cmake -E env DKTOOL_TTL_MINUTES=0 -- ./dk dkml.workflow.compilers CI GitLab PRERELEASE` (nit: This should be done as its own stage; before GitPushForTesting)
-9. Test DkML workflows:
+6. Run `cmake -E env DKTOOL_TTL_MINUTES=0 -- ./dk dkml.workflow.compilers CI GitLab PRERELEASE` (nit: This should be done as its own stage; before GitPushForTesting)
+7. Test DkML workflows:
 
    ```sh
    [ -x /usr/bin/cygpath ] && export HOME=$(cygpath -am "$USERPROFILE")
@@ -100,7 +100,7 @@
 
    Wait for <https://github.com/diskuv/dkml-workflows-prerelease/actions> to complete.
 
-10. Finish with the CMake target `-PublishAssets`.
+8. Finish with the CMake target `-PublishAssets`.
 
 ## Editing Source Code
 

@@ -18,7 +18,7 @@ if(CMAKE_SCRIPT_MODE_FILE AND DKML_PUBLICVERSION_CMAKEVER_OVERRIDE)
     set(DKML_PUBLICVERSION_CMAKEVER "${DKML_PUBLICVERSION_CMAKEVER_OVERRIDE}")
 else()
     #   Edited by pkg/bump/CMakeLists.txt. Do not change format.
-    set(DKML_PUBLICVERSION_CMAKEVER "2.1.2")
+    set(DKML_PUBLICVERSION_CMAKEVER "2.1.3")
 endif()
 
 # The current version.
@@ -30,7 +30,7 @@ else()
     # - Prereleases are in the format major.minor.patch.prerelease.
     # - Major/minor/patch releases are in the format major.minor.patch.
     # Can be edited by pkg/bump/CMakeLists.txt. Do not change format.
-    set(DKML_VERSION_CMAKEVER "2.1.3")
+    set(DKML_VERSION_CMAKEVER "2.1.4")
 endif()
 
 macro(ExpandDkmlVersion VERSIONTYPE)
