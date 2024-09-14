@@ -2302,12 +2302,13 @@ do_pins() {
     else
         touch "$opam_root/.ci.$do_pins_NAME.pinned"
     fi
+    printf "#!/bin/sh\nset -eufx\n" > "$opam_root/.ci.$do_pins_NAME.do.sh"
     do_pin_add() {
         do_pin_add_NAME=$1; shift
         do_pin_add_VER=$1; shift
         # ex. "astring.1.0.2" - The double-quotes are necessary.
         if ! grep -q "\"$do_pin_add_NAME.$do_pin_add_VER\"" "$opam_root/.ci.$do_pins_NAME.pinned"; then
-            opamrun pin add --switch "$do_pins_NAME"  --yes --no-action -k version "$do_pin_add_NAME" "$do_pin_add_VER"
+            printf "opam pin add --switch '%s' --yes --no-action -k version '%s' '%s'\n" "$do_pins_NAME" "$do_pin_add_NAME" "$do_pin_add_VER" >> "$opam_root/.ci.$do_pins_NAME.do.sh"
         fi
     }
     ### BEGIN pin-adds. DO NOT EDIT THE LINES IN THIS SECTION
@@ -2498,6 +2499,7 @@ do_pins() {
     do_pin_add yojson "${PIN_YOJSON}"
     do_pin_add zed "${PIN_ZED}"
     ### END pin-adds. DO NOT EDIT THE LINES ABOVE
+    cmdrun sh "$opam_root/.ci.$do_pins_NAME.do.sh"
     section_end "opam-pins-$do_pins_NAME"
 
     # --------------
