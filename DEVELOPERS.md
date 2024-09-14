@@ -156,7 +156,7 @@ at the appropriate times.
 
 Each iteration:
 
-1. Run in a Unix shell (`with-dkml bash` on Windows) ... use the correct version number:
+1. Run in a Unix shell (`dk Ml.Use -- bash` on Windows) ... use the correct version number:
 
    ```sh
    delete_git_tag() {
@@ -292,16 +292,16 @@ sh ci/build-unix-targz.sh linux_x86_64 dockcross
 ### dkml-workflows
 
 ```powershell
-with-dkml build\pkg\bump\.ci\sd4\bs\bin\opam.exe install --root build\pkg\bump\.ci\o crunch uutf astring jingoo bos
-with-dkml build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root build\pkg\bump\.ci\o -- dune runtest --root vendor/dkml-workflows --auto-promote
+dk Ml.Use -- build\pkg\bump\.ci\sd4\bs\bin\opam.exe install --root build\pkg\bump\.ci\o crunch uutf astring jingoo bos
+dk Ml.Use -- build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root build\pkg\bump\.ci\o -- dune runtest --root vendor/dkml-workflows --auto-promote
 ```
 
 ### dkml-runtime-apps
 
 ```powershell
-with-dkml build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root build\pkg\bump\.ci\o -- dune build --root vendor/dkml-runtime-apps '@install' -w
+dk Ml.Use -- build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root build\pkg\bump\.ci\o -- dune build --root vendor/dkml-runtime-apps '@install' -w
 
-vendor\dkml-runtime-apps> with-dkml ..\..\build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root ..\..\build\pkg\bump\.ci\o -- dune build *.opam
+vendor\dkml-runtime-apps> dk Ml.Use -- ..\..\build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root ..\..\build\pkg\bump\.ci\o -- dune build *.opam
 ```
 
 ### diskuv-opam-repository
@@ -314,5 +314,5 @@ build\pkg\bump\.ci\sd4\bs\bin\opam.exe repository --root build\pkg\bump\.ci\o ad
 ### dkml-component-ocamlcompiler
 
 ```powershell
-with-dkml build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root build\pkg\bump\.ci\o -- dune build --root vendor/dkml-component-ocamlcompiler '@install' -w
+dk Ml.Use -- build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root build\pkg\bump\.ci\o -- dune build --root vendor/dkml-component-ocamlcompiler '@install' -w
 ```
