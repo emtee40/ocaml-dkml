@@ -289,30 +289,32 @@ sh ci/build-unix-targz.sh linux_x86_64 dockcross
 
 ## Subproject builds
 
+> Alternative: `$env:CHERE_INVOKING = "yes"; $env:MSYSTEM = "CLANG64"; build\pkg\bump\msys64\usr\bin\dash.exe -cl 'PATH="$PWD/build/pkg/bump/.ci/sd4/opamrun:$PATH"; opamrun --no-troubleshooting install --root build/pkg/bump/.ci/o --switch dkml crunch uutf astring jingoo bos'`
+
 ### dkml-workflows
 
 ```powershell
-dk Ml.Use -- build\pkg\bump\.ci\sd4\bs\bin\opam.exe install --root build\pkg\bump\.ci\o crunch uutf astring jingoo bos
-dk Ml.Use -- build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root build\pkg\bump\.ci\o -- dune runtest --root vendor/dkml-workflows --auto-promote
+dk Ml.Use -- build\pkg\bump\.ci\sd4\bs\bin\opam.exe install --root build\pkg\bump\.ci\o --switch dkml crunch uutf astring jingoo bos
+dk Ml.Use -- build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root build\pkg\bump\.ci\o --switch dkml -- dune runtest --root vendor/dkml-workflows --auto-promote
 ```
 
 ### dkml-runtime-apps
 
 ```powershell
-dk Ml.Use -- build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root build\pkg\bump\.ci\o -- dune build --root vendor/dkml-runtime-apps '@install' -w
+dk Ml.Use -- build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root build\pkg\bump\.ci\o --switch dkml -- dune build --root vendor/dkml-runtime-apps '@install' -w
 
-vendor\dkml-runtime-apps> dk Ml.Use -- ..\..\build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root ..\..\build\pkg\bump\.ci\o -- dune build *.opam
+vendor\dkml-runtime-apps> dk Ml.Use -- ..\..\build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root ..\..\build\pkg\bump\.ci\o --switch dkml -- dune build *.opam
 ```
 
 ### diskuv-opam-repository
 
 ```powershell
 build\pkg\bump\.ci\sd4\bs\bin\opam.exe repository --root build\pkg\bump\.ci\o remove diskuv --all
-build\pkg\bump\.ci\sd4\bs\bin\opam.exe repository --root build\pkg\bump\.ci\o add diskuv "file://$(cygpath -am .)/vendor/diskuv-opam-repository"
+build\pkg\bump\.ci\sd4\bs\bin\opam.exe repository --root build\pkg\bump\.ci\o --switch dkml add diskuv "file://$(cygpath -am .)/vendor/diskuv-opam-repository"
 ```
 
 ### dkml-component-ocamlcompiler
 
 ```powershell
-dk Ml.Use -- build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root build\pkg\bump\.ci\o -- dune build --root vendor/dkml-component-ocamlcompiler '@install' -w
+dk Ml.Use -- build\pkg\bump\.ci\sd4\bs\bin\opam.exe exec --root build\pkg\bump\.ci\o --switch dkml -- dune build --root vendor/dkml-component-ocamlcompiler '@install' -w
 ```
