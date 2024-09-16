@@ -71,7 +71,7 @@ endif()
 
 FetchGit(dkml-install-api
     GIT_REPOSITORY https://github.com/diskuv/dkml-install-api.git
-    GIT_TAG 0.5
+    GIT_TAG 0.5.3
 )
 FetchGit(dkml-component-unixutils
     GIT_REPOSITORY https://github.com/diskuv/dkml-component-unixutils.git
