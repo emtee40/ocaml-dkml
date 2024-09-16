@@ -60,10 +60,12 @@ macro(do_subtree_split)
         COMMAND ${GIT_EXECUTABLE} ${git_OPTS} subtree split --prefix "${SUBTREE_PREFIX}" --rejoin ${SUBTREE_SQUASH_OPTIONS}
         COMMAND_ERROR_IS_FATAL ANY
         OUTPUT_STRIP_TRAILING_WHITESPACE
-        # Examples on the standard error:
-        #   1. Subtree is already at commit d3bad8cc922c05960dea56682948316faee5efdc.
-        #   2. <what is message when rejoin point changes?>
-        ERROR_VARIABLE split_output
+        # Examples:
+        #   1. Subtree is already at commit d3bad8cc922c05960dea56682948316faee5efdc. (standard error)
+        #   2. 00a22decddc521b4bf30ff2be412059ae691c97c (standard output)
+        #   3. <what is message when rejoin point changes?>
+        OUTPUT_VARIABLE split_output_stdout
+        ERROR_VARIABLE split_output_stderr
     )
 endmacro()
 macro(proceed gitref)
@@ -73,14 +75,19 @@ macro(proceed gitref)
 endmacro()
 
 do_subtree_split()
-if(split_output MATCHES "already at commit ([0-9a-f]+)")
+if(split_output_stdout MATCHES "([0-9a-f]+)")
+    proceed("${CMAKE_MATCH_1}")
+elseif(split_output_stderr MATCHES "already at commit ([0-9a-f]+)")
     proceed("${CMAKE_MATCH_1}")
 else()
     # Likely: The `git subtree split` succeeded but had a merge. Rerun so the commit id is reported back by `git subtree`.
     do_subtree_split()
-    if(split_output MATCHES "already at commit ([0-9a-f]+)")
+    if(split_output_stdout MATCHES "([0-9a-f]+)")
+        proceed("${CMAKE_MATCH_1}")
+    elseif(split_output_stderr MATCHES "already at commit ([0-9a-f]+)")
         proceed("${CMAKE_MATCH_1}")
     else()
-        message(FATAL_ERROR "The `git subtree split` succeeded. However, even after running twice it has not reported back the commit id (or we don't recognize it).\nOutput:\n${split_output}")
+        # Likely: The `git subtree split` succeeded but had a merge. Rerun so the commit id is reported back by `git subtree`.
+        message(FATAL_ERROR "The `git subtree split` succeeded. However, even after running twice it has not reported back the commit id (or we don't recognize it).\nstdout:\n${split_output_stdout}\nstderr:\n${split_output_stderr}")
     endif()
 endif()
