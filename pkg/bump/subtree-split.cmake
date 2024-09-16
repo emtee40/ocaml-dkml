@@ -6,19 +6,22 @@
 #   if there was no change to the rejoin commit. So no way to use --rejoin --branch
 #   consistently.
 
+# git -c core.fsmonitor=false avoids `error: daemon terminated` lines, esp. on Windows
+set(git_OPTS -c core.fsmonitor=false)
+
 if(NOT GIT_EXECUTABLE OR NOT SUBTREE_PREFIX OR NOT SUBTREE_REF)
     message(FATAL_ERROR "Invalid subtree-split.cmake arguments")
 endif()
 
 function(delete_local_tag_if_exists)
     execute_process(
-        COMMAND ${GIT_EXECUTABLE} show-ref --quiet "refs/tags/${SUBTREE_REF}"
+        COMMAND ${GIT_EXECUTABLE} ${git_OPTS} show-ref --quiet "refs/tags/${SUBTREE_REF}"
         # Do not use: COMMAND_ERROR_IS_FATAL ANY
         RESULT_VARIABLE statuscode
     )
     if(statuscode EQUAL 0)
         execute_process(
-            COMMAND ${GIT_EXECUTABLE} tag --delete "${SUBTREE_REF}"
+            COMMAND ${GIT_EXECUTABLE} ${git_OPTS} tag --delete "${SUBTREE_REF}"
             COMMAND_ECHO STDOUT
             COMMAND_ERROR_IS_FATAL ANY
         )
@@ -26,13 +29,13 @@ function(delete_local_tag_if_exists)
 endfunction()
 function(delete_local_branch_if_exists)
     execute_process(
-        COMMAND ${GIT_EXECUTABLE} show-ref --quiet "refs/heads/${SUBTREE_REF}"
+        COMMAND ${GIT_EXECUTABLE} ${git_OPTS} show-ref --quiet "refs/heads/${SUBTREE_REF}"
         # Do not use: COMMAND_ERROR_IS_FATAL ANY
         RESULT_VARIABLE statuscode
     )
     if(statuscode EQUAL 0)
         execute_process(
-            COMMAND ${GIT_EXECUTABLE} branch --delete --force "${SUBTREE_REF}"
+            COMMAND ${GIT_EXECUTABLE} ${git_OPTS} branch --delete --force "${SUBTREE_REF}"
             COMMAND_ECHO STDOUT
             COMMAND_ERROR_IS_FATAL ANY
         )
@@ -41,12 +44,12 @@ endfunction()
 
 function(create_tag_and_branch commit_id)
     execute_process(
-        COMMAND ${GIT_EXECUTABLE} tag "${SUBTREE_REF}" "${commit_id}"
+        COMMAND ${GIT_EXECUTABLE} ${git_OPTS} tag "${SUBTREE_REF}" "${commit_id}"
         COMMAND_ECHO STDOUT
         COMMAND_ERROR_IS_FATAL ANY
     )
     execute_process(
-        COMMAND ${GIT_EXECUTABLE} branch "${SUBTREE_REF}" "${commit_id}"
+        COMMAND ${GIT_EXECUTABLE} ${git_OPTS} branch "${SUBTREE_REF}" "${commit_id}"
         COMMAND_ECHO STDOUT
         COMMAND_ERROR_IS_FATAL ANY
     )
@@ -54,7 +57,7 @@ endfunction()
 
 macro(do_subtree_split)    
     execute_process(
-        COMMAND ${GIT_EXECUTABLE} subtree split --prefix "${SUBTREE_PREFIX}" --rejoin ${SUBTREE_SQUASH_OPTIONS}
+        COMMAND ${GIT_EXECUTABLE} ${git_OPTS} subtree split --prefix "${SUBTREE_PREFIX}" --rejoin ${SUBTREE_SQUASH_OPTIONS}
         COMMAND_ERROR_IS_FATAL ANY
         OUTPUT_STRIP_TRAILING_WHITESPACE
         # Examples on the standard error:
